@@ -1,0 +1,59 @@
+cp -r macemu-git macemu-build
+cd macemu-build/SheepShaver
+cd ./src/Unix/
+
+CFLAGS="-O3" CXXFLAGS="-O3" ./autogen.sh \
+--prefix=/opt/local \
+--enable-sdl-framework --enable-sdl-audio --enable-sdl-video \
+--enable-standalone-gui --enable-vosf \
+--without-gtk --without-esd
+
+rm ../../../SheepShaver/src/Unix/vm_alloc.h
+cp ../../../BasiliskII/src/CrossPlatform/vm_alloc.h ../../../SheepShaver/src/Unix/
+rm ./vm_alloc.cpp
+cp ../../../BasiliskII/src/CrossPlatform/vm_alloc.cpp ./
+rm ./sigsegv.h
+rm ./sigsegv.cpp
+cp ../../../BasiliskII/src/CrossPlatform/sigsegv.h ./
+cp ../../../SheepShaver/src/CrossPlatform/sigsegv.cpp ./
+rm ./video_blit.h
+rm ./video_blit.cpp
+cp ../../../SheepShaver/src/CrossPlatform/video_blit.h ./
+cp ../../../SheepShaver/src/CrossPlatform/video_blit.cpp ./
+rm video_vosf.h
+cp ../CrossPlatform/video_vosf.h ./
+
+##gnu-sed -i 's/clip_unix\.cpp/\.\.\/MacOSX\/clip_macosx\.cpp/' ./Makefile
+
+make
+
+# Undefined symbols:
+#  "PrefsEditor()", referenced from _SDL_main in main_unix.o
+#  ".objc_class_name_DiskType", referenced from literal-pointer@__OBJC@__cls_refs@DiskType in VMSettingsController.o
+
+gcc -I/Library/Frameworks/SDL.framework/Headers -I../MacOSX/Launcher -I../MacOSX -I../include -I. -I../slirp -DHAVE_CONFIG_H -D_REENTRANT -DDATADIR=\"/opt/local/share/SheepShaver\" -g -O2 -mdynamic-no-pic -fno-strict-aliasing -c ../MacOSX/Launcher/DiskType.m -o obj/DiskType.o
+
+remake
+
+g++ -o SheepShaver -Wl,-seg1addr,0x78048000  obj/main.o obj/main_unix.o obj/prefs.o obj/prefs_items.o obj/prefs_unix.o obj/sys_unix.o obj/rom_patches.o obj/rsrc_patches.o obj/emul_op.o obj/name_registry.o obj/macos_util.o obj/timer.o obj/timer_unix.o obj/xpram.o obj/xpram_unix.o obj/adb.o obj/sony.o obj/disk.o obj/cdrom.o obj/scsi.o obj/gfxaccel.o obj/video.o obj/video_blit.o obj/audio.o obj/ether.o obj/thunks.o obj/serial.o obj/extfs.o obj/disk_sparsebundle.o obj/tinyxml2.o obj/about_window_unix.o obj/user_strings.o obj/user_strings_unix.o obj/vm_alloc.o obj/sigsegv.o obj/rpc_unix.o obj/sshpty.o obj/strlcpy.o obj/video_sdl.o obj/extfs_macosx.o obj/prefs_macosx.o obj/DiskType.o obj/VMSettingsController.o obj/serial_unix.o obj/ether_unix.o obj/scsi_dummy.o obj/audio_sdl.o obj/paranoia.o obj/ppc_asm.o obj/sys_darwin.o obj/SDLMain.o obj/clip_macosx.o obj/utils_macosx.o obj/bootp.o obj/ip_output.o obj/tcp_input.o obj/cksum.o obj/mbuf.o obj/tcp_output.o obj/debug.o obj/misc.o obj/tcp_subr.o obj/if.o obj/sbuf.o obj/tcp_timer.o obj/ip_icmp.o obj/slirp.o obj/tftp.o obj/ip_input.o obj/socket.o obj/udp.o -lpthread -lm  -framework SDL -framework Carbon -framework IOKit -framework CoreFoundation -framework CoreAudio -framework AudioUnit -framework AudioToolbox -framework AppKit
+
+remake
+
+sudo su
+make install
+
+- - - - -
+
+cp -r macemu-git macemu-build
+cd macemu-build/SheepShaver
+cd ./src/MacOSX/
+cp ../Unix/configure.ac ./
+cp ../Unix/Makefile.in ./
+cp ../Unix/autogen.sh ./
+cp ../Unix/install-sh ./
+cp ../Unix/config.sub ./
+cp ../Unix/config.guess ./
+cp -r ../Unix/Darwin ./
+mkdir m4
+cp config/config-macosx-ppc_32.h ./config.h.in
+cp config/config-macosx-ppc_32.h ./config.h
