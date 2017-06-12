@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "video.h"
 #include "video_defs.h"
 #include "main.h"

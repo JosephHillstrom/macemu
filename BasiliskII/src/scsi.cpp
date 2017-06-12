@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
 #include "user_strings.h"

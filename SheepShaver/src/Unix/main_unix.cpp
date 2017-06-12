@@ -93,11 +93,11 @@
 #include <sys/param.h>
 #include <signal.h>
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 #include "main.h"
 #include "version.h"
 #include "prefs.h"
-#include "prefs_editor.h"
+//#include "prefs_editor.h"
 #include "cpu_emulation.h"
 #include "emul_op.h"
 #include "xlowmem.h"
@@ -109,8 +109,8 @@
 #include "macos_util.h"
 #include "rom_patches.h"
 #include "user_strings.h"
-#include "vm_alloc.h"
-#include "sigsegv.h"
+#include "../CrossPlatform/vm_alloc.h"
+#include "../CrossPlatform/sigsegv.h"
 #include "sigregs.h"
 #include "rpc.h"
 
@@ -838,9 +838,9 @@ int main(int argc, char **argv)
 	SysInit();
 
 	// Show preferences editor
-	if (!PrefsFindBool("nogui"))
+/*	if (!PrefsFindBool("nogui"))
 		if (!PrefsEditor())
-			goto quit;
+			goto quit; */
 
 #if !EMULATED_PPC
 	// Check some things

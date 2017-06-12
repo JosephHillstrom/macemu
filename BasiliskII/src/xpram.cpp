@@ -25,7 +25,7 @@
 
 #include <string.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "xpram.h"
 
 

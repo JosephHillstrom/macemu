@@ -21,7 +21,7 @@
 #ifndef DISK_UNIX_H
 #define DISK_UNIX_H
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 struct disk_generic {
 	enum status {

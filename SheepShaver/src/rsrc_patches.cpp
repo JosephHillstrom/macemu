@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "rsrc_patches.h"
 #include "cpu_emulation.h"
 #include "emul_op.h"

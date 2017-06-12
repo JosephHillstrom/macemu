@@ -40,7 +40,7 @@
  *  - Factor out code
  */
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 #include <SDL.h>
 #include <SDL_mutex.h>
@@ -60,8 +60,8 @@
 #include "user_strings.h"
 #include "video.h"
 #include "video_defs.h"
-#include "video_blit.h"
-#include "vm_alloc.h"
+#include "../CrossPlatform/video_blit.h"
+#include "../CrossPlatform/vm_alloc.h"
 
 #define DEBUG 0
 #include "debug.h"
@@ -628,7 +628,7 @@ static void update_display_static(driver_base *drv);
 static driver_base *drv = NULL;	// Pointer to currently used driver object
 
 #ifdef ENABLE_VOSF
-# include "video_vosf.h"
+# include "../CrossPlatform/video_vosf.h"
 #endif
 
 driver_base::driver_base(SDL_monitor_desc &m)

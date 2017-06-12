@@ -26,7 +26,7 @@
 
 #include <string.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "rom_patches.h"
 #include "main.h"
 #include "prefs.h"

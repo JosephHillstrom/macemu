@@ -20,7 +20,7 @@
 
 #import "PrefsEditor.h"
 
-#import "sysdeps.h"
+#import "../../CrossPlatform/sysdeps.h"
 #import "prefs.h"
 
 const int CDROMRefNum = -62;			// RefNum of driver

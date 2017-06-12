@@ -26,7 +26,7 @@
 #endif
 
 #include "config.h"
-#include "user_strings_unix.h"
+#include "../Unix/user_strings_unix.h"
 
 #ifndef STDC_HEADERS
 #error "You don't have ANSI C header files."

@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "timer.h"
 #include "macos_util.h"
 #include "main.h"

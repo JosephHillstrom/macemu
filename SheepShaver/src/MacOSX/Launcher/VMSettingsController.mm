@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#import "sysdeps.h"
+#import "../../CrossPlatform/sysdeps.h"
 #import "prefs.h"
 
 // The _UINT64 define is needed to guard against a typedef mismatch with Snow Leopard headers.

@@ -28,7 +28,7 @@
  *    Technote FL 24: "Don't Look at ioPosOffset for Devices"
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 
 #include <string.h>
 #include <vector>

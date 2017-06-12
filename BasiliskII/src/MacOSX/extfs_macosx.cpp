@@ -28,7 +28,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 #include "prefs.h"
 #include "extfs.h"
 #include "extfs_defs.h"

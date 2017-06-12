@@ -38,7 +38,7 @@
 #import <IOKit/storage/IOCDMediaBSDClient.h>
 #import <CoreFoundation/CoreFoundation.h>
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 #include "sys.h"
 #include "prefs.h"

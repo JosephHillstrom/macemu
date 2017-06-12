@@ -26,7 +26,7 @@
 
 #include <string.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "cpu_emulation.h"
 #include "ether.h"
 #include "ether_defs.h"

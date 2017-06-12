@@ -29,7 +29,7 @@
  *  - windows rpc
  */
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 #include <errno.h>
 #include <fcntl.h>

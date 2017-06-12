@@ -22,7 +22,7 @@
  */
 
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 // The _UINT64 define is needed to guard against a typedef mismatch with Snow Leopard headers.
 #define _UINT64

@@ -28,7 +28,7 @@
  *    Technote FL 36: "Apple Extensions to ISO 9660"
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 
 #include <string.h>
 #include <vector>
