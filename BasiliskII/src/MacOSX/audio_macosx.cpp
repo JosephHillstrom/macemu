@@ -65,7 +65,7 @@ static bool open_audio(void)
 		delete soundOutput;
 
 	soundOutput = new OSXsoundOutput();
-	soundOutput->start(AudioStatus.sample_size, AudioStatus.channels, 
+	soundOutput->start(AudioStatus.sample_size, AudioStatus.channels,
 					   AudioStatus.sample_rate >> 16);
 	soundOutput->setCallback(audioInt);
 	audio_frames_per_block = soundOutput->bufferSizeFrames();
@@ -85,7 +85,7 @@ void AudioInit(void)
 
 	audio_channel_counts.push_back(1);
 	audio_channel_counts.push_back(2);
-	
+
 	audio_sample_rates.push_back(11025 << 16);
 	audio_sample_rates.push_back(22050 << 16);
 	audio_sample_rates.push_back(44100 << 16);
@@ -117,7 +117,7 @@ static void close_audio(void)
 		delete soundOutput;
 		soundOutput = NULL;
 	}
-	
+
 	audio_open = false;
 }
 

@@ -61,11 +61,11 @@ static int pprintf(const char* format, ...)
 	int len, ret;
 	char Buffer[1024];
 	va_list ap;
-	
+
 	if ((PortNum = find_port("PortLogger")) == B_NAME_NOT_FOUND)
 		return(PortNum);
 	for (len=0; len<1024; len++)
-		Buffer[len]='\0'; 
+		Buffer[len]='\0';
 	va_start(ap, format);
 	vsprintf(Buffer, format, ap);
 	ret = write_port(PortNum, 0, Buffer, strlen(Buffer));
@@ -89,7 +89,7 @@ static status_t map_page(uint32 ea, uint32 ra, uint32 **free_pte, uint32 bits)
 
 	D(bug("Trying to map EA %p -> RA %p\n", ea, ra));
 
-	// Find PTEG addresses for given EA 
+	// Find PTEG addresses for given EA
 	hash1 = (vsid & 0x7ffff) ^ ((ea >> 12) & 0xffff);
 	hash2 = ~hash1 & 0x7ffff;
 	api = (ea >> 22) & 0x3f;
@@ -247,7 +247,7 @@ device_hooks *find_device(const char *name)
 {
 	if (!strcmp(name, device_name_list[0]))
 		return &my_device_hooks;
-	
+
 	return NULL;
 }
 
@@ -322,7 +322,7 @@ static status_t sheep_control(void *cookie, uint32 op, void *data, size_t len)
 
 	switch (op) {
 		case SHEEP_UP:
-	
+
 			// Already messed up? Then do nothing now
 			if (find_port(PORT_NAME) != B_NAME_NOT_FOUND)
 				return B_NO_ERROR;
@@ -359,8 +359,8 @@ static status_t sheep_control(void *cookie, uint32 op, void *data, size_t len)
 
 			// Find vsid and real addresses of replacement memory
 			for (i=0; i<table_size/8; i++) {
-				if (((uint32)pe[0].address & 0xfffff000)==(pte_address[i*2+1]&0xfffff000)) { 
-					D(bug("Found page 0  PtePos %04x V%x VSID %03x H%x API %02x RPN %03x R%1x C%1x WIMG%1x PP%1x \n", 
+				if (((uint32)pe[0].address & 0xfffff000)==(pte_address[i*2+1]&0xfffff000)) {
+					D(bug("Found page 0  PtePos %04x V%x VSID %03x H%x API %02x RPN %03x R%1x C%1x WIMG%1x PP%1x \n",
 					  i << 2,
 					  ((pte_address[i*2]&0x80000000) >> 31),((pte_address[i*2]&0x7fffff80) >> 7),
 					  ((pte_address[i*2]&0x00000040) >> 6),(pte_address[i*2] & 0x3f),
@@ -372,7 +372,7 @@ static status_t sheep_control(void *cookie, uint32 op, void *data, size_t len)
 				}
 				if ((uint32)pe[0].size == B_PAGE_SIZE) {
 					if (((uint32)pe[1].address & 0xfffff000)==(pte_address[i*2+1]&0xfffff000)) {
-						D(bug("Found page 1f PtePos %04x V%x VSID %03x H%x API %02x RPN %03x R%1x C%1x WIMG%1x PP%1x \n", 
+						D(bug("Found page 1f PtePos %04x V%x VSID %03x H%x API %02x RPN %03x R%1x C%1x WIMG%1x PP%1x \n",
 						  i << 2,
 						  ((pte_address[i*2]&0x80000000) >> 31), ((pte_address[i*2]&0x7fffff80) >> 7),
 						  ((pte_address[i*2]&0x00000040) >> 6), (pte_address[i*2] & 0x3f),
@@ -383,7 +383,7 @@ static status_t sheep_control(void *cookie, uint32 op, void *data, size_t len)
 					}
 				} else {
 					if ((((uint32)pe[0].address + B_PAGE_SIZE) & 0xfffff000)==(pte_address[i*2+1]&0xfffff000)) {
-						D(bug("Found page 1d PtePos %04x V%x VSID %03x H%x API %02x RPN %03x R%1x C%1x WIMG%1x PP%1x \n", 
+						D(bug("Found page 1d PtePos %04x V%x VSID %03x H%x API %02x RPN %03x R%1x C%1x WIMG%1x PP%1x \n",
 						  i << 2,
 						  ((pte_address[i*2]&0x80000000) >> 31), ((pte_address[i*2]&0x7fffff80) >> 7),
 						  ((pte_address[i*2]&0x00000040) >> 6), (pte_address[i*2] & 0x3f),
@@ -468,7 +468,7 @@ static status_t sheep_read(void *cookie, off_t pos, void *data, size_t *len)
 /*
  *  sheep_write - hook function for the write call
  */
- 
+
 static status_t sheep_write(void *cookie, off_t pos, const void *data, size_t *len)
 {
 	D(bug("write() pos %Lx, data %p, len %08x\n", pos, data, *len));

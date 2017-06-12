@@ -42,7 +42,7 @@
 #endif
 
 #if !EMULATED_68K && defined(__NetBSD__)
-# include <m68k/sync_icache.h> 
+# include <m68k/sync_icache.h>
 # include <m68k/frame.h>
 # include <sys/param.h>
 # include <sys/sysctl.h>
@@ -526,7 +526,7 @@ int main(int argc, char **argv)
 		ErrorAlert(str);
 		QuitEmulator();
 	}
-	
+
 	// Register dump state function when we got mad after a segfault
 	sigsegv_set_dump_state(sigsegv_dump_state);
 
@@ -542,7 +542,7 @@ int main(int argc, char **argv)
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 	RAMSize = RAMSize & -getpagesize();					// Round down to page boundary
 #endif
-	
+
 	// Initialize VM system
 	vm_init();
 
@@ -558,20 +558,20 @@ int main(int argc, char **argv)
 #else
 	const bool can_map_all_memory = false;
 #endif
-	
+
 	// Try to allocate all memory from 0x0000, if it is not known to crash
 	if (can_map_all_memory && (vm_acquire_mac_fixed(0, RAMSize + 0x100000) == 0)) {
 		D(bug("Could allocate RAM and ROM from 0x0000\n"));
 		memory_mapped_from_zero = true;
 	}
-	
+
 #ifndef PAGEZERO_HACK
 	// Otherwise, just create the Low Memory area (0x0000..0x2000)
 	else if (vm_acquire_mac_fixed(0, 0x2000) == 0) {
 		D(bug("Could allocate the Low Memory globals\n"));
 		lm_area_mapped = true;
 	}
-	
+
 	// Exit on failure
 	else {
 		sprintf(str, GetString(STR_LOW_MEM_MMAP_ERR), strerror(errno));
@@ -591,7 +591,7 @@ int main(int argc, char **argv)
 #endif
 	{
 		uint8 *ram_rom_area = (uint8 *)vm_acquire_mac(RAMSize + 0x100000);
-		if (ram_rom_area == VM_MAP_FAILED) {	
+		if (ram_rom_area == VM_MAP_FAILED) {
 			ErrorAlert(STR_NO_MEM_ERR);
 			QuitEmulator();
 		}
@@ -621,7 +621,7 @@ int main(int argc, char **argv)
 #endif
 	D(bug("Mac RAM starts at %p (%08x)\n", RAMBaseHost, RAMBaseMac));
 	D(bug("Mac ROM starts at %p (%08x)\n", ROMBaseHost, ROMBaseMac));
-	
+
 	// Get rom file path from preferences
 	const char *rom_path = PrefsFindString("rom");
 
@@ -892,7 +892,7 @@ void QuitEmulator(void)
 	if (lm_area_mapped)
 		vm_release(0, 0x2000);
 #endif
-	
+
 	// Exit VM wrappers
 	vm_exit();
 
@@ -969,7 +969,7 @@ void Set_pthread_attr(pthread_attr_t *attr, int priority)
 		pthread_attr_setinheritsched(attr, PTHREAD_EXPLICIT_SCHED);
 		pthread_attr_setschedpolicy(attr, SCHED_FIFO);
 		struct sched_param fifo_param;
-		fifo_param.sched_priority = ((sched_get_priority_min(SCHED_FIFO) + 
+		fifo_param.sched_priority = ((sched_get_priority_min(SCHED_FIFO) +
 					      sched_get_priority_max(SCHED_FIFO)) / 2 +
 					     priority);
 		pthread_attr_setschedparam(attr, &fifo_param);
@@ -995,7 +995,7 @@ void Set_pthread_attr(pthread_attr_t *attr, int priority)
 #ifdef HAVE_PTHREADS
 
 struct B2_mutex {
-	B2_mutex() { 
+	B2_mutex() {
 	    pthread_mutexattr_t attr;
 	    pthread_mutexattr_init(&attr);
 	    // Initialize the mutex for priority inheritance --
@@ -1012,7 +1012,7 @@ struct B2_mutex {
 	    pthread_mutex_init(&m, &attr);
 	    pthread_mutexattr_destroy(&attr);
 	}
-	~B2_mutex() { 
+	~B2_mutex() {
 	    pthread_mutex_trylock(&m); // Make sure it's locked before
 	    pthread_mutex_unlock(&m);  // unlocking it.
 	    pthread_mutex_destroy(&m);
@@ -1291,7 +1291,7 @@ static void sigill_handler(int sig, int code, struct sigcontext *scp)
 
 		// Jump to EmulOp trampoline code on return
 		scp->sc_pc = (uint32)EmulOpTrampoline;
-		
+
 	} else switch (opcode) {	// Emulate privileged instructions
 
 		case 0x40e7:	// move sr,-(sp)

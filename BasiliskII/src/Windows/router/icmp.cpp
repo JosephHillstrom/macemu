@@ -62,7 +62,7 @@ void start_icmp_listen()
 
 		icmp_incoming_s->permanent = TRUE;
 		icmp_incoming_s->s = _socket( AF_INET, SOCK_RAW, IPPROTO_ICMP );
-		
+
 		memset( &icmp_incoming_s->from, 0, icmp_incoming_s->from_len );
 		icmp_incoming_s->from.sin_family = AF_INET;
 

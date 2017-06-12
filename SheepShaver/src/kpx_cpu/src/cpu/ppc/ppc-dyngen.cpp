@@ -259,7 +259,7 @@ void powerpc_dyngen::gen_bc(int bo, int bi, uint32 tpc, uint32 npc, bool direct_
 #undef _
 	default: abort();
 	}
-	
+
 	if (BO_CONDITIONAL_BRANCH(bo) || BO_DECREMENT_CTR(bo)) {
 		// two-way branches
 		if (direct_chaining)

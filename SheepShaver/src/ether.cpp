@@ -50,7 +50,7 @@ enum {
  *  Stream private data structure
  */
 
-static const int kGroupSAPMapSize = 128/32;	// Number of 32-bit values we need for 128 bits	
+static const int kGroupSAPMapSize = 128/32;	// Number of 32-bit values we need for 128 bits
 static const int kGSshift = 6;
 static const int kGSmask = 0x1F;
 
@@ -60,7 +60,7 @@ struct multicast_node {
 };
 
 struct DLPIStream {
-	void SetGroupSAP(uint8 sap) 
+	void SetGroupSAP(uint8 sap)
 	{
 		group_sap[sap >> kGSshift] |= (1L << ((sap >> 1) & kGSmask));
 	}
@@ -76,7 +76,7 @@ struct DLPIStream {
 			group_sap[i] = 0;
 	}
 
-	bool TestGroupSAP(uint8 sap) 
+	bool TestGroupSAP(uint8 sap)
 	{
 		return group_sap[sap >> kGSshift] & (1L << ((sap >> 1) & kGSmask));
 	}
@@ -571,35 +571,35 @@ int ether_wput(queue_t *q, mblk_t *mp)
 				case DL_INFO_REQ:
 					DLPI_info(the_stream, q, mp);
 					break;
-	
+
 				case DL_PHYS_ADDR_REQ:
 					DLPI_phys_addr(the_stream, q, mp);
 					break;
-	
+
 				case DL_BIND_REQ:
 					DLPI_bind(the_stream, q, mp);
 					break;
-	
+
 				case DL_UNBIND_REQ:
 					DLPI_unbind(the_stream, q, mp);
 					break;
-	
+
 				case DL_SUBS_BIND_REQ:
 					DLPI_subs_bind(the_stream, q, mp);
 					break;
-	
+
 				case DL_SUBS_UNBIND_REQ:
 					DLPI_subs_unbind(the_stream, q, mp);
 					break;
-	
+
 				case DL_ENABMULTI_REQ:
 					DLPI_enable_multi(the_stream, q, mp);
 					break;
-	
+
 				case DL_DISABMULTI_REQ:
 					DLPI_disable_multi(the_stream, q, mp);
 					break;
-	
+
 				default:
 					D(bug("WARNING: ether_wsrv(): Unknown primitive\n"));
 					DLPI_error_ack(the_stream, q, mp, prim, DL_NOTSUPPORTED, 0);
@@ -690,7 +690,7 @@ static void ether_ioctl(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 
 			// Construct header (converts DL_UNITDATA_REQ -> M_DATA)
 			mblk_t *header_mp = build_tx_packet_header(the_stream, unitdata_mp, true);
-			
+
 			if (header_mp == NULL) {
 				// Could not allocate a message block large enough
 				ioc->ioc_error = MAC_ENOMEM;
@@ -764,7 +764,7 @@ static void ether_flush(queue_t* q, mblk_t* mp)
 
 static uint16 classify_packet_type(uint16 primarySAP, uint16 secondarySAP)
 {
-	if (primarySAP >= kMinDIXSAP) 		
+	if (primarySAP >= kMinDIXSAP)
 		return kPktDIX;
 
 	if ((primarySAP == kIPXSAP) && (secondarySAP == kIPXSAP))
@@ -813,7 +813,7 @@ static mblk_t *reuse_message_block(mblk_t *mp, uint16 needed_size)
 		mp->b_cont = NULL; 	// Detach the M_(PC)PROTO
 		freemsg(mp);		// Free the M_(PC)PROTO
 		mp = nmp;			// Point to the M_DATA blocks
-	
+
 		// Try to get space on the first M_DATA block
 		if (mp && (mp->b_datap->db_ref == 1) && ((mp->b_rptr - mp->b_datap->db_base) >= needed_size))
 			mp->b_rptr -= needed_size;
@@ -826,8 +826,8 @@ static mblk_t *reuse_message_block(mblk_t *mp, uint16 needed_size)
 			} else {
 				nmp->b_cont = mp;		// Attach the new message block as the head
 				nmp->b_wptr += needed_size;
-				mp = nmp; 				
-			} 
+				mp = nmp;
+			}
 		}
 	}
 
@@ -858,10 +858,10 @@ static mblk_t *build_tx_packet_header(DLPIStream *the_stream, mblk_t *mp, bool f
 	// Extract DLSAP
 	uint16 dlsap;
 	switch (destAddrLen) {
-		case kEnetPhysicalAddressLength:	
+		case kEnetPhysicalAddressLength:
 			dlsap = the_stream->dlsap;
 			break;
-		case kEnetAndSAPAddressLength:	
+		case kEnetAndSAPAddressLength:
 			dlsap = ntohs(*(uint16 *)(destAddrOrig + kEnetPhysicalAddressLength));
 			break;
 		case kEnetPhysicalAddressLength + k8022DLSAPLength + k8022SNAPLength:	// SNAP SAP
@@ -880,7 +880,7 @@ static mblk_t *build_tx_packet_header(DLPIStream *the_stream, mblk_t *mp, bool f
 	uint16 hdrsize, proto;
 	switch (packetType) {
 		case kPktDIX:
-			hdrsize = kEnetPacketHeaderLength; 
+			hdrsize = kEnetPacketHeaderLength;
 			proto = dlsap;
 			break;
 		case kPkt8022SAP:
@@ -893,7 +893,7 @@ static mblk_t *build_tx_packet_header(DLPIStream *the_stream, mblk_t *mp, bool f
 		case kPkt8022SNAP:
 			hdrsize = kEnetPacketHeaderLength + k8022SNAPHeaderLength;
 			if (fast_path)
-				proto = 0;		
+				proto = 0;
 			else
 				proto = datasize + k8022SNAPHeaderLength;
 			break;
@@ -902,10 +902,10 @@ static mblk_t *build_tx_packet_header(DLPIStream *the_stream, mblk_t *mp, bool f
 			if (fast_path)
 				proto = 0;
 			else
-				proto = datasize;		
+				proto = datasize;
 			break;
 		default:
-			hdrsize = kEnetPacketHeaderLength; 
+			hdrsize = kEnetPacketHeaderLength;
 			proto = dlsap;
 			break;
 	}
@@ -964,7 +964,7 @@ static void transmit_packet(mblk_t *mp)
 		enetHeader->fProto = msgdsize(mp) - sizeof(EnetPacketHeader);
 
 	// Fill in ethernet source address
-	OTCopy48BitAddress(hardware_address, enetHeader->fSourceAddr); 
+	OTCopy48BitAddress(hardware_address, enetHeader->fSourceAddr);
 
 	// Tell add-on to transmit packet
 	AO_transmit_packet(Host2MacAddr((uint8 *)mp));
@@ -1105,11 +1105,11 @@ void ether_packet_received(mblk_t *mp)
 				if (sum == 0)
 					goto type_found;
 			} else {
-				// No SNAP, found a match since saps match 
+				// No SNAP, found a match since saps match
 				goto type_found;
 			}
 		} else {
-			// Check for an 802.3 Group/Global (odd) 
+			// Check for an 802.3 Group/Global (odd)
 			if (((packetType == kPkt8022SAP) || (packetType == kPkt8022SNAP)) && (destSAP & 1) && the_stream->TestGroupSAP(destSAP))
 				goto type_found;
 		}
@@ -1233,11 +1233,11 @@ static void DLPI_info(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 	// Calculate header length
 	if (the_stream->dlpi_state != DL_UNBOUND) {
 		saplen = (the_stream->flags & kSnapStream) ? k8022DLSAPLength+k8022SNAPLength : k8022DLSAPLength;
-		if (the_stream->dlsap == kSNAPSAP) 	
-			hdrlen = kEnetPacketHeaderLength + k8022SNAPHeaderLength;	// SNAP address 
+		if (the_stream->dlsap == kSNAPSAP)
+			hdrlen = kEnetPacketHeaderLength + k8022SNAPHeaderLength;	// SNAP address
 		else if ((the_stream->dlsap <= kMax8022SAP) || (the_stream->dlsap == kIPXSAP))
-			hdrlen = kEnetPacketHeaderLength + k8022BasicHeaderLength;	// SAP or IPX 
-		else								
+			hdrlen = kEnetPacketHeaderLength + k8022BasicHeaderLength;	// SAP or IPX
+		else
 			hdrlen = kEnetPacketHeaderLength;							// Basic Ethernet
 	}
 
@@ -1276,12 +1276,12 @@ static void DLPI_info(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 	OTCopy48BitAddress(hardware_address, boundAddr->fHWAddr);
 	if (saplen) {
 		boundAddr->fSAP = the_stream->dlsap;
-		if (the_stream->flags & kSnapStream) 
+		if (the_stream->flags & kSnapStream)
 			OTCopy8022SNAP(the_stream->snap, boundAddr->fSNAP);
 	}
 	ackp->dl_brdcst_addr_length = bcastlen;
 	ackp->dl_brdcst_addr_offset = sizeof(dl_info_ack_t) + addrlen + saplen;
-	OTSet48BitBroadcastAddress(ack_mp->b_rptr + ackp->dl_brdcst_addr_offset);	
+	OTSet48BitBroadcastAddress(ack_mp->b_rptr + ackp->dl_brdcst_addr_offset);
 
 	// Advance write pointer
 	ack_mp->b_wptr += sizeof(dl_info_ack_t) + addrlen + saplen + bcastlen;
@@ -1384,7 +1384,7 @@ static void DLPI_bind(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 
 	// Fill in other fields
 	ackp->dl_sap = sap;
-	ackp->dl_addr_length = kEnetAndSAPAddressLength;		
+	ackp->dl_addr_length = kEnetAndSAPAddressLength;
 	ackp->dl_addr_offset = sizeof(dl_bind_ack_t);
 	ackp->dl_max_conind = 0;
 	ackp->dl_xidtest_flg = 0;
@@ -1399,7 +1399,7 @@ static void DLPI_bind(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 	// Set group SAP if necessary
 	the_stream->ClearAllGroupSAPs();
 	if (sap <= kMax8022SAP)
-		the_stream->SetGroupSAP(k8022GlobalSAP);	
+		the_stream->SetGroupSAP(k8022GlobalSAP);
 
 	// The stream is now bound and idle
 	the_stream->dlpi_state = DL_IDLE;
@@ -1431,7 +1431,7 @@ static void DLPI_unbind(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 
 	// Stream is now unbound
 	the_stream->dlpi_state = DL_UNBOUND;
-	the_stream->dlsap = 0;				
+	the_stream->dlsap = 0;
 
 	// Flush all pending outbound messages
 	flushq(q, FLUSHDATA);
@@ -1478,12 +1478,12 @@ static void DLPI_subs_bind(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 						error = DL_BADADDR;
 			} else
 				error = DL_UNSUPPORTED;
-			break;	
+			break;
 
 		case DL_HIERARCHICAL_BIND:	// Bind an additional SNAP
 			if (the_stream->dlsap == kSNAPSAP) {
-				if (the_stream->flags & kSnapStream) 
-					error = DL_TOOMANY;	// only one SNAP binding allowed 
+				if (the_stream->flags & kSnapStream)
+					error = DL_TOOMANY;	// only one SNAP binding allowed
 				else {
 					OTCopy8022SNAP(sap, the_stream->snap);
 					the_stream->flags |= kSnapStream;
@@ -1561,7 +1561,7 @@ static void DLPI_subs_unbind(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 	} else if (length == k8022SNAPLength) {
 		if (the_stream->dlsap == kSNAPSAP) {
 			if (the_stream->flags & kSnapStream) {
-				if (memcmp(the_stream->snap, sap, length) != 0) 
+				if (memcmp(the_stream->snap, sap, length) != 0)
 					error = DL_BADADDR;
 			} else
 				error = DL_BADADDR;
@@ -1650,11 +1650,11 @@ static void DLPI_disable_multi(DLPIStream *the_stream, queue_t *q, mblk_t *mp)
 
 	// Tell add-on to disable multicast address
 	AO_disable_multicast(Host2MacAddr((uint8 *)reqaddr));
-	
+
 	// No longer check multicast packets if no multicast addresses are registered
 	if (the_stream->multicast_list == NULL)
 		the_stream->flags &= ~kAcceptMulticasts;
-			
+
 	// Send reply
 	DLPI_ok_ack(the_stream, q, mp, DL_DISABMULTI_REQ);
 	return;

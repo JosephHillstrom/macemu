@@ -1,5 +1,5 @@
 /*
- * vhd_unix.cpp -- support for disk images in vhd format 
+ * vhd_unix.cpp -- support for disk images in vhd format
  *
  *	(C) 2010 Geoffrey Brown
  *
@@ -45,11 +45,11 @@ static disk_generic::status vhd_unix_open(const char *name, int *size,
 		D(bug("vhd open -- incorrect permissions %s\n", name));
 		return disk_generic::DISK_UNKNOWN;
 	}
-  
-	if (! (fid = open(name, O_RDONLY))) { 
+
+	if (! (fid = open(name, O_RDONLY))) {
 		D(bug("vhd open -- couldn't open file %s\n", name));
 		return disk_generic::DISK_UNKNOWN;
-	} 
+	}
 	else {
 		char buf[9];
 		read(fid, buf, sizeof(buf)-1);
@@ -61,12 +61,12 @@ static disk_generic::status vhd_unix_open(const char *name, int *size,
 		}
 		if (vhd = (vhd_context_t *) malloc(sizeof(vhd_context_t))) {
 			int err;
-			if (err = vhd_open(vhd, name, read_only ? 
+			if (err = vhd_open(vhd, name, read_only ?
 								VHD_OPEN_RDONLY : VHD_OPEN_RDWR)) {
 				D(bug("vhd_open failed (%d)\n", err));
 				free(vhd);
 				return disk_generic::DISK_INVALID;
-			} 
+			}
 			else {
 				*size = (int) vhd->footer.curr_size;
 				printf("VHD Open %s\n", name);
@@ -89,13 +89,13 @@ static int vhd_unix_read(vhd_context_t *ctx, void *buffer, loff_t offset,
 		printf("vhd read only supported on sector boundaries (%d)\n",
 				VHD_SECTOR_SIZE);
 		return 0;
-	}	
-	if (err = vhd_io_read(ctx, (char *) buffer, offset / VHD_SECTOR_SIZE, 
+	}
+	if (err = vhd_io_read(ctx, (char *) buffer, offset / VHD_SECTOR_SIZE,
 							length / VHD_SECTOR_SIZE)){
-		D(bug("vhd read error %d\n", err));	
+		D(bug("vhd read error %d\n", err));
 		return err;
 	}
-	else 
+	else
 		return length;
 }
 
@@ -108,7 +108,7 @@ static int vhd_unix_write(vhd_context_t *ctx, void *buffer, loff_t offset,
 		printf("vhd write only supported on sector boundaries (%d)\n",
 				VHD_SECTOR_SIZE);
 		return 0;
-	}	
+	}
 	if (err = vhd_io_write(ctx, (char *) buffer, offset/VHD_SECTOR_SIZE,
 							length/VHD_SECTOR_SIZE)) {
 		D(bug("vhd write error %d\n", err));
@@ -130,15 +130,15 @@ static void vhd_unix_close(vhd_context_t *ctx)
 struct disk_vhd : disk_generic {
 	disk_vhd(vhd_context_t *ctx, bool read_only, loff_t size)
 	: ctx(ctx), read_only(read_only), file_size(size) { }
-	
+
 	virtual ~disk_vhd() { vhd_unix_close(ctx); }
 	virtual bool is_read_only() { return read_only; }
 	virtual loff_t size() { return file_size; }
-	
+
 	virtual size_t read(void *buf, loff_t offset, size_t length) {
 		return vhd_unix_read(ctx, buf, offset, length);
 	}
-	
+
 	virtual size_t write(void *buf, loff_t offset, size_t length) {
 		return vhd_unix_write(ctx, buf, offset, length);
 	}

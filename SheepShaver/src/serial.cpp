@@ -244,7 +244,7 @@ int16 SerialStatus(uint32 pb, uint32 dce)
 				WriteMacInt16(pb + csParam + 6, 0x0616);
 				res = noErr;
 				break;
-	
+
 			default:
 				res = the_port->status(pb, dce, code);
 				break;

@@ -93,7 +93,7 @@ void AddPrefsDefaults(void)
 	PrefsAddBool("nosound", false);
 	PrefsAddBool("noclipconversion", false);
 	PrefsAddBool("nogui", false);
-	
+
 #if USE_JIT
 	// JIT compiler specific options
 	PrefsAddBool("jit", true);

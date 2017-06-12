@@ -145,7 +145,7 @@ int sheep_fd = -1;					// fd of sheep driver
  */
 
 int main(int argc, char **argv)
-{	
+{
 	the_app = new BasiliskII();
 	the_app->Run();
 	delete the_app;

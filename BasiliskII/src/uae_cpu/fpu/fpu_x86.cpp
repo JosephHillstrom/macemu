@@ -68,7 +68,7 @@
  *		-	Logically OR'ed in x86 form to "x86_status_word_accrued".
  *		-	When regs.FPU fpsr is actually used, the value of
  *			"x86_status_word_accrued" is translated.
- *		
+ *
  *		When "x86_status_word" and "x86_status_word_accrued" are stored,
  *		all pending x86 FPU exceptions are cleared, if there are any.
  *
@@ -131,7 +131,7 @@
  *			based on the idea that the (possible) handler sees that "something
  *			seriously wrong" and takes the same action. Should not really get (m)any
  *			of those since normalization is handled on to_exten()
- *			
+ *
  */
 
 #include <math.h>
@@ -272,14 +272,14 @@ PRIVATE char * FFPU etos(fpu_register const & e)
 		FLD     TBYTE PTR [EDI]
     FSTP    DWORD PTR f
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%1\n"
 			"fstp	%0\n"
 		:	"=m" (f)
 		:	"m" (e)
 		);
-	
+
 	if(++_ix >= 10) _ix = 0;
 
 	sprintf( _s[_ix], "%.04f", (float)f );
@@ -340,8 +340,8 @@ PRIVATE void FFPU FPU_CONSISTENCY_CHECK_STOP(const char *name)
 	// Check for FPU stack overflows/underflows.
 	if( (checked_sw_atend & 0x3800) != (checked_sw_atstart & 0x3800) ) {
 		wsprintf(
-			msg, 
-			"FPU stack leak at %s, %X, %X\r\n", 
+			msg,
+			"FPU stack leak at %s, %X, %X\r\n",
 			name,
 			(int)(checked_sw_atstart & 0x3800) >> 11,
 			(int)(checked_sw_atend & 0x3800) >> 11
@@ -353,7 +353,7 @@ PRIVATE void FFPU FPU_CONSISTENCY_CHECK_STOP(const char *name)
 	/*
 	if(checked_sw_atstart != 0x400 || checked_sw_atend != 0x400) {
 		wsprintf(
-			msg, "Op %s, x86_status_word before=%X, x86_status_word after=%X\r\n", 
+			msg, "Op %s, x86_status_word before=%X, x86_status_word after=%X\r\n",
 			name, (int)checked_sw_atstart, (int)checked_sw_atend
 		);
 		OutputDebugString(msg);
@@ -497,13 +497,13 @@ PRIVATE __inline__ uae_u32 FFPU IS_NEGATIVE (fpu_register const & f)
 PRIVATE void FFPU signed_to_extended ( uae_s32 x, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	
+
 /*	_asm {
 		MOV			ESI, [f]
     FILD    DWORD PTR [x]
 		FSTP    TBYTE PTR [ESI]
 	} */
-	
+
 	__asm__ __volatile__("fildl %1\n\tfstpt %0" : "=m" (f) : "m" (x));
 	D(bug("signed_to_extended (%X) = %s\r\n",(int)x,etos(f)));
 	FPU_CONSISTENCY_CHECK_STOP("signed_to_extended");
@@ -514,7 +514,7 @@ PRIVATE uae_s32 FFPU extended_to_signed_32 ( fpu_register const & f )
 	FPU_CONSISTENCY_CHECK_START();
 	volatile uae_s32 tmp;
 	volatile WORD sw_temp;
-	
+
 /*	_asm {
 		MOV			EDI, [f]
 		FLD     TBYTE PTR [EDI]
@@ -529,7 +529,7 @@ PRIVATE uae_s32 FFPU extended_to_signed_32 ( fpu_register const & f )
 		:	"=m" (tmp), "=m" (sw_temp)
 		:	"m" (f)
 		);
-	
+
 	if(sw_temp & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
 		__asm__ __volatile__("fnclex");
@@ -563,7 +563,7 @@ PRIVATE uae_s16 FFPU extended_to_signed_16 ( fpu_register const & f )
     FISTP   WORD PTR tmp
     FNSTSW  sw_temp
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fistp	%0\n"
@@ -596,14 +596,14 @@ PRIVATE uae_s8 FFPU extended_to_signed_8 ( fpu_register const & f )
 	FPU_CONSISTENCY_CHECK_START();
 	volatile uae_s16 tmp;
 	volatile WORD sw_temp;
-	
+
 /*	_asm {
 		MOV			EDI, [f]
 		FLD     TBYTE PTR [EDI]
     FISTP   WORD PTR tmp
     FNSTSW  sw_temp
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fistp	%0\n"
@@ -645,14 +645,14 @@ PRIVATE void FFPU double_to_extended ( double x, fpu_register & f )
     FLD     QWORD PTR [x]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldl	%1\n"
 			"fstpt	%0\n"
 		:	"=m" (f)
 		:	"m" (x)
 		);
-	
+
 	FPU_CONSISTENCY_CHECK_STOP("double_to_extended");
 }
 
@@ -666,14 +666,14 @@ PRIVATE fpu_double FFPU extended_to_double( fpu_register const & f )
 		FLD     TBYTE PTR [ESI]
     FSTP    QWORD PTR result
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%1\n"
 			"fstpl	%0\n"
 		:	"=m" (result)
 		:	"m" (f)
 		);
-	
+
 	FPU_CONSISTENCY_CHECK_STOP("extended_to_double");
 	return result;
 }
@@ -686,7 +686,7 @@ PRIVATE void FFPU to_single ( uae_u32 src, fpu_register & f )
     FLD     DWORD PTR src
 		FSTP    TBYTE PTR [ESI]
 	} */
-	
+
 	__asm__ __volatile__(
 			"flds	%1\n"
 			"fstpt	%0\n"
@@ -761,13 +761,13 @@ PRIVATE void FFPU to_exten ( uae_u32 wrd1, uae_u32 wrd2, uae_u32 wrd3, fpu_regis
 PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fpu_register & f )
 {
 	FPU_CONSISTENCY_CHECK_START();
-	
+
 	// gb-- make GCC happy
 	union {
 		uae_u64 q;
 		uae_u32 l[2];
 	} src;
-	
+
 	// Should renormalize if needed. I'm not sure that x86 and m68k FPU's
 	// do it the sama way. This should be extremely rare however.
 	// to_exten() is often called with denormalized values.
@@ -780,7 +780,7 @@ PRIVATE void FFPU to_double ( uae_u32 wrd1, uae_u32 wrd2, fpu_register & f )
 		MOV			EDI, [f]
 		FSTP    TBYTE PTR [EDI]
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldl	%1\n"
 			"fstpt	%0\n"
@@ -804,7 +804,7 @@ PRIVATE uae_u32 FFPU from_single ( fpu_register const & f )
 		FSTP    DWORD PTR dest
     FNSTSW  sw_temp
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fstps	%0\n"
@@ -851,7 +851,7 @@ PRIVATE void FFPU from_double ( fpu_register const & f, uae_u32 *wrd1, uae_u32 *
 		FSTP    QWORD PTR dest
     FNSTSW  sw_temp
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fstpl	%0\n"
@@ -888,7 +888,7 @@ PRIVATE void FFPU do_fmove ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fxam	\n"
@@ -966,7 +966,7 @@ PRIVATE void FFPU do_fintrz ( fpu_register & dest, fpu_register const & src )
     FLDCW   x86_control_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	
+
 	__asm__ __volatile__(
 			"fstcw	%0\n"
 			"andl	$(~X86_ROUNDING_MODE), %0\n"
@@ -981,7 +981,7 @@ PRIVATE void FFPU do_fintrz ( fpu_register & dest, fpu_register const & src )
 		:	"+m" (cw_temp), "=m" (x86_status_word), "=m" (dest)
 		:	"m" (src), "m" (x86_control_word)
 		);
-	
+
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
 		__asm__ __volatile__("fnclex");
@@ -1003,7 +1003,7 @@ PRIVATE void FFPU do_fsqrt ( fpu_register & dest, fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    TBYTE PTR [EDI]
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%2\n"
 			"fsqrt	\n"
@@ -1013,7 +1013,7 @@ PRIVATE void FFPU do_fsqrt ( fpu_register & dest, fpu_register const & src )
 		:	"=m" (x86_status_word), "=m" (dest)
 		:	"m" (src)
 		);
-	
+
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
 		__asm__ __volatile__("fnclex");
@@ -1033,7 +1033,7 @@ PRIVATE void FFPU do_ftst ( fpu_register const & src )
     FNSTSW  x86_status_word
 		FSTP    ST(0)
 	} */
-	
+
 	__asm__ __volatile__(
 			"fldt	%1\n"
 			"fxam	\n"
@@ -1042,7 +1042,7 @@ PRIVATE void FFPU do_ftst ( fpu_register const & src )
 		:	"=m" (x86_status_word)
 		:	"m" (src)
 		);
-	
+
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
 		__asm__ __volatile__("fnclex");
@@ -1480,7 +1480,7 @@ PRIVATE void FFPU do_fmod ( fpu_register & dest, fpu_register const & src )
 #if !USE_3_BIT_QUOTIENT
 	WORD cw_temp;
 #endif
-	
+
 	uae_u8 * dest_p = (uae_u8 *)&dest;
 	uae_u8 * src_p = (uae_u8 *)&src;
 	uae_u32 sign = (dest_p[9] ^ src_p[9]) & 0x80;
@@ -1524,9 +1524,9 @@ partial_loop:
 		FSTP    TBYTE PTR [EDI]
 		FSTP    ST(0)
 	} */
-	
+
 #if !USE_3_BIT_QUOTIENT
-	
+
 	__asm__ __volatile__(
 			"movl	%6, %%ecx\n"	// %6: x86_control_word		(read)
 			"andl	$(~X86_ROUNDING_MODE), %%ecx\n"
@@ -1555,9 +1555,9 @@ partial_loop:
 		:	"m" (src), "m" (x86_control_word)
 		:	"ecx"
 		);
-	
+
 #else
-	
+
 	__asm__ __volatile__(
 			"fldt	%3\n"
 			"fldt	%2\n"
@@ -1573,9 +1573,9 @@ partial_loop:
 		:	"+m" (status), "=m" (x86_status_word), "+m" (dest)
 		:	"m" (src)
 		);
-	
+
 #endif
-	
+
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
 		__asm__ __volatile__("fnclex");
@@ -1649,7 +1649,7 @@ partial_loop:
 	} */
 
 #if !USE_3_BIT_QUOTIENT
-	
+
 	__asm__ __volatile__(
 			"movl	%6, %%ecx\n"	// %6: x86_control_word		(read)
 			"andl	$(~X86_ROUNDING_MODE), %%ecx\n"
@@ -1678,9 +1678,9 @@ partial_loop:
 		:	"m" (src), "m" (x86_control_word)
 		:	"ecx"
 		);
-	
+
 #else
-	
+
 	__asm__ __volatile__(
 			"fldt	%3\n"
 			"fldt	%2\n"
@@ -1696,9 +1696,9 @@ partial_loop:
 		:	"+m" (status), "=m" (x86_status_word), "+m" (dest)
 		:	"m" (src)
 		);
-	
+
 #endif
-	
+
 	if(x86_status_word & SW_EXCEPTION_MASK) {
 //		_asm FNCLEX
 		__asm__ __volatile__("fnclex");
@@ -2327,11 +2327,11 @@ PRIVATE int FFPU get_fp_value (uae_u32 opcode, uae_u32 extra, fpu_register & src
 					reg  = 4
 					size = 6
 					*/
-					// Immediate addressing mode && Operation Length == Byte -> 
+					// Immediate addressing mode && Operation Length == Byte ->
 					// Use the low-order byte of the extension word.
 
 					if(size == 6) ad++;
-					
+
 					// May be faster on a PII(I), sz2[size] is already in register
 					// ad += sz2[size] - sz1[size];
 
@@ -2489,7 +2489,7 @@ PRIVATE int FFPU put_fp_value (fpu_register const & value, uae_u32 opcode, uae_u
 		case 2: {
 			uae_u32 wrd1, wrd2, wrd3;
 			from_exten(value, &wrd1, &wrd2, &wrd3);
-			
+
 			x86_status_word &= ~SW_EXCEPTION_MASK;
 			if(wrd3) { // TODO: not correct! Just a "smart" guess.
 				x86_status_word |= SW_PE;
@@ -5744,7 +5744,7 @@ PRIVATE void FFPU build_fpp_opp_lookup_table ()
 						}
 						break;
 					}
-					
+
 					switch (extra & 0x7f) {
 						case 0x00:
 							fpufunctbl[mask] = & FFPU fpuop_do_fmove;
@@ -6067,13 +6067,13 @@ PUBLIC void FFPU fpu_init( bool integral_68040 )
 	}
 
 	__asm__ __volatile__("fsave %0" : "=m" (m_fpu_state_original));
-	
+
 	FPU is_integral = integral_68040;
 	FPU instruction_address = 0;
 	set_fpcr(0);
 	set_fpsr(0);
 
-	x86_control_word = CW_INITIAL; 
+	x86_control_word = CW_INITIAL;
 	x86_status_word = SW_INITIAL;
 	x86_status_word_accrued = 0;
 	FPU fpsr.quotient = 0;
@@ -6081,7 +6081,7 @@ PUBLIC void FFPU fpu_init( bool integral_68040 )
 	for( int i=0; i<8; i++ ) {
 		MAKE_NAN( FPU registers[i] );
 	}
-	
+
 	build_fpp_opp_lookup_table();
 
 	__asm__ __volatile__("fninit\nfldcw %0" : : "m" (x86_control_word));
@@ -6109,7 +6109,7 @@ PUBLIC void FFPU fpu_init( bool integral_68040 )
 	set_constant( const_1e1024,		"1.0e1024",		1.0e256, 100 );
 	set_constant( const_1e2048,		"1.0e2048",		1.0e256, 1000 );
 	set_constant( const_1e4096,		"1.0e4096",		1.0e256, 10000 );
-	
+
 	// Just in case.
 	__asm__ __volatile__("fninit\nfldcw %0" : : "m" (x86_control_word));
 }

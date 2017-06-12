@@ -217,14 +217,14 @@ static GtkWidget *table_make_combobox(GtkWidget *table, int row, int label_id, c
 	label = gtk_label_new(GetString(label_id));
 	gtk_widget_show(label);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)0, (GtkAttachOptions)0, 4, 4);
-	
+
 	combo = gtk_combo_new();
 	gtk_widget_show(combo);
 	gtk_combo_set_popdown_strings(GTK_COMBO(combo), glist);
 
 	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), default_value);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, row, row + 1, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
-	
+
 	return combo;
 }
 
@@ -256,7 +256,7 @@ static GtkWidget *table_make_file_entry(GtkWidget *table, int row, int label_id,
 	gtk_table_attach(GTK_TABLE(table), box, 1, 2, row, row + 1, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 
 	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(entry), str);
 	gtk_widget_show(entry);
 	gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
 
@@ -310,7 +310,7 @@ static GtkWidget *make_file_entry(GtkWidget *top, int label_id, const char *pref
 		str = "";
 
 	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(entry), str);
 	gtk_widget_show(entry);
 	gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
 	return entry;
@@ -342,14 +342,14 @@ static GtkWidget *make_combobox(GtkWidget *top, int label_id, const char *defaul
 	label = gtk_label_new(GetString(label_id));
 	gtk_widget_show(label);
 	gtk_box_pack_start(GTK_BOX(box), label, FALSE, FALSE, 0);
-	
+
 	combo = gtk_combo_new();
 	gtk_widget_show(combo);
 	gtk_combo_set_popdown_strings(GTK_COMBO(combo), glist);
-	
+
 	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), default_value);
 	gtk_box_pack_start(GTK_BOX(box), combo, TRUE, TRUE, 0);
-	
+
 	return combo;
 }
 
@@ -364,7 +364,7 @@ static GtkWidget *make_combobox(GtkWidget *top, int label_id, const char *defaul
 	return make_combobox(top, label_id, default_value, glist);
 }
 
- 
+
 /*
  *  Show preferences editor
  *  Returns true when user clicked on "Start", false otherwise
@@ -831,13 +831,13 @@ static void create_jit_pane(GtkWidget *top)
 #if USE_JIT
 	GtkWidget *box, *table, *label, *menu;
 	char str[32];
-	
+
 	box = make_pane(top, STR_JIT_PANE_TITLE);
 	make_checkbox(box, STR_JIT_CTRL, "jit", GTK_SIGNAL_FUNC(tb_jit));
-	
+
 #ifndef SHEEPSHAVER
 	w_jit_fpu = make_checkbox(box, STR_JIT_FPU_CTRL, "jitfpu", GTK_SIGNAL_FUNC(tb_jit_fpu));
-	
+
 	// Translation cache size
 	static const combo_desc options[] = {
 		STR_JIT_CACHE_SIZE_2MB_LAB,
@@ -848,7 +848,7 @@ static void create_jit_pane(GtkWidget *top)
 	};
 	sprintf(str, "%d", PrefsFindInt32("jitcachesize"));
 	w_jit_cache_size = make_combobox(box, STR_JIT_CACHE_SIZE_CTRL, str, options);
-	
+
 	// Lazy translation cache invalidation
 	w_jit_lazy_flush = make_checkbox(box, STR_JIT_LAZY_CINV_CTRL, "jitlazyflush", GTK_SIGNAL_FUNC(tb_jit_lazy_flush));
 
@@ -1101,7 +1101,7 @@ static void create_graphics_pane(GtkWidget *top)
 		sprintf(str, "%d", dis_width);
 	else
 		strcpy(str, GetString(STR_SIZE_MAX_LAB));
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)0, 4, 4);
 	w_display_x = GTK_COMBO(combo)->entry;
 
@@ -1122,7 +1122,7 @@ static void create_graphics_pane(GtkWidget *top)
 		sprintf(str, "%d", dis_height);
 	else
 		strcpy(str, GetString(STR_SIZE_MAX_LAB));
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 3, 4, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)0, 4, 4);
 	w_display_y = GTK_COMBO(combo)->entry;
 
@@ -1201,7 +1201,7 @@ static void create_input_pane(GtkWidget *top)
 		str = "";
 
 	w_keycode_file = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(w_keycode_file), str); 
+	gtk_entry_set_text(GTK_ENTRY(w_keycode_file), str);
 	gtk_widget_show(w_keycode_file);
 	gtk_box_pack_start(GTK_BOX(hbox), w_keycode_file, TRUE, TRUE, 0);
 

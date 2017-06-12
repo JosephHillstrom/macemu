@@ -1037,7 +1037,7 @@ static bool patch_rom_32(void)
 	if (PatchHWBases) {
 		extern uint8 *ScratchMem;
 		const uint32 ScratchMemBase = Host2MacAddr(ScratchMem);
-		
+
 		D(bug("LMGlob\tOfs/4\tBase\n"));
 		base = ROMBaseMac + UniversalInfo + ReadMacInt32(ROMBaseMac + UniversalInfo); // decoderInfoPtr
 		wp = (uint16 *)(ROMBaseHost + 0x94a);
@@ -1045,7 +1045,7 @@ static bool patch_rom_32(void)
 			int16 ofs = ntohs(*wp++);			// offset in decoderInfo (/4)
 			int16 lmg = ntohs(*wp++);			// address of LowMem global
 			D(bug("0x%04x\t%d\t0x%08x\n", lmg, ofs, ReadMacInt32(base + ofs*4)));
-			
+
 			// Fake address only if this is not the ASC base
 			if (lmg != 0xcc0)
 				WriteMacInt32(base + ofs*4, ScratchMemBase);
@@ -1283,14 +1283,14 @@ static bool patch_rom_32(void)
 	*wp++ = htons(M68K_NOP);
 	*wp = htons(M68K_NOP);
 #endif
-	
+
 #if REAL_ADDRESSING && !defined(AMIGA)
 	// gb-- Temporary hack to get rid of crashes in Speedometer
 	wp = (uint16 *)(ROMBaseHost + 0xdba2);
 	if (ntohs(*wp) == 0x662c)		// bne.b	#$2c
 		*wp = htons(0x602c);		// bra.b	#$2c
 #endif
-	
+
 	// Don't write to VIA in InitTimeMgr
 	wp = (uint16 *)(ROMBaseHost + 0xb0e2);
 	*wp++ = htons(0x4cdf);			// movem.l	(sp)+,d0-d5/a0-a4

@@ -236,16 +236,16 @@ void DarwinAddFloppyPrefs(void)
 
 
 	// This selects all partitions of all disks
-	classesToMatch = IOServiceMatching(kIOMediaClass); 
+	classesToMatch = IOServiceMatching(kIOMediaClass);
 	if ( classesToMatch )
 	{
 		// Skip drivers and partitions
 		CFDictionarySetValue(classesToMatch,
-							 CFSTR(kIOMediaWholeKey), kCFBooleanTrue); 
-	
+							 CFSTR(kIOMediaWholeKey), kCFBooleanTrue);
+
 		// Skip fixed drives (hard disks?)
 		CFDictionarySetValue(classesToMatch,
-							 CFSTR(kIOMediaEjectableKey), kCFBooleanTrue); 
+							 CFSTR(kIOMediaEjectableKey), kCFBooleanTrue);
 	}
 
 	if ( IOServiceGetMatchingServices(masterPort,

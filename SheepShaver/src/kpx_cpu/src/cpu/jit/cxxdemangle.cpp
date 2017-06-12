@@ -500,7 +500,7 @@ static const char*
 demangle_qualifier PARAMS ((int));
 
 static int
-demangle_expression PARAMS ((work_stuff *, const char **, string *, 
+demangle_expression PARAMS ((work_stuff *, const char **, string *,
 			     type_kind_t));
 
 static int
@@ -1588,7 +1588,7 @@ demangle_template_value_parm (
     {
       if (**mangled == 'Q')
 	success = demangle_qualified (work, mangled, s,
-				      /*isfuncname=*/0, 
+				      /*isfuncname=*/0,
 				      /*append=*/1);
       else
 	{
@@ -3250,7 +3250,7 @@ do_type (work_stuff *work, const char **mangled, string *result)
 	    else if (**mangled == 'Q')
 	      {
 		success = demangle_qualified (work, mangled, &decl,
-					      /*isfuncnam=*/0, 
+					      /*isfuncnam=*/0,
 					      /*append=*/0);
 		if (!success)
 		  break;

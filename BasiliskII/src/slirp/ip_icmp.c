@@ -59,7 +59,7 @@ static int icmp_flush[19] = {
 /* INFO (15) */          0,
 /* INFO REPLY (16) */    0,
 /* ADDR MASK (17) */     0,
-/* ADDR MASK REPLY (18) */ 0 
+/* ADDR MASK REPLY (18) */ 0
 };
 
 /*
@@ -74,13 +74,13 @@ icmp_input(m, hlen)
   register struct ip *ip=mtod(m, struct ip *);
   int icmplen=ip->ip_len;
   /* int code; */
-	
+
   DEBUG_CALL("icmp_input");
   DEBUG_ARG("m = %lx", (long )m);
   DEBUG_ARG("m_len = %zu", m->m_len);
 
   icmpstat.icps_received++;
-	
+
   /*
    * Locate icmp structure in mbuf, and check
    * that its not corrupted and of at least minimum length.
@@ -101,7 +101,7 @@ icmp_input(m, hlen)
   }
   m->m_len += hlen;
   m->m_data -= hlen;
-  
+
   /*	icmpstat.icps_inhist[icp->icmp_type]++; */
   /* code = icp->icmp_code; */
 
@@ -117,7 +117,7 @@ icmp_input(m, hlen)
       struct sockaddr_in addr;
       if ((so = socreate()) == NULL) goto freeit;
       if(udp_attach(so) == -1) {
-	DEBUG_MISC((dfd,"icmp_input udp_attach errno = %d-%s\n", 
+	DEBUG_MISC((dfd,"icmp_input udp_attach errno = %d-%s\n",
 		    errno,strerror(errno)));
 	sofree(so);
 	m_free(m);
@@ -131,7 +131,7 @@ icmp_input(m, hlen)
       so->so_iptos = ip->ip_tos;
       so->so_type = IPPROTO_ICMP;
       so->so_state = SS_ISFCONNECTED;
-      
+
       /* Send the packet */
       addr.sin_family = AF_INET;
       if ((so->so_faddr.s_addr & htonl(0xffffff00)) == special_addr.s_addr) {
@@ -153,7 +153,7 @@ icmp_input(m, hlen)
 		(struct sockaddr *)&addr, sizeof(addr)) == -1) {
 	DEBUG_MISC((dfd,"icmp_input udp sendto tx errno = %d-%s\n",
 		    errno,strerror(errno)));
-	icmp_error(m, ICMP_UNREACH,ICMP_UNREACH_NET, 0,strerror(errno)); 
+	icmp_error(m, ICMP_UNREACH,ICMP_UNREACH_NET, 0,strerror(errno));
 	udp_detach(so);
       }
     } /* if ip->ip_dst.s_addr == alias_addr.s_addr */
@@ -169,7 +169,7 @@ icmp_input(m, hlen)
     icmpstat.icps_notsupp++;
     m_freem(m);
     break;
-    
+
   default:
     icmpstat.icps_badtype++;
     m_freem(m);
@@ -195,7 +195,7 @@ end_error:
  * mbuf *msrc is used as a template, but is NOT m_free()'d.
  * It is reported as the bad ip packet.  The header should
  * be fully correct and in host byte order.
- * ICMP fragmentation is illegal.  All machines must accept 576 bytes in one 
+ * ICMP fragmentation is illegal.  All machines must accept 576 bytes in one
  * packet.  The maximum payload is 576-20(ip hdr)-8(icmp hdr)=548
  */
 
@@ -222,7 +222,7 @@ icmp_error(
   /* check msrc */
   if(!msrc) goto end_error;
   ip = mtod(msrc, struct ip *);
-#if DEBUG  
+#if DEBUG
   { char bufa[INET_ADDRSTRLEN], bufb[INET_ADDRSTRLEN];
     inet_ntop(AF_INET, &ip->ip_src, bufa, sizeof(bufa));
 	inet_ntop(AF_INET, &ip->ip_dst, bufb, sizeof(bufb));
@@ -254,9 +254,9 @@ icmp_error(
   /* make the header of the reply packet */
   ip  = mtod(m, struct ip *);
   hlen= sizeof(struct ip );     /* no options in reply */
-  
+
   /* fill in icmp */
-  m->m_data += hlen;                  
+  m->m_data += hlen;
   m->m_len -= hlen;
 
   icp = mtod(m, struct icmp *);
@@ -265,7 +265,7 @@ icmp_error(
   else if(s_ip_len>ICMP_MAXDATALEN)         /* maximum size */
     s_ip_len=ICMP_MAXDATALEN;
 
-  m->m_len=ICMP_MINLEN+s_ip_len;        /* 8 bytes ICMP header */  
+  m->m_len=ICMP_MINLEN+s_ip_len;        /* 8 bytes ICMP header */
 
   /* min. size = 8+sizeof(struct ip)+8 */
 
@@ -300,7 +300,7 @@ icmp_error(
   /* fill in ip */
   ip->ip_hl = hlen >> 2;
   ip->ip_len = (u_int16_t)m->m_len;
-  
+
   ip->ip_tos=((ip->ip_tos & 0x1E) | 0xC0);  /* high priority for errors */
 
   ip->ip_ttl = MAXTTL;
@@ -309,7 +309,7 @@ icmp_error(
   ip->ip_src = alias_addr;
 
   (void ) ip_output((struct socket *)NULL, m);
-  
+
   icmpstat.icps_reflect++;
 
 end_error:

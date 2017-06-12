@@ -703,7 +703,7 @@ static bool open_fbdev_dga(int width, int height)
 		D(bug("[fbdev] visual '%s' not supported\n", fb_visual_str));
 		return false;
 	}
-	
+
 	// Map frame buffer
 	the_buffer = (uint8 *)mmap(NULL, fb_finfo.smem_len, PROT_READ | PROT_WRITE, MAP_SHARED, fb_dev_fd, 0);
 	if (the_buffer == MAP_FAILED) {
@@ -752,7 +752,7 @@ static bool open_fbdev_dga(int width, int height)
 	visualFormat.Rmask = visualInfo.red_mask;
 	visualFormat.Gmask = visualInfo.green_mask;
 	visualFormat.Bmask = visualInfo.blue_mask;
-	D(bug("[fbdev] %d bpp, (%08x,%08x,%08x)\n", 
+	D(bug("[fbdev] %d bpp, (%08x,%08x,%08x)\n",
 		  visualFormat.depth,
 		  visualFormat.Rmask, visualFormat.Gmask, visualFormat.Bmask));
 	D(bug("[fbdev] Mac depth %d bpp\n", depth));
@@ -765,7 +765,7 @@ static bool open_fbdev_dga(int width, int height)
 	const bool native_byte_order = (XImageByteOrder(x_display) == LSBFirst);
 #endif
 	Screen_blitter_init(visualFormat, native_byte_order, depth);
-	
+
 	// Allocate memory for frame buffer (SIZE is extended to page-boundary)
 	use_vosf = true;
 	the_host_buffer = the_buffer;
@@ -856,7 +856,7 @@ static bool open_xf86_dga(int width, int height)
 	// Screen_blitter_init() returns TRUE if VOSF is mandatory
 	// i.e. the framebuffer update function is not Blit_Copy_Raw
 	use_vosf = Screen_blitter_init(visualFormat, native_byte_order, depth);
-	
+
 	if (use_vosf) {
 	  // Allocate memory for frame buffer (SIZE is extended to page-boundary)
 	  the_host_buffer = the_buffer;
@@ -1369,12 +1369,12 @@ bool VideoInit(void)
 	mainBuffer.dirtyPages = NULL;
 	mainBuffer.pageInfo = NULL;
 #endif
-	
+
 	// Check if X server runs on local machine
 	local_X11 = (strncmp(XDisplayName(x_display_name), ":", 1) == 0)
 	         || (strncmp(XDisplayName(x_display_name), "/", 1) == 0)
 	         || (strncmp(XDisplayName(x_display_name), "unix:", 5) == 0);
-    
+
 	// Init keycode translation
 	keycode_init();
 
@@ -1402,7 +1402,7 @@ bool VideoInit(void)
 		return false;
 	}
 	sort(avail_depths, avail_depths + num_depths);
-	
+
 	// Get screen depth
 	xdepth = DefaultDepth(x_display, screen);
 
@@ -1804,7 +1804,7 @@ static void resume_emul(void)
 		UNLOCK_VOSF;
 	}
 #endif
-	
+
 	// Restore frame buffer
 	if (fb_save) {
 #ifdef ENABLE_VOSF

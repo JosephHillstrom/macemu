@@ -155,7 +155,7 @@ struct mnemolookup lookuptab[] = {
 
 	{ i_EMULOP_RETURN, "EMULOP_RETURN" },
 	{ i_EMULOP, "EMULOP" },
-	
+
     { i_MMUOP, "MMUOP" },
     { i_ILLG, "" },
 };
@@ -221,22 +221,22 @@ static void build_insn (int insn)
 
 	// Control flow information
 	cflow = id.cflow;
-	
+
 	// Mask of flags set/used
 	unsigned char flags_set(0), flags_used(0);
-	
+
 	for (i = 0, n = 4; i < 5; i++, n--) {
 		switch (id.flaginfo[i].flagset) {
 			case fa_unset: case fa_isjmp: break;
 			default: flags_set |= (1 << n);
 		}
-		
+
 		switch (id.flaginfo[i].flaguse) {
 			case fu_unused: case fu_isjmp: break;
 			default: flags_used |= (1 << n);
 		}
 	}
-	
+
     for (i = 0; i < 5; i++) {
 	switch (id.flaginfo[i].flagset){
 	 case fa_unset: break;
@@ -767,7 +767,7 @@ static void build_insn (int insn)
 	    table68k[opc].flaginfo[i].flaguse = id.flaginfo[i].flaguse;
 	}
 #endif
-	
+
 	// Fix flags used information for Scc, Bcc, TRAPcc, DBcc instructions
 	if	(	table68k[opc].mnemo == i_Scc
 		||	table68k[opc].mnemo == i_Bcc
@@ -795,7 +795,7 @@ static void build_insn (int insn)
 		case 15:flags_used = 0x0E; break;	/* LE */
 		}
 	}
-		
+
 #if 1
 	/* gb-- flagdead and flaglive would not have correct information */
 	table68k[opc].flagdead = flags_set;

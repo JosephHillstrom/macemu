@@ -287,7 +287,7 @@ void init_m68k (void)
     do_merges ();
 
     build_cpufunctbl ();
-	
+
 #if defined(ENABLE_EXCLUSIVE_SPCFLAGS) && !defined(HAVE_HARDWARE_LOCKS)
 	spcflags_lock = B2_create_mutex();
 #endif
@@ -1203,7 +1203,7 @@ void m68k_reset (void)
     regs.intmask = 7;
     regs.vbr = regs.sfc = regs.dfc = 0;
     fpu_reset();
-	
+
 #if FLIGHT_RECORDER
 	log_ptr = 0;
 	memset(log, 0, sizeof(log));
@@ -1334,7 +1334,7 @@ int m68k_do_specialties (void)
     if ((m68k_execute_depth == 0) && SPCFLAGS_TEST( SPCFLAG_JIT_EXEC_RETURN ))
 	SPCFLAGS_CLEAR( SPCFLAG_JIT_EXEC_RETURN );
 #endif
-	
+
     if (SPCFLAGS_TEST( SPCFLAG_DOTRACE )) {
 	Exception (9,last_trace_ad);
     }
@@ -1508,10 +1508,10 @@ void m68k_dumpstate (uaecptr *nextpc)
     printf ("T=%d%d S=%d M=%d X=%d N=%d Z=%d V=%d C=%d IMASK=%d\n",
 	    regs.t1, regs.t0, regs.s, regs.m,
 	    GET_XFLG, GET_NFLG, GET_ZFLG, GET_VFLG, GET_CFLG, regs.intmask);
-	
+
 	fpu_dump_registers();
 	fpu_dump_flags();
-	
+
     m68k_disasm(m68k_getpc (), nextpc, 1);
     if (nextpc)
 	printf ("next PC: %08lx\n", *nextpc);

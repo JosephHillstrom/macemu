@@ -28,17 +28,17 @@ OSXsoundOutput::OSXsoundOutput() :
 
 void OSXsoundOutput::getMoreSamples(void *arg) {
   OSXsoundOutput *me;
-        
+
   me = (OSXsoundOutput *)arg;
-        
+
   if(me == NULL) {
     return;
   }
-        
+
   if(me->callback == NULL) {
     return;
   }
-        
+
   me->callback();
 }
 
@@ -73,7 +73,7 @@ unsigned int OSXsoundOutput::bufferSizeFrames() {
   if(player != NULL) {
     return player->BufferSizeFrames();
   }
-        
+
   return 0;
 }
 
@@ -81,6 +81,6 @@ int OSXsoundOutput::sendAudioBuffer(void *buffer, int numFrames) {
   if(player != NULL) {
     return player->sendAudioBuffer(buffer, numFrames);
   }
-        
+
   return 0;
 }

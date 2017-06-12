@@ -93,7 +93,7 @@ const struct floatformat floatformat_arm_ext =
   floatformat_big, 96, 0, 17, 15, 0x3fff, 0x7fff, 32, 64,
   floatformat_intbit_yes
 };
-
+
 static unsigned long get_field PARAMS ((unsigned char *,
 					enum floatformat_byteorders,
 					unsigned int,
@@ -146,7 +146,7 @@ get_field (data, order, total_len, start, len)
     }
   return result;
 }
-  
+
 #ifndef min
 #define min(a, b) ((a) < (b) ? (a) : (b))
 #endif
@@ -215,7 +215,7 @@ floatformat_to_double (fmt, from, to)
     dto = -dto;
   *to = dto;
 }
-
+
 static void put_field PARAMS ((unsigned char *, enum floatformat_byteorders,
 			       unsigned int,
 			       unsigned int,

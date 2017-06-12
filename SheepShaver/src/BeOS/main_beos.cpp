@@ -237,7 +237,7 @@ static void sigill_handler(vregs *r);
  */
 
 int main(int argc, char **argv)
-{	
+{
 	tzset();
 	the_app = new SheepShaver();
 	the_app->Run();
@@ -411,7 +411,7 @@ void SheepShaver::StartEmulator(void)
 		PostMessage(B_QUIT_REQUESTED);
 		return;
 	}
-	
+
 	// Create area for Mac RAM
 	RAMSize = PrefsFindInt32("ramsize") & 0xfff00000;	// Round down to 1MB boundary
 	if (RAMSize < 8*1024*1024) {
@@ -650,7 +650,7 @@ void SheepShaver::load_rom(void)
 
 	uint8 *rom = new uint8[ROM_SIZE];	// Reading directly into the area doesn't work
 	ssize_t actual = file.Read((void *)rom, ROM_SIZE);
-	
+
 	// Decode Mac ROM
 	if (!DecodeROM(rom, actual)) {
 		if (rom_size != 4*1024*1024)

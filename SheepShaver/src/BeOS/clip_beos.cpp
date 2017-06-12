@@ -69,8 +69,8 @@ static status_t clip_manager(void *arg)
 			case MSG_PUT_TEXT:
 				if (be_clipboard->Lock()) {
 					be_clipboard->Clear();
-					BMessage *clipper = be_clipboard->Data(); 
-	
+					BMessage *clipper = be_clipboard->Data();
+
 					// Convert text from Mac charset to UTF-8
 					int32 dest_length = cm_length * 3;
 					int32 state = 0;
@@ -81,9 +81,9 @@ static status_t clip_manager(void *arg)
 						for (int i=0; i<dest_length; i++)
 							if (outbuf[i] == 13)
 								outbuf[i] = 10;
-		
+
 						// Add text to Be clipboard
-						clipper->AddData("text/plain", B_MIME_TYPE, outbuf, dest_length); 
+						clipper->AddData("text/plain", B_MIME_TYPE, outbuf, dest_length);
 						be_clipboard->Commit();
 					} else {
 						D(bug(" text conversion failed\n"));
@@ -108,20 +108,20 @@ static status_t clip_manager(void *arg)
 void ClipInit(void)
 {
 	// check if there is a translator that can handle the pict datatype
-	roster = BTranslatorRoster::Default(); 
-	int32 num_translators, i,j; 
-	translator_id *translators; 
-	const char *translator_name, *trans_info; 
-	int32 translator_version; 
+	roster = BTranslatorRoster::Default();
+	int32 num_translators, i,j;
+	translator_id *translators;
+	const char *translator_name, *trans_info;
+	int32 translator_version;
 	const translation_format *t_formats;
 	long t_num;
-	   
-	roster->GetAllTranslators(&translators, &num_translators); 
-	for (i=0;i<num_translators;i++) { 
-		roster->GetTranslatorInfo(translators[i], &translator_name, 
-			&trans_info, &translator_version); 
-		D(bug("found translator %s: %s (%.2f)\n", translator_name, trans_info, 
-			translator_version/100.)); 
+
+	roster->GetAllTranslators(&translators, &num_translators);
+	for (i=0;i<num_translators;i++) {
+		roster->GetTranslatorInfo(translators[i], &translator_name,
+			&trans_info, &translator_version);
+		D(bug("found translator %s: %s (%.2f)\n", translator_name, trans_info,
+			translator_version/100.));
 		// does this translator support the pict datatype ?
 		roster->GetInputFormats(translators[i], &t_formats,&t_num);
 		//printf(" supports %d input formats \n",t_num);
@@ -145,7 +145,7 @@ void ClipInit(void)
 					t_formats[j].capability,t_formats[j].MIME,
 					t_formats[j].name));
 			}
-			
+
 		}
 		roster->GetOutputFormats(translators[i], &t_formats,&t_num);
 		//printf("and %d output formats \n",t_num);
@@ -163,7 +163,7 @@ void ClipInit(void)
 					t_formats[j].name));
 			}
 		}
-	} 
+	}
 	delete [] translators; // clean up our droppings
 
 	// Start clipboard manager thread
@@ -220,7 +220,7 @@ void PutScrap(uint32 type, void *scrap, int32 length)
 #if 0
 			if (be_clipboard->Lock()) {
 				be_clipboard->Clear();
-				BMessage *clipper = be_clipboard->Data();				
+				BMessage *clipper = be_clipboard->Data();
 	// Waaaah! This crashes!
 				if (input_cap > 0) {		// if there is an converter for PICT datatype convert data to bitmap.
 					BMemoryIO *in_buffer = new BMemoryIO(scrap, length);
@@ -264,7 +264,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 		case 'TEXT':
 			D(bug(" clipping TEXT\n"));
 			if (be_clipboard->Lock()) {
-				BMessage *clipper = be_clipboard->Data(); 
+				BMessage *clipper = be_clipboard->Data();
 				char *clip;
 				ssize_t length;
 
@@ -272,7 +272,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 				if (clipper->HasData("application/x-SheepShaver-cookie", B_MIME_TYPE))
 					return;
 				bigtime_t cookie = system_time();
-				clipper->AddData("application/x-SheepShaver-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t)); 
+				clipper->AddData("application/x-SheepShaver-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t));
 
 				// No, is there text in it?
 				if (clipper->FindData("text/plain", B_MIME_TYPE, &clip, &length) == B_OK) {
@@ -316,7 +316,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 		case 'PICT':
 			D(bug(" clipping PICT\n"));
 			if (be_clipboard->Lock()) {
-				BMessage *clipper = be_clipboard->Data(); 
+				BMessage *clipper = be_clipboard->Data();
 				char *clip;
 				ssize_t length;
 
@@ -324,7 +324,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 				if (clipper->HasData("application/x-SheepShaver-cookie", B_MIME_TYPE))
 					return;
 				bigtime_t cookie = system_time();
-				clipper->AddData("application/x-SheepShaver-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t)); 
+				clipper->AddData("application/x-SheepShaver-cookie", B_MIME_TYPE, &cookie, sizeof(bigtime_t));
 
 				static uint16 proc2[] = {
 					0x598f,					// subq.l	#4,sp

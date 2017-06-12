@@ -93,7 +93,7 @@ static const uint8 keycode2mac[0x80] = {
 
 class Amiga_monitor_desc : public monitor_desc {
 public:
-	Amiga_monitor_desc(const vector<video_mode> &available_modes, video_depth default_depth, uint32 default_id, int default_display_type) 
+	Amiga_monitor_desc(const vector<video_mode> &available_modes, video_depth default_depth, uint32 default_id, int default_display_type)
 		:  monitor_desc(available_modes, default_depth, default_id), display_type(default_display_type) {};
 	~Amiga_monitor_desc() {};
 
@@ -513,7 +513,7 @@ static __saveds void periodic_func(void)
 	if (win_port) {
 		win_mask = 1 << win_port->mp_SigBit;
 		drv->the_win->UserPort = win_port;
-		ModifyIDCMP(drv->the_win, IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE | IDCMP_RAWKEY | 
+		ModifyIDCMP(drv->the_win, IDCMP_MOUSEBUTTONS | IDCMP_MOUSEMOVE | IDCMP_RAWKEY |
 			((drv->monitor.display_type == DISPLAY_SCREEN_P96 || drv->monitor.display_type == DISPLAY_SCREEN_CGFX) ? IDCMP_DELTAMOVE : 0));
 	}
 

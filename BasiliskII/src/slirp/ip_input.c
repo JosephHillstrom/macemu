@@ -33,7 +33,7 @@
 /*
  * Changes and additions relating to SLiRP are
  * Copyright (c) 1995 Danny Gasparovski.
- * 
+ *
  * Please read the file COPYRIGHT for the
  * terms and conditions of the copyright.
  */
@@ -69,20 +69,20 @@ ip_input(m)
 {
 	register struct ip *ip;
 	u_int hlen;
-	
+
 	DEBUG_CALL("ip_input");
 	DEBUG_ARG("m = %lx", (long)m);
 	DEBUG_ARG("m_len = %zu", m->m_len);
 
 	ipstat.ips_total++;
-	
+
 	if (m->m_len < sizeof (struct ip)) {
 		ipstat.ips_toosmall++;
 		return;
 	}
-	
+
 	ip = mtod(m, struct ip *);
-	
+
 	if (ip->ip_v != IPVERSION) {
 		ipstat.ips_badvers++;
 		goto bad;
@@ -95,8 +95,8 @@ ip_input(m)
 	}
 
         /* keep ip header intact for ICMP reply
-	 * ip->ip_sum = cksum(m, hlen); 
-	 * if (ip->ip_sum) { 
+	 * ip->ip_sum = cksum(m, hlen);
+	 * if (ip->ip_sum) {
 	 */
 	if(cksum(m,hlen)) {
 	  ipstat.ips_badsum++;
@@ -150,7 +150,7 @@ ip_input(m)
 	 * (We could look in the reassembly queue to see
 	 * if the packet was previously fragmented,
 	 * but it's not worth the time; just let them time out.)
-	 * 
+	 *
 	 * XXX This should fail, don't fragment yet
 	 */
 	if (ip->ip_off &~ IP_DF) {
@@ -177,7 +177,7 @@ ip_input(m)
 		ip->ip_len -= hlen;
 		if (ip->ip_off & IP_MF)
 		  ((struct ipasfrag *)ip)->ipf_mff |= 1;
-		else 
+		else
 		  ((struct ipasfrag *)ip)->ipf_mff &= ~1;
 
 		ip->ip_off <<= 3;
@@ -240,7 +240,7 @@ ip_reass(ip, fp)
 	register struct ipasfrag *q;
 	int hlen = ip->ip_hl << 2;
 	int i, next;
-	
+
 	DEBUG_CALL("ip_reass");
 	DEBUG_ARG("ip = %lx", (long)ip);
 	DEBUG_ARG("fp = %lx", (long)fp);
@@ -271,7 +271,7 @@ ip_reass(ip, fp)
 	  q = (struct ipasfrag *)fp;
 	  goto insert;
 	}
-	
+
 	/*
 	 * Find a segment which begins after this one does.
 	 */
@@ -365,7 +365,7 @@ insert:
 	  ip = (struct ipasfrag *)(m->m_ext + delta);
 	}
 
-	/* DEBUG_ARG("ip = %lx", (long)ip); 
+	/* DEBUG_ARG("ip = %lx", (long)ip);
 	 * ip=(struct ipasfrag *)m->m_data; */
 
 	ip->ip_len = next;
@@ -442,9 +442,9 @@ void
 ip_slowtimo()
 {
 	register struct ipq *fp;
-	
+
 	DEBUG_CALL("ip_slowtimo");
-	
+
 	fp = (struct ipq *) ipq.next;
 	if (fp == 0)
 	   return;
@@ -688,6 +688,6 @@ ip_stripoptions(m, mopt)
 	i = m->m_len - (sizeof (struct ip) + olen);
 	memcpy(opts, opts  + olen, (unsigned)i);
 	m->m_len -= olen;
-	
+
 	ip->ip_hl = sizeof(struct ip) >> 2;
 }

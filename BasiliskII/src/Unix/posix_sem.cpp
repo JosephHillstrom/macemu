@@ -41,14 +41,14 @@ int sem_init(sem_t* sem, int pshared, unsigned int value)
 		errno = EINVAL;
 		return -1;
 	}
-	if(pshared) {	
+	if(pshared) {
 		errno = ENOSYS;
 		return -1;
 	}
 	pthread_mutex_init(&sem->sem_lock, NULL);
 	sem->sem_value = value;
 	sem->sem_waiting = 0;
-	return 0;	
+	return 0;
 }
 
 
@@ -102,7 +102,7 @@ int sem_wait(sem_t* sem)
 	}
 	while(!sem->sem_value) nanosleep(NULL, &req);
 	pthread_mutex_unlock(&sem->sem_lock);
-	return 0;	
+	return 0;
 }
 
 int sem_trywait(sem_t* sem)

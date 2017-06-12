@@ -9,7 +9,7 @@
  *  Rewrite for x86, copyright 1999-2000 Lauri Pesonen
  *  New framework, copyright 2000 Gwenole Beauchesne
  *  Adapted for JIT compilation (c) Bernd Meyer, 2000
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -64,7 +64,7 @@
  *  The loop termination condition was wrong.
  *  Possible leak from int16 to int32 fixed.
  * get_fp_value:
- *  Immediate addressing mode && Operation Length == Byte -> 
+ *  Immediate addressing mode && Operation Length == Byte ->
  *  Use the low-order byte of the extension word.
  * Now FPU fpcr high 16 bits are always read as zeroes, no matter what was
  * written to them.
@@ -162,7 +162,7 @@ PRIVATE void FFPU dump_registers(const char * str)
 		fpu_get_register(0), fpu_get_register(1), fpu_get_register(2),
 		fpu_get_register(3), fpu_get_register(4), fpu_get_register(5),
 		fpu_get_register(6), fpu_get_register(7) );
-	
+
 	fpu_debug((temp_str));
 #endif
 }
@@ -174,13 +174,13 @@ PRIVATE void FFPU dump_first_bytes(uae_u8 * buffer, uae_s32 actual)
 	int bytes = sizeof(temp_buf1)/3-1-3;
 	if (actual < bytes)
 		bytes = actual;
-	
+
 	temp_buf1[0] = 0;
 	for (int  i = 0; i < bytes; i++) {
 		sprintf(temp_buf2, "%02x ", (uae_u32)buffer[i]);
 		strcat(temp_buf1, temp_buf2);
 	}
-	
+
 	strcat(temp_buf1, "\n");
 	fpu_debug((temp_buf1));
 #endif
@@ -210,7 +210,7 @@ PRIVATE inline fpu_register FFPU make_single(uae_u32 value)
 #elif 0 /* Original code */
 	if ((value & 0x7fffffff) == 0)
 		return (0.0);
-	
+
 	fpu_register result;
 	uae_u32 * p = (uae_u32 *)&result;
 
@@ -221,7 +221,7 @@ PRIVATE inline fpu_register FFPU make_single(uae_u32 value)
 	p[FHI] = sign | (exp << 20) | ((value & 0x007FFFFF) >> 3);
 
 	fpu_debug(("make_single (%X) = %.04f\n",value,(double)result));
-	
+
 	return(result);
 #endif
 }
@@ -240,7 +240,7 @@ PRIVATE inline uae_u32 FFPU extract_single(fpu_register const & src)
 #elif 0 /* Original code */
 	if (src == 0.0)
 		return 0;
-	
+
 	uae_u32 result;
 	uae_u32 *p = (uae_u32 *)&src;
 
@@ -325,7 +325,7 @@ PRIVATE inline fpu_register FFPU make_extended(uae_u32 wrd1, uae_u32 wrd2, uae_u
 		exp = FP_DOUBLE_EXP_MAX;
 	else
 		exp += FP_DOUBLE_EXP_BIAS - FP_EXTENDED_EXP_BIAS;
-	
+
 	fp_declare_init_shape(srp, result, double);
 	srp->ieee.negative  = sgn;
 	srp->ieee.exponent  = exp;
@@ -386,7 +386,7 @@ PRIVATE inline void FFPU make_extended_no_normalize(
 		exp = FP_DOUBLE_EXP_MAX;
 	else
 		exp += FP_DOUBLE_EXP_BIAS - FP_EXTENDED_EXP_BIAS;
-	
+
 	fp_declare_init_shape(srp, result, double);
 	srp->ieee.negative  = (wrd1 >> 31) & 1;
 	srp->ieee.exponent  = exp;
@@ -464,7 +464,7 @@ PRIVATE inline fpu_register FFPU make_double(uae_u32 wrd1, uae_u32 wrd2)
 }
 
 // from_double
-PRIVATE inline void FFPU extract_double(fpu_register const & src, 
+PRIVATE inline void FFPU extract_double(fpu_register const & src,
 	uae_u32 * wrd1, uae_u32 * wrd2
 )
 {
@@ -661,7 +661,7 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fpu_registe
 		case 4:
 			ad = m68k_getpc ();
 			m68k_setpc (ad + sz2[size]);
-			// Immediate addressing mode && Operation Length == Byte -> 
+			// Immediate addressing mode && Operation Length == Byte ->
 			// Use the low-order byte of the extension word.
 			if(size == 6) ad++;
 				break;
@@ -720,7 +720,7 @@ PRIVATE inline int FFPU get_fp_value (uae_u32 opcode, uae_u16 extra, fpu_registe
 	default:
 		return 0;
 	}
-	
+
 	// fpu_debug(("get_fp_value result = %.04f\n",(float)src));
 	return 1;
 }
@@ -947,7 +947,7 @@ PRIVATE inline int FFPU fpp_cond(int condition)
 	int N	= (FPU result < 0.0);
 	int Z	= (FPU result == 0.0);
 	int NaN	= isnan(FPU result);
-	
+
 	if (NaN)
 		N = Z = 0;
 
@@ -1020,7 +1020,7 @@ void FFPU fpuop_dbcc(uae_u32 opcode, uae_u32 extra)
 void FFPU fpuop_scc(uae_u32 opcode, uae_u32 extra)
 {
 	fpu_debug(("fscc_opp %X, %X at %08lx\n", (uae_u32)opcode, (uae_u32)extra, m68k_getpc ()));
-	
+
 	uae_u32 ad;
 	int cc = fpp_cond(extra & 0x3f);
 	if (cc == -1) {
@@ -1042,7 +1042,7 @@ void FFPU fpuop_scc(uae_u32 opcode, uae_u32 extra)
 void FFPU fpuop_trapcc(uae_u32 opcode, uaecptr oldpc)
 {
 	fpu_debug(("ftrapcc_opp %X at %08lx\n", (uae_u32)opcode, m68k_getpc ()));
-	
+
 	int cc = fpp_cond(opcode & 0x3f);
 	if (cc == -1) {
 		m68k_setpc (oldpc);
@@ -1285,7 +1285,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			}
 //		} else if ((opcode & 0x38) == 1) {
 		}
-		else if ((opcode & 0x38) == 8) { 
+		else if ((opcode & 0x38) == 8) {
 			if (extra & 0x2000) { // dr bit
 				if (extra & 0x1000) {
 					// according to the manual, the msb bits are always zero.
@@ -1674,7 +1674,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			dump_registers( "END  ");
 			return;
 		}
-		
+
 		if (get_fp_value (opcode, extra, src) == 0) {
 			m68k_setpc (m68k_getpc () - 4);
 			op_illg (opcode);
@@ -1682,7 +1682,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			return;
 		}
 		fpu_debug(("returned from get_fp_value m68k_getpc()=%X\n",m68k_getpc()));
-		
+
 		if (FPU is_integral) {
 			// 68040-specific operations
 			switch (extra & 0x7f) {
@@ -1767,8 +1767,8 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 					else
 						FPU registers[reg] = (double)(FPU registers[reg] * src);
 				}
-				else if (fl_dest.nan || fl_source.nan || 
-						 fl_dest.zero && fl_source.infinity || 
+				else if (fl_dest.nan || fl_source.nan ||
+						 fl_dest.zero && fl_source.infinity ||
 						 fl_dest.infinity && fl_source.zero ) {
 					make_nan( FPU registers[reg] );
 				}
@@ -1801,7 +1801,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			return;
 		}
 
-	process_6888x_instructions:		
+	process_6888x_instructions:
 		switch (extra & 0x7f) {
 		case 0x00:		/* FMOVE */
 			fpu_debug(("FMOVE %.04f\n",(double)src));
@@ -1970,8 +1970,8 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 			if(fl_dest.in_range && fl_source.in_range) {
 				FPU registers[reg] *= src;
 			}
-			else if (fl_dest.nan || fl_source.nan || 
-					 fl_dest.zero && fl_source.infinity || 
+			else if (fl_dest.nan || fl_source.nan ||
+					 fl_dest.zero && fl_source.infinity ||
 					 fl_dest.infinity && fl_source.zero ) {
 				make_nan( FPU registers[reg] );
 			}
@@ -2093,7 +2093,7 @@ void FFPU fpuop_arithmetic(uae_u32 opcode, uae_u32 extra)
 		dump_registers( "END  ");
 		return;
 	}
-	
+
 	fpu_debug(("ILLEGAL F OP 2 %X\n",opcode));
 	m68k_setpc (m68k_getpc () - 4);
 	op_illg (opcode);
@@ -2107,7 +2107,7 @@ PRIVATE uae_u8 m_fpu_state_original[108]; // 90/94/108
 PUBLIC void FFPU fpu_init (bool integral_68040)
 {
 	fpu_debug(("fpu_init\n"));
-	
+
 	static bool initialized_lookup_tables = false;
 	if (!initialized_lookup_tables) {
 		fpu_init_native_fflags();
@@ -2134,7 +2134,7 @@ PUBLIC void FFPU fpu_init (bool integral_68040)
 #endif
 
 	FPU result = 1;
-	
+
 	for (int i = 0; i < 8; i++)
 		make_nan(FPU registers[i]);
 }

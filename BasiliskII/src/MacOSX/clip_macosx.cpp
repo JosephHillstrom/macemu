@@ -166,7 +166,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 void ZeroScrap()
 {
 	D(bug("ZeroScrap\n"));
-	
+
 	we_put_this_data = false;
 }
 

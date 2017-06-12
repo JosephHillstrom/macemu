@@ -33,8 +33,8 @@
 /*
  * Changes and additions relating to SLiRP
  * Copyright (c) 1995 Danny Gasparovski.
- * 
- * Please read the file COPYRIGHT for the 
+ *
+ * Please read the file COPYRIGHT for the
  * terms and conditions of the copyright.
  */
 
@@ -56,11 +56,11 @@ void tcp_init()
 {
 	tcp_iss = 1;		/* wrong */
 	tcb.so_next = tcb.so_prev = &tcb;
-	
+
 	/* tcp_rcvspace = our Window we advertise to the remote */
 	tcp_rcvspace = TCP_RCVSPACE;
 	tcp_sndspace = TCP_SNDSPACE;
-	
+
 	/* Make sure tcp_sndspace is at least 2*MSS */
 	if (tcp_sndspace < 2*(min(if_mtu, if_mru) - sizeof(struct tcpiphdr)))
 		tcp_sndspace = 2*(min(if_mtu, if_mru) - sizeof(struct tcpiphdr));
@@ -86,7 +86,7 @@ void tcp_template(struct tcpcb *tp)
 	n->ti_dst = so->so_laddr;
 	n->ti_sport = so->so_fport;
 	n->ti_dport = so->so_lport;
-	
+
 	n->ti_seq = 0;
 	n->ti_ack = 0;
 	n->ti_x2 = 0;
@@ -123,7 +123,7 @@ void tcp_respond(struct tcpcb *tp, register struct tcpiphdr *ti,
 	DEBUG_ARG("ack = %u", ack);
 	DEBUG_ARG("seq = %u", seq);
 	DEBUG_ARG("flags = %x", flags);
-	
+
 	if (tp)
 		win = sbspace(&tp->t_socket->so_rcv);
 	if (m == 0) {
@@ -139,12 +139,12 @@ void tcp_respond(struct tcpcb *tp, register struct tcpiphdr *ti,
 		ti = mtod(m, struct tcpiphdr *);
 		flags = TH_ACK;
 	} else {
-		/* 
+		/*
 		 * ti points into m so the next line is just making
 		 * the mbuf point to ti
 		 */
 		m->m_data = (caddr_t)ti;
-		
+
 		m->m_len = sizeof (struct tcpiphdr);
 		tlen = 0;
 #define xchg(a,b,type) { type t; t=a; a=b; b=t; }
@@ -172,11 +172,11 @@ void tcp_respond(struct tcpcb *tp, register struct tcpiphdr *ti,
 	ti->ti_sum = cksum(m, tlen);
 	((struct ip *)ti)->ip_len = tlen;
 
-	if(flags & TH_RST) 
+	if(flags & TH_RST)
 	  ((struct ip *)ti)->ip_ttl = MAXTTL;
-	else 
+	else
 	  ((struct ip *)ti)->ip_ttl = ip_defttl;
-	
+
 	(void) ip_output((struct socket *)0, m);
 }
 
@@ -188,18 +188,18 @@ void tcp_respond(struct tcpcb *tp, register struct tcpiphdr *ti,
 struct tcpcb *tcp_newtcpcb(struct socket *so)
 {
 	register struct tcpcb *tp;
-	
+
 	tp = (struct tcpcb *)malloc(sizeof(*tp));
 	if (tp == NULL)
 		return ((struct tcpcb *)0);
-	
+
 	memset((char *) tp, 0, sizeof(struct tcpcb));
 	tp->seg_next = tp->seg_prev = (tcpiphdrp_32)tp;
 	tp->t_maxseg = tcp_mssdflt;
-	
+
 	tp->t_flags = tcp_do_rfc1323 ? (TF_REQ_SCALE|TF_REQ_TSTMP) : 0;
 	tp->t_socket = so;
-	
+
 	/*
 	 * Init srtt to TCPTV_SRTTBASE (0), so we can tell that we have no
 	 * rtt estimate.  Set rttvar so that srtt + 2 * rttvar gives
@@ -209,14 +209,14 @@ struct tcpcb *tcp_newtcpcb(struct socket *so)
 	tp->t_rttvar = tcp_rttdflt * PR_SLOWHZ << 2;
 	tp->t_rttmin = TCPTV_MIN;
 
-	TCPT_RANGESET(tp->t_rxtcur, 
+	TCPT_RANGESET(tp->t_rxtcur,
 	    ((TCPTV_SRTTBASE >> 2) + (TCPTV_SRTTDFLT << 2)) >> 1,
 	    TCPTV_MIN, TCPTV_REXMTMAX);
 
 	tp->snd_cwnd = TCP_MAXWIN << TCP_MAX_WINSHIFT;
 	tp->snd_ssthresh = TCP_MAXWIN << TCP_MAX_WINSHIFT;
 	tp->t_state = TCPS_CLOSED;
-	
+
 	so->so_tcpcb = tp;
 
 	return (tp);
@@ -227,7 +227,7 @@ struct tcpcb *tcp_newtcpcb(struct socket *so)
  * the specified error.  If connection is synchronized,
  * then send a RST to peer.
  */
-struct tcpcb *tcp_drop(struct tcpcb *tp, int err) 
+struct tcpcb *tcp_drop(struct tcpcb *tp, int err)
 {
 /* tcp_drop(tp, errno)
 	register struct tcpcb *tp;
@@ -238,7 +238,7 @@ struct tcpcb *tcp_drop(struct tcpcb *tp, int err)
 	DEBUG_CALL("tcp_drop");
 	DEBUG_ARG("tp = %lx", (long)tp);
 	DEBUG_ARG("errno = %d", errno);
-	
+
 	if (TCPS_HAVERCVDSYN(tp->t_state)) {
 		tp->t_state = TCPS_CLOSED;
 		(void) tcp_output(tp);
@@ -266,7 +266,7 @@ struct tcpcb *tcp_close(register struct tcpcb *tp)
 
 	DEBUG_CALL("tcp_close");
 	DEBUG_ARG("tp = %lx", (long )tp);
-	
+
 	/* free the reassembly queue, if any */
 	t = (struct tcpiphdr *) tp->seg_next;
 	while (t != (struct tcpiphdr *)tp) {
@@ -335,7 +335,7 @@ void tcp_sockclosed(struct tcpcb *tp)
 
 	DEBUG_CALL("tcp_sockclosed");
 	DEBUG_ARG("tp = %lx", (long)tp);
-	
+
 	switch (tp->t_state) {
 
 	case TCPS_CLOSED:
@@ -361,20 +361,20 @@ void tcp_sockclosed(struct tcpcb *tp)
 		tcp_output(tp);
 }
 
-/* 
+/*
  * Connect to a host on the Internet
  * Called by tcp_input
  * Only do a connect, the tcp fields will be set in tcp_input
  * return 0 if there's a result of the connect,
  * else return -1 means we're still connecting
  * The return value is almost always -1 since the socket is
- * nonblocking.  Connect returns after the SYN is sent, and does 
+ * nonblocking.  Connect returns after the SYN is sent, and does
  * not wait for ACK+SYN.
  */
 int tcp_fconnect(struct socket *so)
 {
   int ret=0;
-  
+
   DEBUG_CALL("tcp_fconnect");
   DEBUG_ARG("so = %lx", (long )so);
 
@@ -388,7 +388,7 @@ int tcp_fconnect(struct socket *so)
     setsockopt(s,SOL_SOCKET,SO_REUSEADDR,(char *)&opt,sizeof(opt ));
     opt = 1;
     setsockopt(s,SOL_SOCKET,SO_OOBINLINE,(char *)&opt,sizeof(opt ));
-    
+
     addr.sin_family = AF_INET;
     if ((so->so_faddr.s_addr & htonl(0xffffff00)) == special_addr.s_addr) {
       /* It's an alias */
@@ -407,12 +407,12 @@ int tcp_fconnect(struct socket *so)
 
 	char addrstr[INET_ADDRSTRLEN];
     DEBUG_MISC((dfd, " connect()ing, addr.sin_port=%d, "
-		"addr.sin_addr.s_addr=%.16s\n", 
+		"addr.sin_addr.s_addr=%.16s\n",
 		ntohs(addr.sin_port), inet_ntop(AF_INET, &addr.sin_addr,
 			addrstr, sizeof(addrstr))));
     /* We don't care what port we get */
     ret = connect(s,(struct sockaddr *)&addr,sizeof (addr));
-    
+
     /*
      * If it's not in progress, it failed, so we just return 0,
      * without clearing SS_NOFDREF
@@ -425,16 +425,16 @@ int tcp_fconnect(struct socket *so)
 
 /*
  * Accept the socket and connect to the local-host
- * 
+ *
  * We have a problem. The correct thing to do would be
  * to first connect to the local-host, and only if the
  * connection is accepted, then do an accept() here.
- * But, a) we need to know who's trying to connect 
+ * But, a) we need to know who's trying to connect
  * to the socket to be able to SYN the local-host, and
  * b) we are already connected to the foreign host by
  * the time it gets to accept(), so... We simply accept
  * here and SYN the local-host.
- */ 
+ */
 void tcp_connect(struct socket *inso)
 {
 	struct socket *so;
@@ -445,7 +445,7 @@ void tcp_connect(struct socket *inso)
 
 	DEBUG_CALL("tcp_connect");
 	DEBUG_ARG("inso = %lx", (long)inso);
-	
+
 	/*
 	 * If it's an SS_ACCEPTONCE socket, no need to socreate()
 	 * another socket, just use the accept() socket.
@@ -466,7 +466,7 @@ void tcp_connect(struct socket *inso)
 		so->so_laddr = inso->so_laddr;
 		so->so_lport = inso->so_lport;
 	}
-	
+
 	tcp_mss(sototcpcb(so), 0);
 
 	if ((s = accept(inso->s,(struct sockaddr *)&addr,&addrlen)) < 0) {
@@ -480,13 +480,13 @@ void tcp_connect(struct socket *inso)
 	setsockopt(s,SOL_SOCKET,SO_OOBINLINE,(char *)&opt,sizeof(int));
 	opt = 1;
 	setsockopt(s,IPPROTO_TCP,TCP_NODELAY,(char *)&opt,sizeof(int));
-	
+
 	so->so_fport = addr.sin_port;
 	so->so_faddr = addr.sin_addr;
 	/* Translate connections from localhost to the real hostname */
 	if (so->so_faddr.s_addr == 0 || so->so_faddr.s_addr == loopback_addr.s_addr)
 	   so->so_faddr = alias_addr;
-	
+
 	/* Close the accept() socket, set right state */
 	if (inso->so_state & SS_FACCEPTONCE) {
 		closesocket(so->s); /* If we only accept once, close the accept() socket */
@@ -494,12 +494,12 @@ void tcp_connect(struct socket *inso)
 					   /* if it's not FACCEPTONCE, it's already NOFDREF */
 	}
 	so->s = s;
-	
+
 	so->so_iptos = tcp_tos(so);
 	tp = sototcpcb(so);
 
 	tcp_template(tp);
-	
+
 	/* Compute window scaling to request.  */
 /*	while (tp->request_r_scale < TCP_MAX_WINSHIFT &&
  *		(TCP_MAXWIN << tp->request_r_scale) < so->so_rcv.sb_hiwat)
@@ -508,10 +508,10 @@ void tcp_connect(struct socket *inso)
 
 /*	soisconnecting(so); */ /* NOFDREF used instead */
 	tcpstat.tcps_connattempt++;
-	
+
 	tp->t_state = TCPS_SYN_SENT;
 	tp->t_timer[TCPT_KEEP] = TCPTV_KEEP_INIT;
-	tp->iss = tcp_iss; 
+	tp->iss = tcp_iss;
 	tcp_iss += TCP_ISSINCR/2;
 	tcp_sendseqinit(tp);
 	tcp_output(tp);
@@ -524,7 +524,7 @@ int tcp_attach(struct socket *so)
 {
 	if ((so->so_tcpcb = tcp_newtcpcb(so)) == NULL)
 	   return -1;
-	
+
 	insque(so, &tcb);
 
 	return 0;
@@ -550,7 +550,7 @@ struct tos_t tcptos[] = {
 };
 
 struct emu_t *tcpemu = 0;
-		
+
 /*
  * Return TOS according to the above table
  */
@@ -558,7 +558,7 @@ u_int8_t tcp_tos(struct socket *so)
 {
 	int i = 0;
 	struct emu_t *emup;
-	
+
 	while(tcptos[i].tos) {
 		if ((tcptos[i].fport && (ntohs(so->so_fport) == tcptos[i].fport)) ||
 		    (tcptos[i].lport && (ntohs(so->so_lport) == tcptos[i].lport))) {
@@ -567,7 +567,7 @@ u_int8_t tcp_tos(struct socket *so)
 		}
 		i++;
 	}
-	
+
 	/* Nope, lets see if there's a user-added one */
 	for (emup = tcpemu; emup; emup = emup->next) {
 		if ((emup->fport && (ntohs(so->so_fport) == emup->fport)) ||
@@ -576,7 +576,7 @@ u_int8_t tcp_tos(struct socket *so)
 			return emup->tos;
 		}
 	}
-	
+
 	return 0;
 }
 
@@ -587,23 +587,23 @@ int do_echo = -1;
  * This includes ftp (the data connection is
  * initiated by the server) and IRC (DCC CHAT and
  * DCC SEND) for now
- * 
+ *
  * NOTE: It's possible to crash SLiRP by sending it
  * unstandard strings to emulate... if this is a problem,
  * more checks are needed here
  *
  * XXX Assumes the whole command came in one packet
- *					    
+ *
  * XXX Some ftp clients will have their TOS set to
  * LOWDELAY and so Nagel will kick in.  Because of this,
  * we'll get the first letter, followed by the rest, so
  * we simply scan for ORT instead of PORT...
  * DCC doesn't have this problem because there's other stuff
  * in the packet before the DCC command.
- * 
- * Return 1 if the mbuf m is still valid and should be 
+ *
+ * Return 1 if the mbuf m is still valid and should be
  * sbappend()ed
- * 
+ *
  * NOTE: if you return 0 you MUST m_free() the mbuf!
  */
 int tcp_emu(struct socket *so, struct mbuf *m)
@@ -613,25 +613,25 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 	u_int32_t laddr;
 	u_int lport;
 	char *bptr;
-	
+
 	DEBUG_CALL("tcp_emu");
 	DEBUG_ARG("so = %lx", (long)so);
 	DEBUG_ARG("m = %lx", (long)m);
-	
+
 	switch(so->so_emu) {
 		int x, i;
-		
+
 	 case EMU_IDENT:
 		/*
 		 * Identification protocol as per rfc-1413
 		 */
-		
+
 		{
 			struct socket *tmpso;
 			struct sockaddr_in addr;
 			socklen_t addrlen = sizeof(struct sockaddr_in);
 			struct sbuf *so_rcv = &so->so_rcv;
-			
+
 			memcpy(so_rcv->sb_wptr, m->m_data, m->m_len);
 			so_rcv->sb_wptr += m->m_len;
 			so_rcv->sb_rptr += m->m_len;
@@ -660,7 +660,7 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 			m_free(m);
 			return 0;
 		}
-		
+
 #if 0
 	 case EMU_RLOGIN:
 		/*
@@ -675,7 +675,7 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 			char term[100];
 			struct sbuf *so_snd = &so->so_snd;
 			struct sbuf *so_rcv = &so->so_rcv;
-			
+
 			/* First check if they have a priveladged port, or too much data has arrived */
 			if (ntohs(so->so_lport) > 1023 || ntohs(so->so_lport) < 512 ||
 			    (m->m_len + so_rcv->sb_wptr) > (so_rcv->sb_data + so_rcv->sb_datalen)) {
@@ -686,13 +686,13 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 				m_free(m);
 				return 0;
 			}
-			
+
 			/* Append the current data */
 			memcpy(so_rcv->sb_wptr, m->m_data, m->m_len);
 			so_rcv->sb_wptr += m->m_len;
 			so_rcv->sb_rptr += m->m_len;
 			m_free(m);
-			
+
 			/*
 			 * Check if we have all the initial options,
 			 * and build argument list to rlogin while we're here
@@ -724,10 +724,10 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 					}
 				}
 			}
-			
+
 			if (n != 4)
 			   return 0;
-			
+
 			/* We have it, set our term variable and fork_exec() */
 #ifdef HAVE_SETENV
 			setenv("TERM", term, 1);
@@ -737,15 +737,15 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 			fork_exec(so, args, 2);
 			term[0] = 0;
 			so->so_emu = 0;
-			
+
 			/* And finally, send the client a 0 character */
 			so_snd->sb_wptr[0] = 0;
 			so_snd->sb_wptr++;
 			so_snd->sb_cc++;
-			
+
 			return 0;
 		}
-		
+
 	 case EMU_RSH:
 		/*
 		 * rsh emulation
@@ -759,7 +759,7 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 			char *args;
 			struct sbuf *so_snd = &so->so_snd;
 			struct sbuf *so_rcv = &so->so_rcv;
-			
+
 			/* First check if they have a priveladged port, or too much data has arrived */
 			if (ntohs(so->so_lport) > 1023 || ntohs(so->so_lport) < 512 ||
 			    (m->m_len + so_rcv->sb_wptr) > (so_rcv->sb_data + so_rcv->sb_datalen)) {
@@ -770,13 +770,13 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 				m_free(m);
 				return 0;
 			}
-			
+
 			/* Append the current data */
 			memcpy(so_rcv->sb_wptr, m->m_data, m->m_len);
 			so_rcv->sb_wptr += m->m_len;
 			so_rcv->sb_rptr += m->m_len;
 			m_free(m);
-			
+
 			/*
 			 * Check if we have all the initial options,
 			 * and build argument list to rlogin while we're here
@@ -812,15 +812,15 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 				ns->so_faddr=so->so_faddr;
 				ns->so_fport=htons(IPPORT_RESERVED-1); /* Use a fake port. */
 
-				if (ns->so_faddr.s_addr == 0 || 
+				if (ns->so_faddr.s_addr == 0 ||
 					ns->so_faddr.s_addr == loopback_addr.s_addr)
                   ns->so_faddr = alias_addr;
 
 				ns->so_iptos = tcp_tos(ns);
 				tp = sototcpcb(ns);
-                
+
 				tcp_template(tp);
-                
+
 				/* Compute window scaling to request.  */
 				/*	while (tp->request_r_scale < TCP_MAX_WINSHIFT &&
 				 *		(TCP_MAXWIN << tp->request_r_scale) < so->so_rcv.sb_hiwat)
@@ -830,10 +830,10 @@ int tcp_emu(struct socket *so, struct mbuf *m)
                 /*soisfconnecting(ns);*/
 
 				tcpstat.tcps_connattempt++;
-					
+
 				tp->t_state = TCPS_SYN_SENT;
 				tp->t_timer[TCPT_KEEP] = TCPTV_KEEP_INIT;
-				tp->iss = tcp_iss; 
+				tp->iss = tcp_iss;
 				tcp_iss += TCP_ISSINCR/2;
 				tcp_sendseqinit(tp);
 				tcp_output(tp);
@@ -849,19 +849,19 @@ int tcp_emu(struct socket *so, struct mbuf *m)
                 }
               }
 			}
-			
+
 			if (n != 4)
               return 0;
-			
+
 			rsh_exec(so,so->extra, user, inet_ntoa(so->so_faddr), args);
 			so->so_emu = 0;
 			so->extra=NULL;
-			
+
 			/* And finally, send the client a 0 character */
 			so_snd->sb_wptr[0] = 0;
 			so_snd->sb_wptr++;
 			so_snd->sb_cc++;
-			
+
 			return 0;
 		}
 
@@ -870,7 +870,7 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 			int num;
 			struct sbuf *so_snd = &so->so_snd;
 			struct sbuf *so_rcv = &so->so_rcv;
-			
+
 			/*
 			 * If there is binary data here, we save it in so->so_m
 			 */
@@ -885,16 +885,16 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 			    }
 			  }
 			} /* if(so->so_m==NULL) */
-			
+
 			/*
 			 * Append the line
 			 */
 			sbappendsb(so_rcv, m);
-			
+
 			/* To avoid going over the edge of the buffer, we reset it */
 			if (so_snd->sb_cc == 0)
 			   so_snd->sb_wptr = so_snd->sb_rptr = so_snd->sb_data;
-			
+
 			/*
 			 * A bit of a hack:
 			 * If the first packet we get here is 1 byte long, then it
@@ -913,13 +913,13 @@ int tcp_emu(struct socket *so, struct mbuf *m)
 			  tcp_output(sototcpcb(so)); /* XXX */
 			} else
 			  m_free(m);
-			
+
 			num = 0;
 			while (num < so->so_rcv.sb_cc) {
 				if (*(so->so_rcv.sb_rptr + num) == '\n' ||
 				    *(so->so_rcv.sb_rptr + num) == '\r') {
 					int n;
-					
+
 					*(so_rcv->sb_rptr + num) = 0;
 					if (ctl_password && !ctl_password_ok) {
 						/* Need a password */
@@ -956,38 +956,38 @@ do_prompt:
 			}
 			return 0;
 		}
-#endif		
+#endif
         case EMU_FTP: /* ftp */
 		*(m->m_data+m->m_len) = 0; /* NULL terminate for strstr */
 		if ((bptr = (char *)strstr(m->m_data, "ORT")) != NULL) {
 			/*
 			 * Need to emulate the PORT command
-			 */			
-			x = sscanf(bptr, "ORT %d,%d,%d,%d,%d,%d\r\n%256[^\177]", 
+			 */
+			x = sscanf(bptr, "ORT %d,%d,%d,%d,%d,%d\r\n%256[^\177]",
 				   &n1, &n2, &n3, &n4, &n5, &n6, buff);
 			if (x < 6)
 			   return 1;
-			
+
 			laddr = htonl((n1 << 24) | (n2 << 16) | (n3 << 8) | (n4));
 			lport = htons((n5 << 8) | (n6));
-			
+
 			if ((so = solisten(0, laddr, lport, SS_FACCEPTONCE)) == NULL)
 			   return 1;
-			
+
 			n6 = ntohs(so->so_fport);
-			
+
 			n5 = (n6 >> 8) & 0xff;
 			n6 &= 0xff;
-			
+
 			laddr = ntohl(so->so_faddr.s_addr);
-			
+
 			n1 = ((laddr >> 24) & 0xff);
 			n2 = ((laddr >> 16) & 0xff);
 			n3 = ((laddr >> 8)  & 0xff);
 			n4 =  (laddr & 0xff);
-			
+
 			m->m_len = bptr - m->m_data; /* Adjust length */
-			m->m_len += sprintf(bptr,"ORT %d,%d,%d,%d,%d,%d\r\n%s", 
+			m->m_len += sprintf(bptr,"ORT %d,%d,%d,%d,%d,%d\r\n%s",
 					    n1, n2, n3, n4, n5, n6, x==7?buff:"");
 			return 1;
 		} else if ((bptr = (char *)strstr(m->m_data, "27 Entering")) != NULL) {
@@ -998,34 +998,34 @@ do_prompt:
 				   &n1, &n2, &n3, &n4, &n5, &n6, buff);
 			if (x < 6)
 			   return 1;
-			
+
 			laddr = htonl((n1 << 24) | (n2 << 16) | (n3 << 8) | (n4));
 			lport = htons((n5 << 8) | (n6));
-			
+
 			if ((so = solisten(0, laddr, lport, SS_FACCEPTONCE)) == NULL)
 			   return 1;
-			
+
 			n6 = ntohs(so->so_fport);
-			
+
 			n5 = (n6 >> 8) & 0xff;
 			n6 &= 0xff;
-			
+
 			laddr = ntohl(so->so_faddr.s_addr);
-			
+
 			n1 = ((laddr >> 24) & 0xff);
 			n2 = ((laddr >> 16) & 0xff);
 			n3 = ((laddr >> 8)  & 0xff);
 			n4 =  (laddr & 0xff);
-			
+
 			m->m_len = bptr - m->m_data; /* Adjust length */
 			m->m_len += sprintf(bptr,"27 Entering Passive Mode (%d,%d,%d,%d,%d,%d)\r\n%s",
 					    n1, n2, n3, n4, n5, n6, x==7?buff:"");
-			
+
 			return 1;
 		}
-		
+
 		return 1;
-				   
+
 	 case EMU_KSH:
 		/*
 		 * The kshell (Kerberos rsh) and shell services both pass
@@ -1044,7 +1044,7 @@ do_prompt:
 		    (so = solisten(0, so->so_laddr.s_addr, htons(lport), SS_FACCEPTONCE)) != NULL)
 			m->m_len = sprintf(m->m_data, "%d", ntohs(so->so_fport))+1;
 		return 1;
-		
+
 	 case EMU_IRC:
 		/*
 		 * Need to emulate DCC CHAT, DCC SEND and DCC MOVE
@@ -1052,12 +1052,12 @@ do_prompt:
 		*(m->m_data+m->m_len) = 0; /* NULL terminate the string for strstr */
 		if ((bptr = (char *)strstr(m->m_data, "DCC")) == NULL)
 			 return 1;
-		
+
 		/* The %256s is for the broken mIRC */
 		if (sscanf(bptr, "DCC CHAT %256s %u %u", buff, &laddr, &lport) == 3) {
 			if ((so = solisten(0, htonl(laddr), htons(lport), SS_FACCEPTONCE)) == NULL)
 				return 1;
-			
+
 			m->m_len = bptr - m->m_data; /* Adjust length */
 			m->m_len += sprintf(bptr, "DCC CHAT chat %lu %u%c\n",
 			     (unsigned long)ntohl(so->so_faddr.s_addr),
@@ -1065,15 +1065,15 @@ do_prompt:
 		} else if (sscanf(bptr, "DCC SEND %256s %u %u %u", buff, &laddr, &lport, &n1) == 4) {
 			if ((so = solisten(0, htonl(laddr), htons(lport), SS_FACCEPTONCE)) == NULL)
 				return 1;
-			
+
 			m->m_len = bptr - m->m_data; /* Adjust length */
-			m->m_len += sprintf(bptr, "DCC SEND %s %lu %u %u%c\n", 
+			m->m_len += sprintf(bptr, "DCC SEND %s %lu %u %u%c\n",
 			      buff, (unsigned long)ntohl(so->so_faddr.s_addr),
 			      ntohs(so->so_fport), n1, 1);
 		} else if (sscanf(bptr, "DCC MOVE %256s %u %u %u", buff, &laddr, &lport, &n1) == 4) {
 			if ((so = solisten(0, htonl(laddr), htons(lport), SS_FACCEPTONCE)) == NULL)
 				return 1;
-			
+
 			m->m_len = bptr - m->m_data; /* Adjust length */
 			m->m_len += sprintf(bptr, "DCC MOVE %s %lu %u %u%c\n",
 			      buff, (unsigned long)ntohl(so->so_faddr.s_addr),
@@ -1082,7 +1082,7 @@ do_prompt:
 		return 1;
 
 	 case EMU_REALAUDIO:
-                /* 
+                /*
 		 * RealAudio emulation - JP. We must try to parse the incoming
 		 * data and try to find the two characters that contain the
 		 * port number. Then we redirect an udp port and replace the
@@ -1090,45 +1090,45 @@ do_prompt:
 		 *
 		 * The 1.0 beta versions of the player are not supported
 		 * any more.
-		 * 
+		 *
 		 * A typical packet for player version 1.0 (release version):
-		 *        
-		 * 0000:50 4E 41 00 05 
+		 *
+		 * 0000:50 4E 41 00 05
 		 * 0000:00 01 00 02 1B D7 00 00 67 E6 6C DC 63 00 12 50 .....×..gælÜc..P
 		 * 0010:4E 43 4C 49 45 4E 54 20 31 30 31 20 41 4C 50 48 NCLIENT 101 ALPH
 		 * 0020:41 6C 00 00 52 00 17 72 61 66 69 6C 65 73 2F 76 Al..R..rafiles/v
 		 * 0030:6F 61 2F 65 6E 67 6C 69 73 68 5F 2E 72 61 79 42 oa/english_.rayB
-		 *         
+		 *
 		 * Now the port number 0x1BD7 is found at offset 0x04 of the
 		 * Now the port number 0x1BD7 is found at offset 0x04 of the
 		 * second packet. This time we received five bytes first and
 		 * then the rest. You never know how many bytes you get.
 		 *
 		 * A typical packet for player version 2.0 (beta):
-		 *        
+		 *
 		 * 0000:50 4E 41 00 06 00 02 00 00 00 01 00 02 1B C1 00 PNA...........Á.
 		 * 0010:00 67 75 78 F5 63 00 0A 57 69 6E 32 2E 30 2E 30 .guxõc..Win2.0.0
 		 * 0020:2E 35 6C 00 00 52 00 1C 72 61 66 69 6C 65 73 2F .5l..R..rafiles/
 		 * 0030:77 65 62 73 69 74 65 2F 32 30 72 65 6C 65 61 73 website/20releas
 		 * 0040:65 2E 72 61 79 53 00 00 06 36 42                e.rayS...6B
-		 *        
+		 *
 		 * Port number 0x1BC1 is found at offset 0x0d.
-		 *      
+		 *
 		 * This is just a horrible switch statement. Variable ra tells
 		 * us where we're going.
 		 */
-		
+
 		bptr = m->m_data;
 		while (bptr < m->m_data + m->m_len) {
 			u_short p;
 			static int ra = 0;
-			char ra_tbl[4]; 
-			
+			char ra_tbl[4];
+
 			ra_tbl[0] = 0x50;
 			ra_tbl[1] = 0x4e;
 			ra_tbl[2] = 0x41;
 			ra_tbl[3] = 0;
-			
+
 			switch (ra) {
 			 case 0:
 			 case 2:
@@ -1138,7 +1138,7 @@ do_prompt:
 					continue;
 				}
 				break;
-				
+
 			 case 1:
 				/*
 				 * We may get 0x50 several times, ignore them
@@ -1152,15 +1152,15 @@ do_prompt:
 					continue;
 				}
 				break;
-				
-			 case 4: 
-				/* 
+
+			 case 4:
+				/*
 				 * skip version number
 				 */
 				bptr++;
 				break;
-				
-			 case 5: 
+
+			 case 5:
 				/*
 				 * The difference between versions 1.0 and
 				 * 2.0 is here. For future versions of
@@ -1170,19 +1170,19 @@ do_prompt:
 				   bptr += 8;
 				else
 				   bptr += 4;
-				break;                          
-				
+				break;
+
 			 case 6:
 				/* This is the field containing the port
 				 * number that RA-player is listening to.
 				 */
-				lport = (((u_char*)bptr)[0] << 8) 
+				lport = (((u_char*)bptr)[0] << 8)
 				+ ((u_char *)bptr)[1];
-				if (lport < 6970)      
+				if (lport < 6970)
 				   lport += 256;   /* don't know why */
 				if (lport < 6970 || lport > 7170)
 				   return 1;       /* failed */
-				
+
 				/* try to get udp port between 6970 - 7170 */
 				for (p = 6970; p < 7071; p++) {
 					if (udp_listen( htons(p),
@@ -1196,17 +1196,17 @@ do_prompt:
 				   p = 0;
 				*(u_char *)bptr++ = (p >> 8) & 0xff;
 				*(u_char *)bptr++ = p & 0xff;
-				ra = 0; 
+				ra = 0;
 				return 1;   /* port redirected, we're done */
-				break;  
-				
+				break;
+
 			 default:
-				ra = 0;                         
+				ra = 0;
 			}
 			ra++;
 		}
-		return 1;                                
-		
+		return 1;
+
 	 default:
 		/* Ooops, not emulated, won't call tcp_emu again */
 		so->so_emu = 0;
@@ -1226,10 +1226,10 @@ int tcp_ctl(struct socket *so)
  	struct ex_list *ex_ptr;
 	int do_pty;
         //	struct socket *tmpso;
-	
+
 	DEBUG_CALL("tcp_ctl");
 	DEBUG_ARG("so = %lx", (long )so);
-	
+
 #if 0
 	/*
 	 * Check if they're authorised
@@ -1239,12 +1239,12 @@ int tcp_ctl(struct socket *so)
 		sb->sb_wptr += sb->sb_cc;
 		return 0;
 	}
-#endif	
+#endif
 	command = (ntohl(so->so_faddr.s_addr) & 0xff);
-	
+
 	switch(command) {
 	default: /* Check for exec's */
-		
+
 		/*
 		 * Check if it's pty_exec
 		 */
@@ -1255,12 +1255,12 @@ int tcp_ctl(struct socket *so)
 				goto do_exec;
 			}
 		}
-		
+
 		/*
 		 * Nothing bound..
 		 */
 		/* tcp_fconnect(so); */
-		
+
 		/* FALLTHROUGH */
 	case CTL_ALIAS:
 	  sb->sb_cc = sprintf(sb->sb_wptr,
@@ -1271,12 +1271,12 @@ int tcp_ctl(struct socket *so)
 	do_exec:
 		DEBUG_MISC((dfd, " executing %s \n",ex_ptr->ex_exec));
 		return(fork_exec(so, ex_ptr->ex_exec, do_pty));
-		
+
 #if 0
 	case CTL_CMD:
 	   for (tmpso = tcb.so_next; tmpso != &tcb; tmpso = tmpso->so_next) {
-	     if (tmpso->so_emu == EMU_CTL && 
-		 !(tmpso->so_tcpcb? 
+	     if (tmpso->so_emu == EMU_CTL &&
+		 !(tmpso->so_tcpcb?
 		   (tmpso->so_tcpcb->t_state & (TCPS_TIME_WAIT|TCPS_LAST_ACK))
 		   :0)) {
 	       /* Ooops, control connection already active */

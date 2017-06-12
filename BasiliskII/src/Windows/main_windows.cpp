@@ -318,7 +318,7 @@ int main(int argc, char **argv)
 		ErrorAlert(str);
 		QuitEmulator();
 	}
-	
+
 	// Register dump state function when we got mad after a segfault
 	sigsegv_set_dump_state(sigsegv_dump_state);
 
@@ -328,7 +328,7 @@ int main(int argc, char **argv)
 		WarningAlert(GetString(STR_SMALL_RAM_WARN));
 		RAMSize = 1024*1024;
 	}
-	
+
 	// Initialize VM system
 	vm_init();
 
@@ -359,7 +359,7 @@ int main(int argc, char **argv)
 #endif
 	D(bug("Mac RAM starts at %p (%08x)\n", RAMBaseHost, RAMBaseMac));
 	D(bug("Mac ROM starts at %p (%08x)\n", ROMBaseHost, ROMBaseMac));
-	
+
 	// Get rom file path from preferences
 	auto rom_path = tstr(PrefsFindString("rom"));
 

@@ -515,7 +515,7 @@ int16 XSERDPort::control(uint32 pb, uint32 dce, uint16 code)
 					rate = 57600; baud_rate = CBR_57600;
 				}
 				WriteMacInt16(pb + csParam, rate);
-				mode.BaudRate = baud_rate;			
+				mode.BaudRate = baud_rate;
 				if(!SetCommState( fd, &mode )) return controlErr;
 				// TODO: save parity/stop values and use here (not critical)
 				if(!set_timeouts(rate,0,1)) return controlErr;
@@ -918,7 +918,7 @@ void XSERDPort::set_handshake(uint32 s, bool with_dtr)
 	// shkFCTS = 0
 	// shkXOn = f4
 	// shkXOff = f5
-	// shkErrs = 21 
+	// shkErrs = 21
 	// shkEvts = 0
 	// shkFInX = 0
 	// shkFDTR = 0

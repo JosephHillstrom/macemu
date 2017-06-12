@@ -2099,7 +2099,7 @@ static void video_refresh_dga_vosf(void)
 {
 	// Quit DGA mode if requested
 	possibly_quit_dga_mode();
-	
+
 	// Update display (VOSF variant)
 	static uint32 tick_counter = 0;
 	if (++tick_counter >= frame_skip) {
@@ -2117,7 +2117,7 @@ static void video_refresh_window_vosf(void)
 {
 	// Ungrab mouse if requested
 	possibly_ungrab_mouse();
-	
+
 	// Update display (VOSF variant)
 	static uint32 tick_counter = 0;
 	if (++tick_counter >= frame_skip) {

@@ -4,12 +4,12 @@
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  MC68881/68040 fpu emulation
- *  
+ *
  *  Original UAE FPU, copyright 1996 Herman ten Brugge
  *  Rewrite for x86, copyright 1999-2000 Lauri Pesonen
  *  New framework, copyright 2000 Gwenole Beauchesne
  *  Adapted for JIT compilation (c) Bernd Meyer, 2000
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -57,7 +57,7 @@ void FFPU fpu_init_native_fflags(void)
 	#define SW_DENORMAL				(SW_C2|SW_C3)
 	#define SW_UNSUPPORTED			(0)
 	#define SW_N					(SW_C1)
-	
+
 	// Sanity checks
 	#if (SW_Z != NATIVE_FFLAG_ZERO)
 	#error "Incorrect X86 Z fflag"
@@ -71,7 +71,7 @@ void FFPU fpu_init_native_fflags(void)
 	#if (SW_NAN != NATIVE_FFLAG_NAN)
 	#error "Incorrect X86 NAN fflag"
 	#endif
-	
+
 	// Native status word to m68k mappings
 	for (uae_u32 i = 0; i < 0x48; i++) {
 		to_m68k_fpcond[i] = 0;
@@ -114,7 +114,7 @@ void FFPU fpu_init_native_fflags(void)
 		if (m68k_fpcond & FPSR_CCB_NEGATIVE)
 			to_host_fpcond[i] |= SW_N;
 	}
-	
+
 	// truth-table for FPU conditions
 	for (uae_u32 host_fpcond = 0; host_fpcond < 0x08; host_fpcond++) {
 		// host_fpcond: C3 on bit 2, C1 and C0 are respectively on bits 1 and 0
@@ -122,7 +122,7 @@ void FFPU fpu_init_native_fflags(void)
 		const bool N = ((real_host_fpcond & NATIVE_FFLAG_NEGATIVE) == NATIVE_FFLAG_NEGATIVE);
 		const bool Z = ((real_host_fpcond & NATIVE_FFLAG_ZERO) == NATIVE_FFLAG_ZERO);
 		const bool NaN = ((real_host_fpcond & NATIVE_FFLAG_NAN) == NATIVE_FFLAG_NAN);
-		
+
 		int value;
 		for (uae_u32 m68k_fpcond = 0; m68k_fpcond < 0x20; m68k_fpcond++) {
 			switch (m68k_fpcond) {

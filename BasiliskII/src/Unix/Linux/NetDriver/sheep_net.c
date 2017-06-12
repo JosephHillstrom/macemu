@@ -334,7 +334,7 @@ static inline int is_fake_addr(struct SheepVars *v, void *a)
 }
 
 
-/* 
+/*
  * Outgoing packet. Replace the fake enet addr with the real local one.
  */
 
@@ -347,7 +347,7 @@ static void demasquerade(struct SheepVars *v, struct sk_buff *skb)
 {
 	u8 *p = skb_mac_header(skb);
 	int proto = (p[12] << 8) | p[13];
-	
+
 	do_demasq(v, p + 6); /* source address */
 
 	/* Need to fix ARP packets */

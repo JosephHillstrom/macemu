@@ -110,7 +110,7 @@ int16 DSERDPort::prime_out(uint32 pb, uint32 dce)
 /*
  *	Control calls
  */
- 
+
 int16 DSERDPort::control(uint32 pb, uint32 dce, uint16 code)
 {
 	return controlErr;

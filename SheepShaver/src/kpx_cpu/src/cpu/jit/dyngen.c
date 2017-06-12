@@ -1,6 +1,6 @@
 /*
  *  Generic Dynamic compiler generator
- * 
+ *
  *  Copyright (c) 2003-2004 Fabrice Bellard
  *
  *  The COFF object format support was extracted from Kazu's QEMU port
@@ -352,8 +352,8 @@ struct nlist_extended
        long  n_strx;
 #endif
    } n_un;
-   unsigned char n_type; 
-   unsigned char n_sect; 
+   unsigned char n_type;
+   unsigned char n_sect;
    short st_desc;
    unsigned long st_value;
    unsigned long st_size;
@@ -498,7 +498,7 @@ static int is_op_gen_label(const char *sym_name, const char **ptr)
 
 /* generate op code */
 void gen_code(const char *name, const char *demangled_name,
-              host_ulong offset, host_ulong size, 
+              host_ulong offset, host_ulong size,
               FILE *outfile, int gen_switch, const char *prefix);
 void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ulong start_offset, int copy_size);
 
@@ -609,10 +609,10 @@ int elf_must_swap(elfhdr *h)
   } swaptest;
 
   swaptest.i = 1;
-  return (h->e_ident[EI_DATA] == ELFDATA2MSB) != 
+  return (h->e_ident[EI_DATA] == ELFDATA2MSB) !=
       (swaptest.b[0] == 0);
 }
-  
+
 void elf_swap_ehdr(elfhdr *h)
 {
     swab16s(&h->e_type);			/* Object file type */
@@ -665,7 +665,7 @@ void elf_swap_rel(ELF_RELOC *rel)
 #endif
 }
 
-elf_shdr *find_elf_section(elf_shdr *shdr, int shnum, const char *shstr, 
+elf_shdr *find_elf_section(elf_shdr *shdr, int shnum, const char *shstr,
                                   const char *name)
 {
     int i;
@@ -690,7 +690,7 @@ static int do_find_reloc(int sh_index, ElfW(Word) type)
 
     for(i = 0; i < ehdr.e_shnum; i++) {
         sec = &shdr[i];
-        if (sec->sh_type == type && sec->sh_info == sh_index) 
+        if (sec->sh_type == type && sec->sh_info == sh_index)
             return i;
     }
     return 0;
@@ -735,11 +735,11 @@ int load_object(const char *filename, FILE *outfile)
     elf_shdr *rodata_cst16_sec;
     uint8_t *rodata_cst16 = NULL;
     int rodata_cst16_shndx;
-    
+
     fd = open(filename, O_RDONLY);
-    if (fd < 0) 
+    if (fd < 0)
         error("can't open file '%s'", filename);
-    
+
     /* Read ELF header.  */
     if (read(fd, &ehdr, sizeof (ehdr)) != sizeof (ehdr))
         error("unable to read file header");
@@ -776,7 +776,7 @@ int load_object(const char *filename, FILE *outfile)
     /* read all section data */
     sdata = malloc(sizeof(void *) * ehdr.e_shnum);
     memset(sdata, 0, sizeof(void *) * ehdr.e_shnum);
-    
+
     for(i = 0;i < ehdr.e_shnum; i++) {
         sec = &shdr[i];
         if (sec->sh_type != SHT_NOBITS)
@@ -867,7 +867,7 @@ int load_object(const char *filename, FILE *outfile)
 
     symtab = (ElfW(Sym) *)sdata[symtab_sec - shdr];
     strtab = sdata[symtab_sec->sh_link];
-    
+
     nb_syms = symtab_sec->sh_size / sizeof(ElfW(Sym));
     if (do_swap) {
         for(i = 0, sym = symtab; i < nb_syms; i++, sym++) {
@@ -947,7 +947,7 @@ void sym_ent_name(struct external_syment *ext_sym, EXE_SYM *sym)
 {
     char *q;
     int c, i, len;
-    
+
     if (ext_sym->e.e.e_zeroes != 0) {
         q = sym->st_name;
         for(i = 0; i < 8; i++) {
@@ -981,7 +981,7 @@ char *name_for_dotdata(struct coff_rel *rel)
 		if (sym->st_syment->e_scnum == data_shndx &&
                     text_data >= sym->st_value &&
                     text_data < sym->st_value + sym->st_size) {
-                    
+
                     return sym->st_name;
 
 		}
@@ -1037,15 +1037,15 @@ int load_object(const char *filename, FILE *outfile)
     uint32_t *n_strtab;
     EXE_SYM *sym;
     EXE_RELOC *rel;
-	
-    fd = open(filename, O_RDONLY 
+
+    fd = open(filename, O_RDONLY
 #ifdef _WIN32
               | O_BINARY
 #endif
               );
-    if (fd < 0) 
+    if (fd < 0)
         error("can't open file '%s'", filename);
-    
+
     /* Read COFF header.  */
     if (read(fd, &fhdr, sizeof (fhdr)) != sizeof (fhdr))
         error("unable to read file header");
@@ -1058,11 +1058,11 @@ int load_object(const char *filename, FILE *outfile)
 
     /* read section headers */
     shdr = load_data(fd, sizeof(struct external_filehdr) + fhdr.f_opthdr, fhdr.f_nscns * sizeof(struct external_scnhdr));
-	
+
     /* read all section data */
     sdata = malloc(sizeof(void *) * fhdr.f_nscns);
     memset(sdata, 0, sizeof(void *) * fhdr.f_nscns);
-    
+
     const char *p;
     for(i = 0;i < fhdr.f_nscns; i++) {
         sec = &shdr[i];
@@ -1084,7 +1084,7 @@ int load_object(const char *filename, FILE *outfile)
         error("could not find .data section");
     coff_data_shndx = data_sec - shdr;
     data = sdata[coff_data_shndx];
-    
+
     coff_symtab = load_data(fd, fhdr.f_symptr, fhdr.f_nsyms*SYMESZ);
     for (i = 0, ext_sym = coff_symtab; i < nb_syms; i++, ext_sym++) {
         for(j=0;j<8;j++)
@@ -1094,8 +1094,8 @@ int load_object(const char *filename, FILE *outfile)
 
     nb_syms = fhdr.f_nsyms;
     n_strtab = load_data(fd, (fhdr.f_symptr + fhdr.f_nsyms*SYMESZ), STRTAB_SIZE);
-    strtab = load_data(fd, (fhdr.f_symptr + fhdr.f_nsyms*SYMESZ), *n_strtab); 
-    
+    strtab = load_data(fd, (fhdr.f_symptr + fhdr.f_nsyms*SYMESZ), *n_strtab);
+
     for (i = 0, ext_sym = coff_symtab; i < nb_syms; i++, ext_sym++) {
       if (strstart(ext_sym->e.e_name, ".text", NULL))
 		  text_shndx = ext_sym->e_scnum;
@@ -1140,12 +1140,12 @@ int load_object(const char *filename, FILE *outfile)
 		} else {
 			sym->st_size = 0;
 		}
-		
+
 		sym->st_type = ext_sym->e_type;
 		sym->st_shndx = ext_sym->e_scnum;
 	}
 
-		
+
     /* find text relocations, if any */
     sec = &shdr[coff_text_shndx];
     coff_relocs = load_data(fd, sec->s_relptr, sec->s_nreloc*RELSZ);
@@ -1153,7 +1153,7 @@ int load_object(const char *filename, FILE *outfile)
 
     /* set coff relocation */
     relocs = malloc(sizeof(struct coff_rel) * nb_relocs);
-    for (i = 0, ext_rel = coff_relocs, rel = relocs; i < nb_relocs; 
+    for (i = 0, ext_rel = coff_relocs, rel = relocs; i < nb_relocs;
          i++, ext_rel++, rel++) {
         memset(rel, 0, sizeof(*rel));
         rel->r_reloc = ext_rel;
@@ -1184,7 +1184,7 @@ uint8_t 	**sdata;
 
 /* relocs */
 struct relocation_info *relocs;
-	
+
 /* symbols */
 EXE_SYM			*symtab;
 struct NLIST 	*symtab_std;
@@ -1204,10 +1204,10 @@ static inline char *find_str_by_index(int index)
 static char *get_sym_name(EXE_SYM *sym)
 {
 	char *name = find_str_by_index(sym->n_un.n_strx);
-	
+
 	if ( sym->n_type & N_STAB ) /* Debug symbols are ignored */
 		return "debug";
-			
+
 	if(!name)
 		return name;
 	if(name[0]=='_')
@@ -1217,7 +1217,7 @@ static char *get_sym_name(EXE_SYM *sym)
 }
 
 /* find a section index given its segname, sectname */
-static int find_mach_sec_index(struct SECTION *section_hdr, int shnum, const char *segname, 
+static int find_mach_sec_index(struct SECTION *section_hdr, int shnum, const char *segname,
                                   const char *sectname)
 {
     int i;
@@ -1233,7 +1233,7 @@ static int find_mach_sec_index(struct SECTION *section_hdr, int shnum, const cha
 }
 
 /* find a section header given its segname, sectname */
-struct SECTION *find_mach_sec_hdr(struct SECTION *section_hdr, int shnum, const char *segname, 
+struct SECTION *find_mach_sec_hdr(struct SECTION *section_hdr, int shnum, const char *segname,
                                   const char *sectname)
 {
 	int index = find_mach_sec_index(section_hdr, shnum, segname, sectname);
@@ -1246,7 +1246,7 @@ struct SECTION *find_mach_sec_hdr(struct SECTION *section_hdr, int shnum, const 
 static inline void fetch_next_pair_value(struct relocation_info * rel, unsigned int *value)
 {
 	struct scattered_relocation_info * scarel;
-	
+
 	if(R_SCATTERED & rel->r_address) {
 		scarel = (struct scattered_relocation_info*)rel;
 		if(scarel->r_type != PPC_RELOC_PAIR)
@@ -1263,7 +1263,7 @@ static inline void fetch_next_pair_value(struct relocation_info * rel, unsigned 
 static const char * find_sym_with_value_and_sec_number( int value, int sectnum, int * offset )
 {
 	int i, ret = -1;
-	
+
 	for( i = 0 ; i < nb_syms; i++ )
 	{
 	    if( !(symtab[i].n_type & N_STAB) && (symtab[i].n_type & N_SECT) &&
@@ -1282,8 +1282,8 @@ static const char * find_sym_with_value_and_sec_number( int value, int sectnum, 
 	}
 }
 
-/* 
- *  Find symbol name given a (virtual) address, and a section which is of type 
+/*
+ *  Find symbol name given a (virtual) address, and a section which is of type
  *  S_NON_LAZY_SYMBOL_POINTERS or S_LAZY_SYMBOL_POINTERS or S_SYMBOL_STUBS
  */
 static const char * find_reloc_name_in_sec_ptr(int address, struct SECTION * sec_hdr)
@@ -1294,23 +1294,23 @@ static const char * find_reloc_name_in_sec_ptr(int address, struct SECTION * sec
 	/* Sanity check */
 	if(!( address >= sec_hdr->addr && address < (sec_hdr->addr + sec_hdr->size) ) )
 		return (char*)0;
-		
+
 	if( sec_hdr->flags & S_SYMBOL_STUBS ){
 		size = sec_hdr->reserved2;
 		if(size == 0)
 		    error("size = 0");
-		
+
 	}
 	else if( (sec_hdr->flags & S_LAZY_SYMBOL_POINTERS) ||
 	            (sec_hdr->flags & S_NON_LAZY_SYMBOL_POINTERS) )
 		size = sizeof(unsigned long);
 	else
 		return 0;
-		
+
     /* Compute our index in toc */
 	tocindex = (address - sec_hdr->addr)/size;
 	symindex = tocdylib[sec_hdr->reserved1 + tocindex];
-	
+
 	name = get_sym_name(&symtab[symindex]);
 
 	return name;
@@ -1335,7 +1335,7 @@ static const char * get_reloc_name(EXE_RELOC * rel, int * sslide)
 	int sectnum = rel->r_symbolnum;
 	int sectoffset;
 	unsigned int other_half=0;
-	
+
 	/* init the slide value */
 #ifdef HOST_X86_64 /* no scattered on x86_64 */
 	switch(rel->r_length)
@@ -1347,7 +1347,7 @@ static const char * get_reloc_name(EXE_RELOC * rel, int * sslide)
 	}
 #else
 	*sslide = 0;
-	
+
 	if (R_SCATTERED & rel->r_address) {
         char *name = (char *)find_reloc_name_given_its_address(sca_rel->r_value);
 
@@ -1374,7 +1374,7 @@ static const char * get_reloc_name(EXE_RELOC * rel, int * sslide)
 	if(rel->r_extern)
 	{
 		/* ignore debug sym */
-		if ( symtab[rel->r_symbolnum].n_type & N_STAB ) 
+		if ( symtab[rel->r_symbolnum].n_type & N_STAB )
 			return 0;
 		return get_sym_name(&symtab[rel->r_symbolnum]);
 	}
@@ -1385,7 +1385,7 @@ static const char * get_reloc_name(EXE_RELOC * rel, int * sslide)
 
 	/* Intruction contains an offset to the symbols pointed to, in the rel->r_symbolnum section */
 	sectoffset = *(uint32_t *)(text + rel->r_address) & 0xffff;
-			
+
 	if(sectnum==0xffffff)
 		return 0;
 
@@ -1427,7 +1427,7 @@ static const char * get_reloc_name(EXE_RELOC * rel, int * sslide)
 	/* search it in the full symbol list, if not found */
 	if(!name)
 		name = (char *)find_sym_with_value_and_sec_number(sectoffset, sectnum, sslide);
-	
+
 	return name;
 #endif
 }
@@ -1460,11 +1460,11 @@ int load_object(const char *filename, FILE *outfile)
     unsigned int i, j;
     EXE_SYM *sym;
     struct NLIST *syment;
-    
+
     fd = open(filename, O_RDONLY);
-    if (fd < 0) 
+    if (fd < 0)
         error("can't open file '%s'", filename);
-		
+
     /* Read Mach header.  */
     if (read(fd, &mach_hdr, sizeof (mach_hdr)) != sizeof (mach_hdr))
         error("unable to read file header");
@@ -1473,13 +1473,13 @@ int load_object(const char *filename, FILE *outfile)
     if (!check_mach_header(mach_hdr)) {
         error("bad Mach header");
     }
-    
+
     if (!mach_check_cputype(mach_hdr.cputype))
         error("Unsupported CPU");
-        
+
     if (mach_hdr.filetype != MH_OBJECT)
         error("Unsupported Mach Object");
-    
+
     /* read segment headers */
     for(i=0, j=sizeof(mach_hdr); i<mach_hdr.ncmds ; i++)
     {
@@ -1531,7 +1531,7 @@ int load_object(const char *filename, FILE *outfile)
     /* read all section data */
     sdata = (uint8_t **)malloc(sizeof(void *) * segment->nsects);
     memset(sdata, 0, sizeof(void *) * segment->nsects);
-    
+
     /* Load the data in section data */
     for(i = 0; i < segment->nsects; i++)
         sdata[i] = load_data(fd, section_hdr[i].offset, section_hdr[i].size);
@@ -1552,14 +1552,14 @@ int load_object(const char *filename, FILE *outfile)
     if (i == -1 || !text_sec_hdr)
         error("could not find __TEXT,__text section");
     text = sdata[i];
-	    
+
     /* Make sure dysym was loaded */
     if(dysymtabcmd == NULL)
         error("could not find __DYSYMTAB segment");
-    
+
     /* read the table of content of the indirect sym */
     tocdylib = load_data( fd, dysymtabcmd->indirectsymoff, dysymtabcmd->nindirectsyms * sizeof(uint32_t) );
-    
+
     /* Make sure symtab was loaded  */
     if(symtabcmd == NULL)
         error("could not find __SYMTAB segment");
@@ -1567,15 +1567,15 @@ int load_object(const char *filename, FILE *outfile)
 
     symtab_std = load_data(fd, symtabcmd->symoff, symtabcmd->nsyms * sizeof(struct NLIST));
     strtab = load_data(fd, symtabcmd->stroff, symtabcmd->strsize);
-	
+
     symtab = malloc(sizeof(EXE_SYM) * nb_syms);
-	
+
     /* Now transform the symtab, to an extended version, with the sym size, and the C name */
     for(i = 0, sym = symtab, syment = symtab_std; i < nb_syms; i++, sym++, syment++) {
         struct NLIST *sym_follow, *sym_next = 0;
         unsigned int j;
         memset(sym, 0, sizeof(*sym));
-		
+
         if ( syment->n_type & N_STAB ) /* Debug symbols are skipped */
             continue;
 
@@ -1601,7 +1601,7 @@ int load_object(const char *filename, FILE *outfile)
         else
             sym->st_size = text_sec_hdr->size - sym->st_value;
     }
-	
+
     /* Find Reloc */
     relocs = load_data(fd, text_sec_hdr->reloff, text_sec_hdr->nreloc * sizeof(struct relocation_info));
     nb_relocs = text_sec_hdr->nreloc;
@@ -1619,7 +1619,7 @@ void get_reloc_expr(char *name, int name_size, const char *sym_name)
     char demangled_buf[256];
     size_t nd = sizeof(demangled_buf);
     int status;
-    
+
     demangled = cxx_demangle(sym_name, demangled_buf, &nd, &status);
     if (!status && demangled)
         sym_name = demangled;
@@ -1628,7 +1628,7 @@ void get_reloc_expr(char *name, int name_size, const char *sym_name)
     } else if (is_op_gen_label(sym_name, &p)) {
         snprintf(name, name_size, "gen_labels[param%s]", p);
     } else if (strstart(sym_name, ".LC", NULL)) {
-        snprintf(name, name_size, "(long)(gen_const_%s())", gen_dot_prefix(sym_name));	
+        snprintf(name, name_size, "(long)(gen_const_%s())", gen_dot_prefix(sym_name));
     } else {
 #ifdef HOST_SPARC
         if (sym_name[0] == '.')
@@ -1652,9 +1652,9 @@ int arm_emit_ldr_info(const char *name, unsigned long start_offset,
     int offset, min_offset, pc_offset, data_size;
     uint8_t data_allocated[1024];
     unsigned int data_index;
-    
+
     memset(data_allocated, 0, sizeof(data_allocated));
-    
+
     p = p_start;
     min_offset = p_end - p_start;
     while (p < p_start + min_offset) {
@@ -1665,22 +1665,22 @@ int arm_emit_ldr_info(const char *name, unsigned long start_offset,
             if (!(insn & 0x00800000))
                         offset = -offset;
             if ((offset & 3) !=0)
-                error("%s:%04x: ldr pc offset must be 32 bit aligned", 
+                error("%s:%04x: ldr pc offset must be 32 bit aligned",
                       name, start_offset + p - p_start);
             pc_offset = p - p_start + offset + 8;
-            if (pc_offset <= (p - p_start) || 
+            if (pc_offset <= (p - p_start) ||
                 pc_offset >= (p_end - p_start))
-                error("%s:%04x: ldr pc offset must point inside the function code", 
+                error("%s:%04x: ldr pc offset must point inside the function code",
                       name, start_offset + p - p_start);
             if (pc_offset < min_offset)
                 min_offset = pc_offset;
             if (outfile) {
                 /* ldr position */
-                fprintf(outfile, "    arm_ldr_ptr->ptr = ptr() + %d;\n", 
+                fprintf(outfile, "    arm_ldr_ptr->ptr = ptr() + %d;\n",
                         p - p_start);
                 /* ldr data index */
                 data_index = ((p_end - p_start) - pc_offset - 4) >> 2;
-                fprintf(outfile, "    arm_ldr_ptr->data_ptr = arm_data_ptr + %d;\n", 
+                fprintf(outfile, "    arm_ldr_ptr->data_ptr = arm_data_ptr + %d;\n",
                         data_index);
                 fprintf(outfile, "    arm_ldr_ptr++;\n");
                 if (data_index >= sizeof(data_allocated))
@@ -1732,7 +1732,7 @@ int arm_emit_ldr_info(const char *name, unsigned long start_offset,
         if (!outfile)
             printf("%s: invalid epilog\n", name);
     }
-    return p - p_start;	    
+    return p - p_start;
 }
 #endif
 
@@ -1741,7 +1741,7 @@ int arm_emit_ldr_info(const char *name, unsigned long start_offset,
 
 /* generate op code */
 void gen_code(const char *name, const char *demangled_name,
-              host_ulong offset, host_ulong size, 
+              host_ulong offset, host_ulong size,
               FILE *outfile, int gen_switch, const char *prefix)
 {
     int copy_size = 0;
@@ -1831,7 +1831,7 @@ void gen_code(const char *name, const char *demangled_name,
 #endif
         if (get32((uint32_t *)p) != 0x6bfa8001)
             error("ret expected at the end of %s", name);
-        copy_size = p - p_start;	    
+        copy_size = p - p_start;
     }
 #elif defined(HOST_IA64)
     {
@@ -1895,14 +1895,14 @@ void gen_code(const char *name, const char *demangled_name,
         } else {
             error("No save at the beginning of %s", name);
         }
-        
+
         /* Skip a preceeding nop, if present.  */
         if (p > p_start) {
             skip_insn = get32((uint32_t *)(p - 0x4));
             if (skip_insn == 0x01000000)
                 p -= 4;
         }
-        
+
         copy_size = p - p_start;
     }
 #elif defined(HOST_ARM)
@@ -1915,7 +1915,7 @@ void gen_code(const char *name, const char *demangled_name,
             error("%s: invalid prolog", name);
         p_start += 12;
         start_offset += 12;
-        copy_size = arm_emit_ldr_info(name, start_offset, NULL, p_start, p_end, 
+        copy_size = arm_emit_ldr_info(name, start_offset, NULL, p_start, p_end,
                                       relocs, nb_relocs);
     }
 #elif defined(HOST_M68K)
@@ -1926,7 +1926,7 @@ void gen_code(const char *name, const char *demangled_name,
             error("empty code for %s", name);
         // remove NOP's, probably added for alignment
         while ((get16((uint16_t *)p) == 0x4e71) &&
-               (p>p_start)) 
+               (p>p_start))
             p -= 2;
         if (get16((uint16_t *)p) != 0x4e75)
             error("rts expected at the end of %s", name);
@@ -1948,7 +1948,7 @@ void gen_code(const char *name, const char *demangled_name,
 #error unsupported CPU
 #endif
 
-    
+
 
     /* compute the number of arguments by looking at the relocations */
     for(i = 0;i < MAX_ARGS; i++)
@@ -1973,7 +1973,7 @@ void gen_code(const char *name, const char *demangled_name,
             }
         }
     }
-    
+
     nb_args = 0;
     while (nb_args < MAX_ARGS && args_present[nb_args])
         nb_args++;
@@ -2015,7 +2015,7 @@ void gen_code(const char *name, const char *demangled_name,
                 demangled = cxx_demangle(sym_name, demangled_buf, &nd, &status);
                 if (!status && demangled)
                     sym_name = demangled;
-                if (*sym_name && 
+                if (*sym_name &&
                     !is_op_param(sym_name, NULL) &&
                     !is_op_jmp(sym_name, NULL) &&
                     !strstart(sym_name, ".LC", NULL))
@@ -2037,7 +2037,7 @@ void gen_code(const char *name, const char *demangled_name,
                 if (strstart(sym_name, "__op_label", &p)) {
                     uint8_t *ptr;
                     unsigned long offset;
-                    
+
                     /* test if the variable refers to a label inside
                        the code we are generating */
 #ifdef CONFIG_FORMAT_COFF
@@ -2069,7 +2069,7 @@ void gen_code(const char *name, const char *demangled_name,
                         /* try to find a matching relocation */
                         reloc_shndx = find_reloc(sym->st_shndx);
                         if (reloc_shndx) {
-                            nb_relocs1 = shdr[reloc_shndx].sh_size / 
+                            nb_relocs1 = shdr[reloc_shndx].sh_size /
                                 shdr[reloc_shndx].sh_entsize;
                             rel = (ELF_RELOC *)sdata[reloc_shndx];
                             for(j = 0; j < nb_relocs1; j++) {
@@ -2081,7 +2081,7 @@ void gen_code(const char *name, const char *demangled_name,
                             }
                         }
                     }
-#endif                    
+#endif
 
                     if (val >= start_offset && val < start_offset + copy_size) {
                         n = strtol(p, NULL, 10);
@@ -2136,7 +2136,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 
 		slide = offset - start_offset;
 
-		if (!(offset >= start_offset && offset < start_offset + size)) 
+		if (!(offset >= start_offset && offset < start_offset + size))
 			continue;  /* not in our range */
 
 		sym_name = get_reloc_name(rel, &sslide);
@@ -2169,7 +2169,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 						slide, final_sym_name, slide);
 				}
 				else {
-					fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (%s + %d);\n", 
+					fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (%s + %d);\n",
 						slide, final_sym_name, sslide);
 				}
 				break;
@@ -2205,11 +2205,11 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			type = ELF32_R_TYPE(rel->r_info);
 			switch(type) {
 			case R_386_32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n",
 					rel->r_offset - start_offset, final_sym_name, addend);
 				break;
 			case R_386_PC32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %d) + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %d) + %d;\n",
 					rel->r_offset - start_offset, final_sym_name, rel->r_offset - start_offset, addend);
 				break;
 			default:
@@ -2232,11 +2232,11 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			type = rel->r_type;
 			switch(type) {
 			case DIR32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n",
 					rel->r_offset - start_offset, final_sym_name, addend);
 				break;
 			case DISP32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %d) + %d -4;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %d) + %d -4;\n",
 					rel->r_offset - start_offset, final_sym_name, rel->r_offset - start_offset, addend);
 				break;
 			default:
@@ -2270,13 +2270,13 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 
 		if (usesym && (symtab[isym].n_type & N_STAB))
 			continue; /* don't handle STAB (debug sym) */
-                    
-		if (!(offset >= start_offset && offset < start_offset + size)) 
+
+		if (!(offset >= start_offset && offset < start_offset + size))
 			continue;  /* not in our range */
 
 		if (length > 3)
 			error("unsupported %d-bit relocation", 8 * (1 << length));
-                    
+
 		bytecount = (1 << length);
 		bitlength = 8 * bytecount;
 		slide = offset - start_offset;
@@ -2284,15 +2284,15 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 		if (!usesym) {
 			// local reloc
 			sslide = get32((uint32_t *)(text + offset)) + rel->r_address + 4;
-			if ( literal16_sec_hdr 
-				&& sslide >= literal16_sec_hdr->addr 
+			if ( literal16_sec_hdr
+				&& sslide >= literal16_sec_hdr->addr
 				&& sslide + 16 <= literal16_sec_hdr->addr + literal16_sec_hdr->size ) {
 				sprintf(final_sym_name, "literal16_%d", ++local16);
 				print_data(outfile, final_sym_name, literal16 + sslide - literal16_sec_hdr->addr, 16);
 				fprintf(outfile, "    static uint8 *data_p_%d = NULL;\n", local16);
 				fprintf(outfile, "    if (data_p_%d == NULL)\n", local16);
 				fprintf(outfile, "        data_p_%d = copy_data(%s, %d);\n", local16, final_sym_name, 16);
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (int32_t)((long)data_p_%d - (long)(code_ptr() + %d + %d));\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (int32_t)((long)data_p_%d - (long)(code_ptr() + %d + %d));\n",
 						slide, local16, slide, bytecount);
 			} else {
 				fprintf(outfile, "/* #warning relocation not handled in %s (section %d, offset 0x%x, length 0x%x, %s, type 0x%x) */\n",
@@ -2337,7 +2337,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			case X86_64_RELOC_UNSIGNED:     // for absolute addresses
 			case X86_64_RELOC_SIGNED:		// for signed 32-bit displacement
 			case X86_64_RELOC_BRANCH:		// a CALL/JMP instruction with 32-bit displacement
-				fprintf(outfile, "    *(uint%d_t *)(code_ptr() + %d) = (int%d_t)((long)%s - (long)(code_ptr() + %d + %d)) + %d;\n", 
+				fprintf(outfile, "    *(uint%d_t *)(code_ptr() + %d) = (int%d_t)((long)%s - (long)(code_ptr() + %d + %d)) + %d;\n",
 					bitlength, slide, bitlength, final_sym_name, slide, bytecount, sslide + adjustment);
 				break;
 			default:
@@ -2346,18 +2346,18 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 		} else {
 			switch (type) {
 			case X86_64_RELOC_UNSIGNED:     // for absolute addresses
-				fprintf(outfile, "    *(uint%d_t *)(code_ptr() + %d) = (uint%d_t)%s + %d;\n", 
+				fprintf(outfile, "    *(uint%d_t *)(code_ptr() + %d) = (uint%d_t)%s + %d;\n",
 					bitlength, slide, bitlength, final_sym_name, sslide);
 				break;
 			case X86_64_RELOC_SIGNED:		// for signed 32-bit displacement
-				fprintf(outfile, "    *(uint%d_t *)(code_ptr() + %d) = (int%d_t)%s + %d;\n", 
+				fprintf(outfile, "    *(uint%d_t *)(code_ptr() + %d) = (int%d_t)%s + %d;\n",
 					bitlength, slide, bitlength, final_sym_name, sslide + adjustment);
 				break;
 			default:
 				error("unsupported x86_64 relocation (%d) in %s\n", type, sym_name);
 			}
 		}
-	}                
+	}
 #elif defined (CONFIG_FORMAT_ELF)
 	char final_sym_name[256];
 	const char *sym_name;
@@ -2396,7 +2396,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (int32_t)%s + %d;\n", slide, final_sym_name, addend);
 				break;
 			case R_X86_64_PC32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %d) + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %d) + %d;\n",
 					slide, final_sym_name, slide, addend);
 				break;
 			default:
@@ -2405,7 +2405,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 		}
 	}
 #else
-#error unsupport object format for HOST_X86_64 
+#error unsupport object format for HOST_X86_64
 #endif
 #elif defined(HOST_PPC)
 #ifdef CONFIG_FORMAT_ELF
@@ -2432,24 +2432,24 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			addend = rel->r_addend;
 			switch(type) {
 			case R_PPC_ADDR32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n",
 					slide, final_sym_name, addend);
 				break;
 			case R_PPC_ADDR16_LO:
-				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = (%s + %d);\n", 
+				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = (%s + %d);\n",
 					slide, final_sym_name, addend);
 				break;
 			case R_PPC_ADDR16_HI:
-				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = (%s + %d) >> 16;\n", 
+				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = (%s + %d) >> 16;\n",
 					slide, final_sym_name, addend);
 				break;
 			case R_PPC_ADDR16_HA:
-				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = (%s + %d + 0x8000) >> 16;\n", 
+				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = (%s + %d + 0x8000) >> 16;\n",
 					slide, final_sym_name, addend);
 				break;
 			case R_PPC_REL24:
 				/* warning: must be at 32 MB distancy */
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (*(uint32_t *)(code_ptr() + %d) & ~0x03fffffc) | ((%s - (long)(code_ptr() + %d) + %d) & 0x03fffffc);\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (*(uint32_t *)(code_ptr() + %d) & ~0x03fffffc) | ((%s - (long)(code_ptr() + %d) + %d) & 0x03fffffc);\n",
 					slide, slide, final_sym_name, slide, addend);
 				break;
 			default:
@@ -2486,15 +2486,15 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 		}
 
 		slide = offset - start_offset;
-		
-		if (!(offset >= start_offset && offset < start_offset + size)) 
+
+		if (!(offset >= start_offset && offset < start_offset + size))
 			continue;  /* not in our range */
 
 		sym_name = get_reloc_name(rel, &sslide);
-	
+
 		if(usesym && (symtab[isym].n_type & N_STAB))
 			continue; /* don't handle STAB (debug sym) */
-					
+
 		if (sym_name && is_op_jmp(sym_name, &p)) {
 			int n;
 			n = strtol(p, NULL, 10);
@@ -2502,7 +2502,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 				n, slide);
 			continue; /* Nothing more to do */
 		}
-	
+
 		if(!sym_name)
 		{
 			fprintf(outfile, "/* #warning relocation not handled in %s (value 0x%x, %s, offset 0x%x, length 0x%x, %s, type 0x%x) */\n",
@@ -2517,7 +2517,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			if (!is_op_param(sym_name, &p)) {
 				fprintf(outfile, "{\n");
 				fprintf(outfile, "    uint32_t imm = *(uint32_t *)(code_ptr() + %d) & 0x3fffffc;\n", slide);
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (*(uint32_t *)(code_ptr() + %d) & ~0x03fffffc) | ((imm + ((long)%s - (long)code_ptr()) + %d) & 0x03fffffc);\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = (*(uint32_t *)(code_ptr() + %d) & ~0x03fffffc) | ((imm + ((long)%s - (long)code_ptr()) + %d) & 0x03fffffc);\n",
 					slide, slide, final_sym_name, sslide );
 				fprintf(outfile, "}\n");
 			} else {
@@ -2526,15 +2526,15 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			}
 			break;
 		case PPC_RELOC_HI16:
-			fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d + 2) = (%s + %d) >> 16;\n", 
+			fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d + 2) = (%s + %d) >> 16;\n",
 				slide, final_sym_name, sslide);
 			break;
 		case PPC_RELOC_LO16:
-			fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d + 2) = (%s + %d);\n", 
+			fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d + 2) = (%s + %d);\n",
 				slide, final_sym_name, sslide);
 			break;
 		case PPC_RELOC_HA16:
-			fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d + 2) = (%s + %d + 0x8000) >> 16;\n", 
+			fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d + 2) = (%s + %d + 0x8000) >> 16;\n",
 				slide, final_sym_name, sslide);
 			break;
 		default:
@@ -2560,15 +2560,15 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			addend = rel->r_addend;
 			switch(type) {
 			case R_390_32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n",
 					slide, final_sym_name, addend);
 				break;
 			case R_390_16:
-				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint16_t *)(code_ptr() + %d) = %s + %d;\n",
 					slide, final_sym_name, addend);
 				break;
 			case R_390_8:
-				fprintf(outfile, "    *(uint8_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint8_t *)(code_ptr() + %d) = %s + %d;\n",
 					slide, final_sym_name, addend);
 				break;
 			default:
@@ -2674,7 +2674,7 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			addend = rel->r_addend;
 			switch(type) {
 			case R_SPARC_32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n",
 					rel->r_offset - start_offset, final_sym_name, addend);
 				break;
 			case R_SPARC_HI22:
@@ -2789,11 +2789,11 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			addend = get32((uint32_t *)(text + rel->r_offset));
 			switch(type) {
 			case R_ARM_ABS32:
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %d;\n",
 					rel->r_offset - start_offset, final_sym_name, addend);
 				break;
 			case R_ARM_PC24:
-				fprintf(outfile, "    arm_reloc_pc24((uint32_t *)(code_ptr() + %d), 0x%x, %s);\n", 
+				fprintf(outfile, "    arm_reloc_pc24((uint32_t *)(code_ptr() + %d), 0x%x, %s);\n",
 					rel->r_offset - start_offset, addend, final_sym_name);
 				break;
 			default:
@@ -2818,12 +2818,12 @@ void patch_relocations(FILE *outfile, const char *name, host_ulong size, host_ul
 			switch(type) {
 			case R_68K_32:
 				fprintf(outfile, "    /* R_68K_32 RELOC, offset %x */\n", rel->r_offset) ;
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %#x;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s + %#x;\n",
 					rel->r_offset - start_offset, final_sym_name, addend );
 				break;
 			case R_68K_PC32:
 				fprintf(outfile, "    /* R_68K_PC32 RELOC, offset %x */\n", rel->r_offset);
-				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %#x) + %#x;\n", 
+				fprintf(outfile, "    *(uint32_t *)(code_ptr() + %d) = %s - (long)(code_ptr() + %#x) + %#x;\n",
 					rel->r_offset - start_offset, final_sym_name, rel->r_offset - start_offset, /*sym->st_value+*/ addend);
 				break;
 			default:
