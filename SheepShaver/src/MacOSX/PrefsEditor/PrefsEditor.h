@@ -61,8 +61,9 @@
 }
 - (id) init;
 - (IBAction) addDisk:(id)sender;
-- (IBAction) removeDisk:(id)sender;
 - (IBAction) createDisk:(id)sender;
+- (IBAction) removeDisk:(id)sender;
+- (IBAction) moveDiskToTop:(id)sender;
 - (IBAction) useRawKeyCodesClicked:(id)sender;
 - (IBAction) browseForROMFileClicked:(id)sender;
 - (void) windowWillClose: (NSNotification *) aNotification;

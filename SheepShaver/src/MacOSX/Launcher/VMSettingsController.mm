@@ -271,7 +271,7 @@ static NSString *makeRelativeIfNecessary(NSString *path)
 
     [d setIsCDROM:([isCDROMcheckbox state] == NSOnState)];
 
-    [diskArray addObject: d]; 
+    [diskArray addObject: d];
     [disks reloadData];
   }
 }

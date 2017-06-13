@@ -51,7 +51,7 @@
 
 // Global variables
 uint8		display_type = DISPLAY_WINDOW,	// These are used by PrefsEditor
-			frame_skip;	
+			frame_skip;
 uint16		init_width  = MIN_WIDTH,		// as well as this code
 			init_height = MIN_HEIGHT,
 			init_depth  = 32;
@@ -1003,7 +1003,7 @@ OSX_monitor::switch_to_current_mode(void)
 	const char *failure = NULL;
 
 	D(bug("switch_to_current_mode(): width=%d  height=%d  depth=%d  bytes_per_row=%d\n", mode.x, mode.y, bits_from_depth(mode.depth), mode.bytes_per_row));
-	
+
 	if ( display_type == DISPLAY_SCREEN && originalMode )
 	{
 		D(NSLog(@"About to call CGDisplayBestModeForParameters()"));
@@ -1043,7 +1043,7 @@ OSX_monitor::switch_to_current_mode(void)
 		CGColorSpaceRef		oldColourSpace	= colourSpace;
 		CGDataProviderRef	oldProvider		= provider;
 		void				*oldBuffer		= the_buffer;
- 
+
 		if ( video_open(mode) )
 		{
 			CGImageRelease(oldImageRef);
@@ -1065,7 +1065,7 @@ OSX_monitor::switch_to_current_mode(void)
 //		if ( CGDisplayMoveCursorToPoint(theDisplay, CGPointMake(15,15))
 //														== CGDisplayNoErr )
 //		{
-			// 
+			//
 			[output fullscreenMouseMove];
 //		}
 //		else

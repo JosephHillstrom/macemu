@@ -337,7 +337,7 @@ bool InitEmulator (void)
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 	RAMSize = RAMSize & -getpagesize();					// Round down to page boundary
 #endif
-	
+
 	// Initialize VM system
 	vm_init();
 
@@ -353,20 +353,20 @@ bool InitEmulator (void)
 #else
 	const bool can_map_all_memory = false;
 #endif
-	
+
 	// Try to allocate all memory from 0x0000, if it is not known to crash
 	if (can_map_all_memory && (vm_acquire_mac_fixed(0, RAMSize + 0x100000) == 0)) {
 		D(bug("Could allocate RAM and ROM from 0x0000\n"));
 		memory_mapped_from_zero = true;
 	}
-	
+
 #ifndef PAGEZERO_HACK
 	// Otherwise, just create the Low Memory area (0x0000..0x2000)
 	else if (vm_acquire_mac_fixed(0, 0x2000) == 0) {
 		D(bug("Could allocate the Low Memory globals\n"));
 		lm_area_mapped = true;
 	}
-	
+
 	// Exit on failure
 	else {
 		sprintf(str, GetString(STR_LOW_MEM_MMAP_ERR), strerror(errno));
@@ -388,7 +388,7 @@ bool InitEmulator (void)
 #endif
 	{
 		uint8 *ram_rom_area = (uint8 *)vm_acquire_mac(RAMSize + 0x100000);
-		if (ram_rom_area == VM_MAP_FAILED) { 
+		if (ram_rom_area == VM_MAP_FAILED) {
 			ErrorAlert(STR_NO_MEM_ERR);
 			QuitEmulator();
 		}
@@ -418,7 +418,7 @@ bool InitEmulator (void)
 #endif
 	D(bug("Mac RAM starts at %p (%08x)\n", RAMBaseHost, RAMBaseMac));
 	D(bug("Mac ROM starts at %p (%08x)\n", ROMBaseHost, ROMBaseMac));
-	
+
 	// Get rom file path from preferences
 	const char *rom_path = PrefsFindString("rom");
 	if ( ! rom_path )
@@ -503,7 +503,7 @@ void QuitEmuNoExit()
 	if (lm_area_mapped)
 		vm_release(0, 0x2000);
 #endif
-	
+
 	// Exit VM wrappers
 	vm_exit();
 

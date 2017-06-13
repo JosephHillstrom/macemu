@@ -1,6 +1,6 @@
 /*
  *	Emulator.mm - Class whose actions are attached to GUI widgets in a window,
- *				  used to control a single Basilisk II emulated Macintosh. 
+ *				  used to control a single Basilisk II emulated Macintosh.
  *
  *	$Id$
  *
@@ -93,7 +93,7 @@
 
 	// Try to speed up everything
 	//[win setHasShadow: NO];		// This causes view & window to now be drawn correctly
-	[win useOptimizedDrawing: YES];			
+	[win useOptimizedDrawing: YES];
 
 	[win makeKeyAndOrderFront:self];
 
@@ -127,7 +127,7 @@
 		[runOrPause setState: NSOnState];	// Running. Change button label to 'Pause'
 	else
 		[runOrPause setState: NSOffState];	// Paused.  Change button label to 'Run'
-	
+
 	[win setDocumentEdited: uaeCreated];	// Set the little dimple in the close button
 }
 
@@ -286,7 +286,7 @@
 - (IBAction) SpeedChange: (NSSlider *)sender
 {
 	float frequency = [sender floatValue];
-	
+
 	[redraw suspend];
 
 	if ( frequency == 0.0 )

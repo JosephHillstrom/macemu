@@ -178,7 +178,7 @@ Copy path!
 }
 
 - (BOOL) tableView: (NSTableView *) table acceptDrop: (id <NSDraggingInfo>) info row: (NSInteger) row dropOperation: (NSTableViewDropOperation) op
-{	
+{
 	if ([[[info draggingPasteboard] availableTypeFromArray:[NSArray arrayWithObject:VM_DRAG_TYPE]] isEqualToString:VM_DRAG_TYPE]) {
 		[vmList deselectAll:nil];
 		int index = [vmArray indexOfObject:vmBeingDragged];
