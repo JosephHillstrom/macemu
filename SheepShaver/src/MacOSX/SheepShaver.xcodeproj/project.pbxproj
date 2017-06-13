@@ -129,6 +129,10 @@
 		08CD42DC14B7B85B009CA2A2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CD42DB14B7B85B009CA2A2 /* Cocoa.framework */; };
 		08CD42E814B7B8AA009CA2A2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CD42E714B7B8AA009CA2A2 /* Carbon.framework */; };
 		08D93A16159FE174003B04EC /* clip_macosx64.mm in Sources */ = {isa = PBXBuildFile; fileRef = 08D93A15159FE174003B04EC /* clip_macosx64.mm */; };
+		8D1A51B21CE49FA10036B102 /* basic-dyngen-ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A51B11CE49FA10036B102 /* basic-dyngen-ops.cpp */; };
+		8D1A51F41CE4A5950036B102 /* ppc-dyngen-ops.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A51F31CE4A5950036B102 /* ppc-dyngen-ops.cpp */; };
+		8D1A51F61CE4A59E0036B102 /* ppc-dyngen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8D1A51F51CE4A59E0036B102 /* ppc-dyngen.cpp */; };
+		8D1A51FC1CE4A6450036B102 /* vm.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 8D1A51FB1CE4A6450036B102 /* vm.hpp */; };
 		A7B1921418C35D4700791D8D /* DiskType.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B1921318C35D4700791D8D /* DiskType.m */; };
 /* End PBXBuildFile section */
 
@@ -407,7 +411,6 @@
 		0856CF6614A99EF0000B1711 /* strlcpy.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = strlcpy.c; sourceTree = "<group>"; };
 		0856CF6714A99EF0000B1711 /* strlcpy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = strlcpy.h; sourceTree = "<group>"; };
 		0856CF6814A99EF0000B1711 /* sys_unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = sys_unix.cpp; sourceTree = "<group>"; };
-		0856CF6914A99EF0000B1711 /* sysdeps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sysdeps.h; sourceTree = "<group>"; };
 		0856CF6A14A99EF0000B1711 /* timer_unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = timer_unix.cpp; sourceTree = "<group>"; };
 		0856CF6C14A99EF0000B1711 /* user_strings_unix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = user_strings_unix.cpp; sourceTree = "<group>"; };
 		0856CF6D14A99EF0000B1711 /* user_strings_unix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = user_strings_unix.h; sourceTree = "<group>"; };
@@ -424,7 +427,6 @@
 		0873A53F14AAF18E004F12B7 /* cxxdemangle.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cxxdemangle.cpp; sourceTree = "<group>"; };
 		0873A54014AAF18E004F12B7 /* cxxdemangle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cxxdemangle.h; sourceTree = "<group>"; };
 		0873A54114AAF18E004F12B7 /* dyngen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dyngen.c; sourceTree = "<group>"; };
-		0873A58E14AAF539004F12B7 /* basic-dyngen-ops.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = "basic-dyngen-ops.hpp"; sourceTree = "<group>"; };
 		0873A5C514AB8038004F12B7 /* libbasic-dyngen-ops.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libbasic-dyngen-ops.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0873A5CC14AB806D004F12B7 /* libppc-dyngen-ops.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libppc-dyngen-ops.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0873A5D514AB80CA004F12B7 /* basic-dyngen-ops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "basic-dyngen-ops.cpp"; sourceTree = "<group>"; };
@@ -450,6 +452,11 @@
 		08CD42DB14B7B85B009CA2A2 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		08CD42E714B7B8AA009CA2A2 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		08D93A15159FE174003B04EC /* clip_macosx64.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = clip_macosx64.mm; sourceTree = "<group>"; };
+		8D1A51AD1CE49E650036B102 /* sysdeps.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sysdeps.h; path = ../../../BasiliskII/src/Unix/sysdeps.h; sourceTree = SOURCE_ROOT; };
+		8D1A51B11CE49FA10036B102 /* basic-dyngen-ops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "basic-dyngen-ops.cpp"; path = "../kpx_cpu/src/cpu/jit/basic-dyngen-ops.cpp"; sourceTree = SOURCE_ROOT; };
+		8D1A51F31CE4A5950036B102 /* ppc-dyngen-ops.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "ppc-dyngen-ops.cpp"; path = "src/cpu/ppc/ppc-dyngen-ops.cpp"; sourceTree = "<group>"; };
+		8D1A51F51CE4A59E0036B102 /* ppc-dyngen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = "ppc-dyngen.cpp"; path = "src/cpu/ppc/ppc-dyngen.cpp"; sourceTree = "<group>"; };
+		8D1A51FB1CE4A6450036B102 /* vm.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = vm.hpp; path = ../kpx_cpu/src/cpu/vm.hpp; sourceTree = SOURCE_ROOT; };
 		A7B1921218C35D4700791D8D /* DiskType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskType.h; sourceTree = "<group>"; };
 		A7B1921318C35D4700791D8D /* DiskType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiskType.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -655,6 +662,8 @@
 			children = (
 				08163337158C121000C449F9 /* dis-asm.h */,
 				08163338158C121000C449F9 /* ppc-dis.c */,
+				8D1A51F51CE4A59E0036B102 /* ppc-dyngen.cpp */,
+				8D1A51F31CE4A5950036B102 /* ppc-dyngen-ops.cpp */,
 				0856CDB214A99EEF000B1711 /* include */,
 				0856CDBB14A99EEF000B1711 /* sheepshaver_glue.cpp */,
 				0856CDBC14A99EEF000B1711 /* src */,
@@ -666,6 +675,7 @@
 		0856CDB214A99EEF000B1711 /* include */ = {
 			isa = PBXGroup;
 			children = (
+				8D1A51FB1CE4A6450036B102 /* vm.hpp */,
 				0856CDB314A99EEF000B1711 /* a.out-defs.h */,
 				0856CDB414A99EEF000B1711 /* basic-blockinfo.hpp */,
 				0856CDB514A99EEF000B1711 /* basic-cpu.hpp */,
@@ -902,7 +912,7 @@
 		0856CEC314A99EF0000B1711 /* Unix */ = {
 			isa = PBXGroup;
 			children = (
-				0873A58E14AAF539004F12B7 /* basic-dyngen-ops.hpp */,
+				8D1A51B11CE49FA10036B102 /* basic-dyngen-ops.cpp */,
 				082AC25614AA59DA00071F5E /* Darwin */,
 				0856CEC414A99EF0000B1711 /* about_window_unix.cpp */,
 				0856CECF14A99EF0000B1711 /* bincue_unix.cpp */,
@@ -924,7 +934,7 @@
 				0856CF6614A99EF0000B1711 /* strlcpy.c */,
 				0856CF6714A99EF0000B1711 /* strlcpy.h */,
 				0856CF6814A99EF0000B1711 /* sys_unix.cpp */,
-				0856CF6914A99EF0000B1711 /* sysdeps.h */,
+				8D1A51AD1CE49E650036B102 /* sysdeps.h */,
 				0856CF6A14A99EF0000B1711 /* timer_unix.cpp */,
 				083E372016EFE87200CCCA59 /* tinyxml2.cpp */,
 				083E372116EFE87200CCCA59 /* tinyxml2.h */,
@@ -1010,6 +1020,7 @@
 				0873A76B14ABD151004F12B7 /* config.h in Headers */,
 				0879BD8715A891EC00DC277D /* config-macosx-ppc_32.h in Headers */,
 				0879BD8815A891EC00DC277D /* config-macosx-x86_32.h in Headers */,
+				8D1A51FC1CE4A6450036B102 /* vm.hpp in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1214,7 +1225,6 @@
 			isa = PBXProject;
 			buildConfigurationList = 0856CCB114A99DE0000B1711 /* Build configuration list for PBXProject "SheepShaver" */;
 			compatibilityVersion = "Xcode 3.0";
-			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				English,
@@ -1485,6 +1495,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0873A5D614AB80CA004F12B7 /* basic-dyngen-ops.cpp in Sources */,
+				8D1A51B21CE49FA10036B102 /* basic-dyngen-ops.cpp in Sources */,
+				8D1A51F41CE4A5950036B102 /* ppc-dyngen-ops.cpp in Sources */,
+				8D1A51F61CE4A59E0036B102 /* ppc-dyngen.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1579,10 +1592,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1594,6 +1604,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_VERSION = 4.0;
 				INSTALL_PATH = /usr/local/bin;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
@@ -1606,10 +1617,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -1620,6 +1628,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_VERSION = 4.0;
 				INSTALL_PATH = /usr/local/bin;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
@@ -1766,6 +1775,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				VALID_ARCHS = "ppc ppc64 ppc7400 ppc970";
 			};
 			name = Debug;
 		};
@@ -1773,6 +1784,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
+				VALID_ARCHS = "ppc ppc64 ppc7400 ppc970";
 			};
 			name = Release;
 		};
@@ -1780,11 +1793,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks;
 				GCC_CW_ASM_SYNTAX = NO;
@@ -1826,6 +1835,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
@@ -1853,7 +1863,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = SheepShaver;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				WARNING_LDFLAGS = "";
 			};
 			name = Debug;
@@ -1862,11 +1872,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					ppc,
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
@@ -1915,6 +1921,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				"MACOSX_DEPLOYMENT_TARGET[arch=x86_64]" = 10.5;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
@@ -1942,7 +1949,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
 				PRODUCT_NAME = SheepShaver;
 				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
-				"SDKROOT[arch=x86_64]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				"SDKROOT[arch=ppc]" = "$(DEVELOPER_SDK_DIR)/MacOSX10.4u.sdk";
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -1951,10 +1958,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -1965,6 +1969,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_VERSION = 4.0;
 				INSTALL_PATH = /usr/local/bin;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "-mdynamic-no-pic";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
@@ -1978,10 +1983,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -1991,6 +1993,7 @@
 				GCC_PREFIX_HEADER = "";
 				GCC_VERSION = 4.0;
 				INSTALL_PATH = /usr/local/bin;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = NO;
@@ -2004,10 +2007,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = NO;
 				GCC_CW_ASM_SYNTAX = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -2030,6 +2030,7 @@
 					../kpx_cpu/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-mdynamic-no-pic",
 					"-fomit-frame-pointer",
@@ -2058,10 +2059,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = (
-					i386,
-					x86_64,
-				);
+				ARCHS = "$(NATIVE_ARCH)";
 				COPY_PHASE_STRIP = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -2075,6 +2073,7 @@
 					../kpx_cpu/include,
 				);
 				INSTALL_PATH = /usr/local/lib;
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = (
 					"-mdynamic-no-pic",
 					"-fomit-frame-pointer",
