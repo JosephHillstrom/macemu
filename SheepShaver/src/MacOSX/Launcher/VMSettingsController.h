@@ -31,7 +31,7 @@
     IBOutlet NSTextField *diskSaveSizeField;
     NSMutableArray *diskArray;
     IBOutlet NSView *isCDROM;
-    IBOutlet NSButton *isCDROMcheckbox;	
+    IBOutlet NSButton *isCDROMcheckbox;
     // Setup
     IBOutlet NSTableView *disks;
     IBOutlet NSComboBox *bootFrom;

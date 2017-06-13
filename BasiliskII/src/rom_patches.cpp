@@ -182,75 +182,6 @@ static void list_rom_resources(void)
 	printf("\n");
 }
 
-// Mapping of Model IDs to Model names
-struct mac_desc {
-	const char *name;
-	int32 id;
-};
-
-static mac_desc MacDesc[] = {
-	{"Classic"				, 1},
-	{"Mac XL"				, 2},
-	{"Mac 512KE"			, 3},
-	{"Mac Plus"				, 4},
-	{"Mac SE"				, 5},
-	{"Mac II"				, 6},
-	{"Mac IIx"				, 7},
-	{"Mac IIcx"				, 8},
-	{"Mac SE/030"			, 9},
-	{"Mac Portable"			, 10},
-	{"Mac IIci"				, 11},
-	{"Mac IIfx"				, 13},
-	{"Mac Classic"			, 17},
-	{"Mac IIsi"				, 18},
-	{"Mac LC"				, 19},
-	{"Quadra 900"			, 20},
-	{"PowerBook 170"		, 21},
-	{"Quadra 700"			, 22},
-	{"Classic II"			, 23},
-	{"PowerBook 100"		, 24},
-	{"PowerBook 140"		, 25},
-	{"Quadra 950"			, 26},
-	{"Mac LCIII/Performa 450", 27},
-	{"PowerBook Duo 210"	, 29},
-	{"Centris 650"			, 30},
-	{"PowerBook Duo 230"	, 32},
-	{"PowerBook 180"		, 33},
-	{"PowerBook 160"		, 34},
-	{"Quadra 800"			, 35},
-	{"Quadra 650"			, 36},
-	{"Mac LCII"				, 37},
-	{"PowerBook Duo 250"	, 38},
-	{"Mac IIvi"				, 44},
-	{"Mac IIvm/Performa 600", 45},
-	{"Mac IIvx"				, 48},
-	{"Color Classic/Performa 250", 49},
-	{"PowerBook 165c"		, 50},
-	{"Centris 610"			, 52},
-	{"Quadra 610"			, 53},
-	{"PowerBook 145"		, 54},
-	{"Mac LC520"			, 56},
-	{"Quadra/Centris 660AV"	, 60},
-	{"Performa 46x"			, 62},
-	{"PowerBook 180c"		, 71},
-	{"PowerBook 520/520c/540/540c", 72},
-	{"PowerBook Duo 270c"	, 77},
-	{"Quadra 840AV"			, 78},
-	{"Performa 550"			, 80},
-	{"PowerBook 165"		, 84},
-	{"PowerBook 190"		, 85},
-	{"Mac TV"				, 88},
-	{"Mac LC475/Performa 47x", 89},
-	{"Mac LC575"			, 92},
-	{"Quadra 605"			, 94},
-	{"Quadra 630"			, 98},
-	{"Mac LC580"			, 99},
-	{"PowerBook Duo 280"	, 102},
-	{"PowerBook Duo 280c"	, 103},
-	{"PowerBook 150"		, 115},
-	{"unknown", -1}
-};
-
 static void print_universal_info(uint32 info)
 {
 	uint8 id = ReadMacInt8(info + 18);
@@ -259,9 +190,9 @@ static void print_universal_info(uint32 info)
 
 	// Find model name
 	const char *name = "unknown";
-	for (int i=0; MacDesc[i].id >= 0; i++)
-		if (MacDesc[i].id == id + 6) {
-			name = MacDesc[i].name;
+	for ( int i = 0; macDesc[i].id >= 0; i++ )
+		if ( macDesc[i].id == id + 6 ) {
+			name = macDesc[ i ].name;
 			break;
 		}
 

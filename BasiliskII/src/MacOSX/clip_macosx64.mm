@@ -948,7 +948,7 @@ static NSData *ConvertImageToPICT(NSImage *image) {
 	// create a new bitmap image rep in our desired format, following the advice here:
 	// https://developer.apple.com/library/mac/#releasenotes/Cocoa/AppKitOlderNotes.html#X10_6Notes
 
-	NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+	NSBitmapImageRep *bitmap = [[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL];
 																	   pixelsWide:width
 																	   pixelsHigh:height
 																	bitsPerSample:8

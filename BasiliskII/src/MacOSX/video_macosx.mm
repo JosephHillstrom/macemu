@@ -44,22 +44,34 @@
 #import <AppKit/NSBitmapImageRep.h>
 #endif
 
-#import <Foundation/NSString.h>				// Needed for NSLog(@"")
-#import "misc_macosx.h"						// WarningSheet() prototype
+#import <Foundation/NSString.h>		// for NSLog(@"")
+#import "misc_macosx.h"			// WarningSheet() prototype
 
 
 
 // Global variables
 uint8		display_type = DISPLAY_WINDOW,	// These are used by PrefsEditor
-			frame_skip;
-uint16		init_width  = MIN_WIDTH,		// as well as this code
-			init_height = MIN_HEIGHT,
-			init_depth  = 32;
+		frame_skip;
+uint16		init_width  = MIN_WIDTH,	// as well as this code
+		init_height = MIN_HEIGHT,
+		init_depth  = 32;
 
 		EmulatorView	*output = nil;		// Set by [EmulatorView init]
-		NSWindow		*the_win = nil;		// Set by [Emulator awakeFromNib]
+		NSWindow	*the_win = nil;		// Set by [Emulator awakeFromNib]
 
-static	BOOL			singleDisplay = YES;
+static	BOOL  singleDisplay  = YES;
+
+video_mode theVideoMode;
+
+video_mode get_current_video_mode()
+{
+	return theVideoMode;
+}
+
+void set_current_video_mode(video_mode videoMode)
+{
+	theVideoMode = videoMode;
+}
 
 /*
  *  Utility functions
@@ -81,7 +93,7 @@ colours_from_depth(const video_depth depth)
 {
 	switch ( depth )
 	{
-		case VDEPTH_1BIT : return "Monochrome";
+		case VDEPTH_1BIT : return "Black & White";
 		case VDEPTH_2BIT : return "4 colours";
 		case VDEPTH_4BIT : return "16 colours";
 		case VDEPTH_8BIT : return "256 colours";
@@ -89,7 +101,7 @@ colours_from_depth(const video_depth depth)
 		case VDEPTH_32BIT: return "Millions of colours";
 	}
 
-	return "illegal colour depth";
+	return "unknown colour depth";
 }
 
 static const char *
@@ -161,7 +173,7 @@ add_mode(const uint16 width, const uint16 height,
 	mode.user_data = user_data;
 	mode.depth = depth;
 
-	D(bug("Added video mode: w=%d  h=%d  d=%d(%d bits)\n",
+	D(NSLog( @"Added video mode: w=%d  h=%d  d=%d(%d bits)\n",
 				width, height, depth, bits_from_depth(depth) ));
 
 	VideoModes.push_back(mode);
@@ -237,8 +249,7 @@ static bool add_CGDirectDisplay_modes()
 	CGDirectDisplayID	displays[kMaxDisplays];
 	CGDisplayErr		err;
 	CGDisplayCount		n;
-	int32				oldRes = 0,
-						res_id = 0x80;
+	int32			oldRes = 0, res_id = 0x80;
 
 
 	err = CGGetActiveDisplayList(kMaxDisplays, displays, &n);
@@ -251,7 +262,7 @@ static bool add_CGDirectDisplay_modes()
 	for ( CGDisplayCount dc = 0; dc < n; ++dc )
 	{
 		CGDirectDisplayID	d = displays[dc];
-		CFArrayRef			m = CGDisplayAvailableModes(d);
+		CFArrayRef		m = CGDisplayAvailableModes(d);
 
 		if ( ! m )					// Store the current display mode
 			add_mode(CGDisplayPixelsWide(d),
@@ -265,18 +276,20 @@ static bool add_CGDirectDisplay_modes()
 
 			for ( CFIndex mc = 0; mc < nModes; ++mc )
 			{
-				CFDictionaryRef modeSpec = (CFDictionaryRef)
-											CFArrayGetValueAtIndex(m, mc);
+				CFDictionaryRef modeSpec = (CFDictionaryRef)CFArrayGetValueAtIndex(m, mc);
 
 				int32	bpp    = getCFint32(modeSpec, kCGDisplayBitsPerPixel);
 				int32	height = getCFint32(modeSpec, kCGDisplayHeight);
 				int32	width  = getCFint32(modeSpec, kCGDisplayWidth);
-#ifdef MAC_OS_X_VERSION_10_2
+//#ifdef MAC_OS_X_VERSION_10_2
 				int32	bytes  = getCFint32(modeSpec, kCGDisplayBytesPerRow);
-#else
-				int32	bytes  = 0;
-#endif
+//#else
+//				int32	bytes  = 0;
+//#endif
 				video_depth	depth = DepthModeForPixelDepth(bpp);
+
+				NSLog( @"Display %d: width %d x height %d, bits per pixel %d, bytes per row %d",
+					dc, width, height, bpp, bytes );
 
 				if ( ! bpp || ! height || ! width )
 				{
@@ -336,11 +349,11 @@ static void mask_buffer (void *buffer, size_t width, size_t size)
 
 
 	// Round upper-left corner
-				   *bufl = 0, *bufc+4 = 0;					// XXXXX
-	bufc += width, *bufc++ = 0, *bufc++ = 0, *bufc++ = 0;	// XXX
-	bufc += width, *bufc++ = 0, *bufc = 0;					// XX
-	bufc += width, *bufc = 0;								// X
-	bufc += width, *bufc = 0;								// X
+				   *bufl = 0, *bufc+4 = 0;
+	bufc += width, *bufc++ = 0, *bufc++ = 0, *bufc++ = 0;
+	bufc += width, *bufc++ = 0, *bufc = 0;
+	bufc += width, *bufc = 0;
+	bufc += width, *bufc = 0;
 
 
 	NSLog(@"Masked buffer");
@@ -393,8 +406,8 @@ class OSX_monitor : public monitor_desc
 
 
 OSX_monitor :: OSX_monitor (const	vector<video_mode>	&available_modes,
-									video_depth			default_depth,
-									uint32				default_id)
+					video_depth		default_depth,
+					uint32			default_id)
 			: monitor_desc (available_modes, default_depth, default_id)
 {
 #ifdef CGIMAGEREF
@@ -447,8 +460,8 @@ resizeWinBy(const short deltaX, const short deltaY)
 {
 	NSRect	rect = [the_win frame];
 
-	D(bug("resizeWinBy(%d,%d) - ", deltaX, deltaY));
-	D(bug("old x=%g, y=%g", rect.size.width, rect.size.height));
+	NSLog( @"resizeWinBy(%d,%d) - ", deltaX, deltaY );
+	NSLog( @"old x=%g, y=%g", rect.size.width, rect.size.height );
 
 	rect.size.width  += deltaX;
 	rect.size.height += deltaY;
@@ -538,8 +551,7 @@ OSX_monitor::init_window(const video_mode &mode)
 		return false;
 	}
 
-	provider = CGDataProviderCreateWithData(NULL, the_buffer,
-											the_buffer_size, NULL);
+	provider = CGDataProviderCreateWithData(NULL, the_buffer, the_buffer_size, NULL);
 	if ( ! provider )
 	{
 		ErrorAlert("Could not create CGDataProvider from buffer data");
@@ -554,13 +566,15 @@ OSX_monitor::init_window(const video_mode &mode)
   #endif
 							 provider,
 							 NULL, 	// colourMap translation table
-							 NO,	// shouldInterpolate colours?
+							 NO,	// interpolate colours?
 							 kCGRenderingIntentDefault);
 	if ( ! imageRef )
 	{
 		ErrorAlert("Could not create CGImage from CGDataProvider");
 		return false;
 	}
+
+	theVideoMode = mode;
 
 	[output readyToDraw: imageRef
 				 bitmap: offsetBuffer
@@ -596,6 +610,14 @@ OSX_monitor::init_window(const video_mode &mode)
 		samplesPer = 1;
 #endif
 
+#ifdef CGIMAGEREF
+
+	[output readyToDraw: [output cgImgRep]
+			bitmap: [output bitmap]
+			 imageWidth: mode.x
+			imageHeight: mode.y];
+
+#endif
 
 #ifdef NSBITMAP
 	bitmap = [NSBitmapImageRep alloc];
@@ -657,9 +679,7 @@ OSX_monitor::init_screen(video_mode &mode)
 	}
 
 	D(NSLog(@"About to call CGDisplayBestModeForParameters()"));
-	newMode = CGDisplayBestModeForParameters(theDisplay,
-											 bits_from_depth(mode.depth),
-													mode.x, mode.y, NULL);
+	newMode = CGDisplayBestModeForParameters(theDisplay, bits_from_depth(mode.depth), mode.x, mode.y, NULL);
 	if ( ! newMode )
 	{
 		ErrorSheet(@"Could not find a matching screen mode", the_win);
@@ -727,7 +747,7 @@ OSX_monitor::init_screen(video_mode &mode)
 bool
 OSX_monitor::init_opengl(const video_mode &mode)
 {
-	ErrorAlert("Sorry. OpenGL mode is not implemented yet");
+	ErrorAlert("Sorry. OpenGL support is not implemented yet");
 	return false;
 }
 
@@ -740,8 +760,20 @@ monitor_init(const video_mode &init_mode)
 	OSX_monitor	*monitor;
 	BOOL		success;
 
-	monitor = new OSX_monitor(VideoModes, init_mode.depth,
-										  init_mode.resolution_id);
+#ifdef NSBITMAP
+	NSLog( @"use method NSBitmap" );
+#endif
+
+#ifdef CGIMAGEREF
+	NSLog( @"use method CGImageRef" );
+#endif
+
+#ifdef CGDRAWBITMAP
+	NSLog( @"use method CGDrawBitmap" );
+#endif
+
+	NSLog( @"monitor_init: create new OSX_monitor" );
+	monitor = new OSX_monitor(VideoModes, init_mode.depth, init_mode.resolution_id);
 	success = monitor->video_open(init_mode);
 
 	if ( success )
@@ -827,10 +859,11 @@ bool VideoInit(bool classic)
 	}
 
 	char str[150];
-	sprintf(str, "Cannot open selected video mode\r(%hd x %hd, %s).\r%s",
+	sprintf(str, "Cannot open selected video mode (%hd x %hd, %s). %s",
 			init_width, init_height,
 			colours_from_depth(init_depth), "Using lowest resolution");
-	WarningAlert(str);
+	//WarningAlert(str);
+	NSLog( [ NSString stringWithUTF8String:str ] );
 
 	return monitor_init(VideoModes[0]);
 }

@@ -374,7 +374,7 @@ void DarwinAddSerialPrefs(void)
 }
 
 
-#ifdef MAC_OS_X_VERSION_10_2
+//#ifdef MAC_OS_X_VERSION_10_2
 /*
  *  Read CD-ROM TOC (binary MSF format, 804 bytes max.)
  */
@@ -437,4 +437,4 @@ bool DarwinCDReadTOC(char *name, uint8 *toc)
 	free(devname);
 	return true;
 }
-#endif
+//#endif

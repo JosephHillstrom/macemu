@@ -25,7 +25,7 @@ struct pthreadArgs		// This duplicates most of the stuff in the NNThread object
 	id					*object;
 	SEL					*sel;
 
-	NSAutoreleasePool	*pool;	
+	NSAutoreleasePool	*pool;
 	BOOL				allocPool,
 						*completed;
 };

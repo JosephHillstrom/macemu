@@ -1,5 +1,5 @@
 /*
- *	Controller.h - Simple application window management. 
+ *	Controller.h - Simple application window management.
  *
  *	$Id$
  *

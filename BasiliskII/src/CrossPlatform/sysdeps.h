@@ -69,7 +69,9 @@
 #ifdef ENABLE_NATIVE_M68K
 
 /* Mac and host address space are the same */
-#define REAL_ADDRESSING 1
+//#define REAL_ADDRESSING 1
+#define REAL_ADDRESSING 0
+#define DIRECT_ADDRESSING 0
 
 /* Using 68k natively */
 #define EMULATED_68K 0
@@ -321,6 +323,13 @@ static inline int testandset(volatile int *p)
 #endif
 
 #endif /* __GNUC__ */
+
+#if __APPLE__
+#include <libkern/OSByteOrder.h>
+#define bswap_16(x) OSSwapInt16(x)
+#define bswap_32(x) OSSwapInt32(x)
+#define bswap_64(x) OSSwapInt64(x)
+#endif
 
 typedef volatile int spinlock_t;
 

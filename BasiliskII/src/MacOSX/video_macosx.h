@@ -24,18 +24,13 @@
 
 /* Set the strategy for drawing the bitmap in the Mac OS X window */
 //#define CGDRAWBITMAP
-#if defined __i386__
-#define CGIMAGEREF
-//#define NSBITMAP
-#else
-#define CGIMAGEREF
-//#define NSBITMAP
-#endif
+//#define CGIMAGEREF
+#define NSBITMAP
 
 // Using Core Graphics is fastest when rendering 32bit data.
 // Using CGImageRefs allows us to use all the bitmaps that BasiliskII supports.
 // When both Basilisk II and OS X are set to 'Thousands', updating a 312x342
-// window happens at over 500fps under 10.2, and over 600fps on 10.3!
+// window happens at over 500fps
 
 /* When the BasiliskII video driver respects the alpha bits, set this to let us use */
 /* kCGImageAlphaPremultipliedFirst, and to have nice rounded corners on the screen. */
@@ -59,11 +54,8 @@ enum
 };
 
 
-extern	uint8	display_type,
-				frame_skip;
-extern	uint16	init_width,
-				init_height,
-				init_depth;
+extern	uint8	display_type, frame_skip;
+extern	uint16	init_width, init_height, init_depth;
 
 extern	bool	parse_screen_prefs	(const char *);
 extern	void	resizeWinTo			(const uint16, const uint16);
@@ -71,5 +63,8 @@ extern	void	resizeWinTo			(const uint16, const uint16);
 #import <AppKit/NSWindow.h>
 #import "EmulatorView.h"
 
-extern	NSWindow		*the_win;
+extern	NSWindow	*the_win;
 extern	EmulatorView	*output;
+
+extern	video_mode  get_current_video_mode();
+extern	void	    set_current_video_mode(video_mode videoMode);

@@ -1,10 +1,10 @@
 /*
  *
  * This is based on Apple example software AudioBackEnd.cpp
- * 
+ *
  * Copyright © 2004 Apple Computer, Inc., All Rights Reserved
  * Original Apple code modified by Daniel Sumorok
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +18,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */ 
+ */
 
 #ifndef __AudioBackEnd_H__
 #define __AudioBackEnd_H__
@@ -31,7 +31,7 @@ if(err) {\
                            __LINE__\
                            );\
                                    fflush(stdout);\
-}         
+}
 
 #include <CoreAudio/CoreAudio.h>
 #include <AudioToolbox/AudioToolbox.h>
@@ -71,7 +71,7 @@ class AudioBackEnd  {
   AudioUnit mOutputUnit;
   int mBitsPerSample;
   int mSampleRate;
-  int mNumChannels;     
+  int mNumChannels;
   playthruCallback mCallback;
   void *mCallbackArg;
   UInt32 mBufferSizeFrames;

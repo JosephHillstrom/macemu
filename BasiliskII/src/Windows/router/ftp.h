@@ -38,7 +38,7 @@ void ftp_parse_port_command(
 );
 
 // Build a new command using ip and port.
-void ftp_modify_port_command( 
+void ftp_modify_port_command(
 	char *buf,
 	int &count,
 	const uint32 max_size,

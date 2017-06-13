@@ -37,7 +37,7 @@
 */
 /*=============================================================================
 	AudioDevice.h
-	
+
 =============================================================================*/
 
 #ifndef __AudioDevice_h__
@@ -52,11 +52,11 @@ public:
 	AudioDevice(AudioDeviceID devid, bool isInput) { Init(devid, isInput); }
 
 	void	Init(AudioDeviceID devid, bool isInput);
-	
+
 	bool	Valid() { return mID != kAudioDeviceUnknown; }
-	
+
 	void	SetBufferSize(UInt32 size);
-	
+
 	int		CountChannels();
 	char *	GetName(char *buf, UInt32 maxlen);
 
@@ -65,7 +65,7 @@ public:
 	bool							mIsInput;
 	UInt32							mSafetyOffset;
 	UInt32							mBufferSizeFrames;
-	AudioStreamBasicDescription		mFormat;	
+	AudioStreamBasicDescription		mFormat;
 };
 
 

@@ -108,7 +108,7 @@ void udp_detach(struct socket *);
 u_int8_t udp_tos(struct socket *);
 void udp_emu(struct socket *, struct mbuf *);
 struct socket * udp_listen(u_int, u_int32_t, u_int, int);
-int udp_output2(struct socket *so, struct mbuf *m, 
+int udp_output2(struct socket *so, struct mbuf *m,
                 struct sockaddr_in *saddr, struct sockaddr_in *daddr,
                 int iptos);
 #endif

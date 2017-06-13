@@ -88,7 +88,10 @@ bool Init680x0(void)
 			ROMBaseMac = 0x00a00000;
 			break;
 		case ROM_VERSION_32:
-			ROMBaseMac = 0x40800000;
+			if ( !getTwentyFourBitAddressing() )
+				ROMBaseMac = 0x40800000;
+			else
+				ROMBaseMac = 0x00a00000;
 			break;
 		default:
 			return false;
@@ -142,8 +145,14 @@ void Start680x0(void)
     if (UseJIT)
 	m68k_compile_execute();
     else
+	{
 #endif
+
 	m68k_execute();
+
+#if USE_JIT
+	}
+#endif
 }
 
 
@@ -159,7 +168,8 @@ void TriggerInterrupt(void)
 
 void TriggerNMI(void)
 {
-	//!! not implemented yet
+	M68kRegisters r;
+	Execute68kTrap(0xa9ff, &r);	// Debugger()
 }
 
 

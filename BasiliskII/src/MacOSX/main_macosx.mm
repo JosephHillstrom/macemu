@@ -64,6 +64,8 @@ extern void flush_icache_range(uint8 *start, uint32 size); // from compemu_suppo
 #define DEBUG 0
 #include "debug.h"
 
+#include "Emulator.h"
+#include "main.h"
 
 #include "main_macosx.h"		// To bridge between main() and misc. classes
 
@@ -80,8 +82,16 @@ static char *bundle = NULL;		// If in an OS X application bundle, its path
 int CPUType;
 bool CPUIs68060;
 int FPUType;
-bool TwentyFourBitAddressing;
 
+bool getTwentyFourBitAddressing()
+{
+	return [ [ Emulator currentEmulator ] twentyFourBitAddressing ] ? true : false;
+}
+
+void setTwentyFourBitAddressingByComputer(bool b)
+{
+	[ [ Emulator currentEmulator ] setTwentyFourBitAddressingByComputer: ( b ? YES : NO ) ];
+}
 
 // Global variables
 
@@ -245,10 +255,11 @@ int main(int argc, char **argv)
 				UserPrefsPath = argv[i];
 				argv[i] = NULL;
 			}
-		} else if (strcmp(argv[i], "--rominfo") == 0) {
+		}
+		/* else if (strcmp(argv[i], "--rominfo") == 0) {
 			argv[i] = NULL;
 			PrintROMInfo = true;
-		}
+		} */
 	}
 
 	// Remove processed arguments
@@ -313,7 +324,6 @@ bool InitEmulator (void)
 {
 	const char *vmdir = NULL;
 	char str[256];
-
 
 	// Install the handler for SIGSEGV
 	if (!sigsegv_install_handler(sigsegv_handler)) {
@@ -416,8 +426,8 @@ bool InitEmulator (void)
 	RAMBaseMac = Host2MacAddr(RAMBaseHost);
 	ROMBaseMac = Host2MacAddr(ROMBaseHost);
 #endif
-	D(bug("Mac RAM starts at %p (%08x)\n", RAMBaseHost, RAMBaseMac));
-	D(bug("Mac ROM starts at %p (%08x)\n", ROMBaseHost, ROMBaseMac));
+	NSLog( @"Mac RAM starts at %p (%08x)", RAMBaseHost, RAMBaseMac );
+	NSLog( @"Mac ROM starts at %p (%08x)", ROMBaseHost, ROMBaseMac );
 
 	// Get rom file path from preferences
 	const char *rom_path = PrefsFindString("rom");
@@ -435,7 +445,8 @@ bool InitEmulator (void)
 	}
 	printf(GetString(STR_READING_ROM_FILE));
 	ROMSize = lseek(rom_fd, 0, SEEK_END);
-	if (ROMSize != 64*1024 && ROMSize != 128*1024 && ROMSize != 256*1024 && ROMSize != 512*1024 && ROMSize != 1024*1024) {
+	NSLog( @"ROM size %d K", ROMSize >> 10 );
+	if ( ROMSize != 64*1024 && ROMSize != 128*1024 && ROMSize != 256*1024 && ROMSize != 512*1024 && ROMSize != 1024*1024 ) {
 		ErrorAlert(STR_ROM_SIZE_ERR);
 		close(rom_fd);
 		QuitEmulator();
@@ -447,11 +458,17 @@ bool InitEmulator (void)
 		QuitEmulator();
 	}
 
+	lseek(rom_fd, 8, SEEK_SET);
+	short ROMVersion = 0;
+	read(rom_fd, &ROMVersion, 2);
+	NSLog( @"ROM version 0x%04x", ROMVersion );
+
 
 	// Initialize everything
 	if (!InitAll(vmdir))
 		QuitEmulator();
-	D(bug("Initialization complete\n"));
+
+	NSLog( @"Initialization complete" );
 
 
 #ifdef ENABLE_MON

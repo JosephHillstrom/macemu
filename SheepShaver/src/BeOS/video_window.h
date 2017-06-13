@@ -322,7 +322,7 @@ void MacWindow::MessageReceived(BMessage *msg)
 				delete msg2;
 			}
 			MessageQueue()->Unlock();
-			
+
 			// Convert Mac screen buffer to BeOS palette and blit
 			uint32 length = VModes[cur_mode].viRowBytes * VModes[cur_mode].viYsize;
 			if (mode == B_COLOR_8_BIT) {

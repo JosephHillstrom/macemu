@@ -45,15 +45,15 @@ public:
 	BOOL Query(BYTE requestType,OUT RFC1157VarBindList *variableBindings,
 			AsnInteger *errorStatus,AsnInteger *errorIndex);
 
-	BOOL Trap(AsnObjectIdentifier *enterprise, AsnInteger *genericTrap, 
-		AsnInteger *specificTrap, AsnTimeticks *timeStamp, 
+	BOOL Trap(AsnObjectIdentifier *enterprise, AsnInteger *genericTrap,
+		AsnInteger *specificTrap, AsnTimeticks *timeStamp,
 		RFC1157VarBindList  *variableBindings);
 
 public:
 	HINSTANCE             m_hInst;
 	HINSTANCE             m_hInst_snmputil;
 
-private:	
+private:
 	pSnmpExtensionInit    m_Init;
 	pSnmpExtensionInitEx  m_InitEx;
 	pSnmpExtensionQuery   m_Query;

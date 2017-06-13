@@ -188,7 +188,7 @@ void MacScreen::ScreenConnected(bool active)
 			// copy from backup bitmap to framebuffer
 			memcpy((void *)screen_base, frame_backup, VModes[cur_mode].viRowBytes * VModes[cur_mode].viYsize);
 			// delete backup bitmap
-			delete[] frame_backup;			
+			delete[] frame_backup;
 			frame_backup = NULL;
 			// restore palette
 			if (info->bits_per_pixel == 8)

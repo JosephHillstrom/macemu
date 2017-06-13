@@ -298,7 +298,7 @@ enum {
 };
 
 
-/* 
+/*
  *  Definitions for Mixed Mode Manager
  */
 

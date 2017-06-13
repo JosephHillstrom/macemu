@@ -4,12 +4,12 @@
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  MC68881/68040 fpu emulation
- *  
+ *
  *  Original UAE FPU, copyright 1996 Herman ten Brugge
  *  Rewrite for x86, copyright 1999-2001 Lauri Pesonen
  *  New framework, copyright 2000-2001 Gwenole Beauchesne
  *  Adapted for JIT compilation (c) Bernd Meyer, 2000-2001
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -102,7 +102,7 @@ using namespace std;
 
 // IEEE-754 float format
 union fpu_single_shape {
-	
+
 	fpu_single value;
 
 	/* This is the IEEE 754 single-precision format.  */
@@ -137,7 +137,7 @@ union fpu_single_shape {
 // IEEE-754 double format
 union fpu_double_shape {
 	fpu_double value;
-	
+
 	/* This is the IEEE 754 double-precision format.  */
 	struct {
 #ifdef WORDS_BIGENDIAN
@@ -205,7 +205,7 @@ union fpu_double_shape {
 // IEEE-854 long double format
 union fpu_extended_shape {
 	fpu_extended value;
-	
+
 	/* This is the IEEE 854 double-extended-precision format.  */
 	struct {
 #ifdef WORDS_BIGENDIAN
@@ -261,7 +261,7 @@ union fpu_extended_shape {
 #	endif
 #endif
 	} ieee_nan;
-	
+
 	/* This format is used to extract the sign_exponent and mantissa parts only */
 	struct {
 #if HOST_FLOAT_WORDS_BIG_ENDIAN
@@ -283,7 +283,7 @@ union fpu_extended_shape {
 // IEEE-854 quad double format
 union fpu_extended_shape {
 	fpu_extended value;
-	
+
 	/* This is the IEEE 854 quad-precision format.  */
 	struct {
 #ifdef WORDS_BIGENDIAN

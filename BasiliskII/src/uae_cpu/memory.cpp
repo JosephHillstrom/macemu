@@ -468,6 +468,7 @@ uae_u8 *REGPARAM2 frame_xlate(uaecptr addr)
 uae_u8 *REGPARAM2 default_xlate (uaecptr a)
 {
     write_log("Your Mac program just did something terribly stupid\n");
+	write_log("trying to access address %08x\n", (void*)a);
     return NULL;
 }
 
@@ -540,7 +541,7 @@ void memory_init(void)
 	FrameBaseDiff = (uintptr)MacFrameBaseHost - (uintptr)MacFrameBaseMac;
 
 	// Map RAM and ROM
-	if (TwentyFourBitAddressing) {
+	if ( getTwentyFourBitAddressing() ) {
 		map_banks(&ram24_bank, RAMBaseMac >> 16, ram_size >> 16);
 		map_banks(&rom24_bank, ROMBaseMac >> 16, ROMSize >> 16);
 	} else {
@@ -549,7 +550,7 @@ void memory_init(void)
 	}
 
 	// Map frame buffer
-	switch (MacFrameLayout) {
+	switch ( MacFrameLayout ) {
 		case FLAYOUT_DIRECT:
 			map_banks(&frame_direct_bank, MacFrameBaseMac >> 16, (MacFrameSize >> 16) + 1);
 			break;
@@ -575,7 +576,7 @@ void map_banks(addrbank *bank, int start, int size)
 	    put_mem_bank (bnr << 16, bank);
 	return;
     }
-    if (TwentyFourBitAddressing) endhioffs = 0x10000;
+    if ( getTwentyFourBitAddressing() ) endhioffs = 0x10000;
     for (hioffs = 0; hioffs < endhioffs; hioffs += 0x100)
 	for (bnr = start; bnr < start+size; bnr++)
 	    put_mem_bank((bnr + hioffs) << 16, bank);

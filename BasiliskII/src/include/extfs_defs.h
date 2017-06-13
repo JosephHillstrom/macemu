@@ -185,7 +185,7 @@ enum {
 	dtmvVRefNum					= 2,
 	dtmvWDRefNum				= 3,
 	dtmvDriveNum				= 4,
-	dtmvDefault					= 5	
+	dtmvDefault					= 5
 };
 
 // Miscellaneous constants used by FSM
