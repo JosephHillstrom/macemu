@@ -123,7 +123,7 @@
 #endif
 
 #ifdef USE_SDL
-#include <SDL.h>
+#include <SDL/SDL.h>
 #endif
 
 #ifndef USE_SDL_VIDEO
@@ -293,7 +293,7 @@ uintptr SignalStackBase(void)
 {
 	return sig_stack + SIG_STACK_SIZE;
 }
-
+#else/*the below Atomic operations are duplicate with emul_ppc*/
 
 /*
  *  Atomic operations
@@ -678,7 +678,7 @@ static bool init_sdl()
 #ifdef USE_SDL_AUDIO
 	sdl_flags |= SDL_INIT_AUDIO;
 #endif
-	assert(sdl_flags != 0);
+	/*assert(sdl_flags != 0);*/
 
 #ifdef USE_SDL_VIDEO
 	// Don't let SDL block the screensaver
@@ -1312,11 +1312,11 @@ void MakeExecutable(int dummy, uint32 start, uint32 length)
 {
 	if ((start >= ROMBase) && (start < (ROMBase + ROM_SIZE)))
 		return;
-#if EMULATED_PPC
+/*#if EMULATED_PPC
 	FlushCodeCache(start, start + length);
 #else
 	flush_icache_range(start, start + length);
-#endif
+#endif*/
 }
 
 
@@ -1563,12 +1563,12 @@ volatile uint32 InterruptFlags = 0;
 
 void SetInterruptFlag(uint32 flag)
 {
-	atomic_or((int *)&InterruptFlags, flag);
+	*(uint32 *)&InterruptFlags |= flag;
 }
 
 void ClearInterruptFlag(uint32 flag)
 {
-	atomic_and((int *)&InterruptFlags, ~flag);
+	*(uint32 *)&InterruptFlags &= ~flag;
 }
 
 
@@ -1708,7 +1708,15 @@ void sigusr2_handler(int sig, siginfo_t *sip, void *scp)
 /*
  *  SIGSEGV handler
  */
-
+#if EMULATED_PPC
+sigsegv_return_t sigsegv_handler(sigsegv_info_t * dummy)
+{
+	/*dummy function
+	fprintf(stderr, "sigsegv");
+	fprintf(stderr, "sigsegv at %d\n", addr, num_same);*/
+	return SIGSEGV_RETURN_SKIP_INSTRUCTION;
+}
+#endif
 #if !EMULATED_PPC
 static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 {

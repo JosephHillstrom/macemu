@@ -42,9 +42,9 @@
 
 #include "sysdeps.h"
 
-#include <SDL.h>
-#include <SDL_mutex.h>
-#include <SDL_thread.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_mutex.h>
+#include <SDL/SDL_thread.h>
 #include <errno.h>
 #include <vector>
 

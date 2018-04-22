@@ -170,6 +170,11 @@ typedef int64 intptr;
 #else
 #error "Unsupported size of pointer"
 #endif
+#ifdef __x86_64__
+#define ___X86___
+#elif defined i386
+#define ___X86___
+#endif
 
 // Define if the host processor supports fast unaligned load/stores
 #if defined __i386__ || defined __x86_64__
@@ -181,7 +186,7 @@ typedef int64 intptr;
  *		Helper functions to byteswap data
  **/
 
-#if defined(__GNUC__)
+/*#if defined(__GNUC__)
 #if defined(__x86_64__) || defined(__i386__)
 // Linux/AMD64 currently has no asm optimized bswap_32() in <byteswap.h>
 #define opt_bswap_32 do_opt_bswap_32
@@ -192,18 +197,18 @@ static inline uint32 do_opt_bswap_32(uint32 x)
   return v;
 }
 #endif
-#endif
+#endif*/
 
 #ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>
 #endif
 
-#ifdef  opt_bswap_16
+/*#ifdef  opt_bswap_16
 #undef  bswap_16
 #define bswap_16 opt_bswap_16
 #endif
 #ifndef bswap_16
-#define bswap_16 generic_bswap_16
+#define bswap_16(x) ((uint16)(((uint16)x & 0xff) << 8) | (((uint16)x >> 8) & 0xff))
 #endif
 
 static inline uint16 generic_bswap_16(uint16 x)
@@ -253,8 +258,32 @@ static inline uint64 generic_bswap_64(uint64 x)
 		  ((x & UVAL64(0x0000000000ff0000)) << 24) |
 		  ((x & UVAL64(0x000000000000ff00)) << 40) |
 		  ((x & UVAL64(0x00000000000000ff)) << 56) );
+}*/
+static inline uint16 bswap_16(uint16 toSwap)
+{
+#ifdef ___X86___
+	__asm__("rolw $8, %w0":"=r"(toSwap):"0"(toSwap));
+#else
+		toSwap = ((toSwap >> 8)|(toSwap << 8))
+#endif
+	return toSwap;
 }
-
+static inline uint32 bswap_32(uint32 toSwap)
+{
+#ifdef ___X86___
+	__asm__("bswap %k0":"=r"(toSwap):"0"(toSwap));
+#else
+	toSwap = (((toSwap & 0xff000000) >> 24) |
+	 ((toSwap & 0x00ff0000) >>  8) |
+	 ((toSwap & 0x0000ff00) <<  8) |
+	 ((toSwap & 0x000000ff) << 24) );
+#endif
+	return toSwap;
+}
+static inline uint64 bswap_64(uint64 toSwap)
+{
+	return (uint64)((uint64)((bswap_32((uint32)(toSwap >> 32)))) | (((uint64)(bswap_32((uint32)toSwap))) << 32));
+}
 #ifdef WORDS_BIGENDIAN
 static inline uint16 tswap16(uint16 x) { return x; }
 static inline uint32 tswap32(uint32 x) { return x; }

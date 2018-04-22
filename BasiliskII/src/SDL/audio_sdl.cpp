@@ -26,8 +26,8 @@
 #include "audio.h"
 #include "audio_defs.h"
 
-#include <SDL_mutex.h>
-#include <SDL_audio.h>
+#include <SDL/SDL_mutex.h>
+#include <SDL/SDL_audio.h>
 
 #define DEBUG 0
 #include "debug.h"

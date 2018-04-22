@@ -246,7 +246,7 @@ static int vm_acquire_mac_fixed(void *addr, size_t size)
  *  SIGSEGV handler
  */
 
-static sigsegv_return_t sigsegv_handler(sigsegv_info_t *sip)
+/*static*/ sigsegv_return_t sigsegv_handler(sigsegv_info_t *sip)
 {
 	const uintptr fault_address = (uintptr)sigsegv_get_fault_address(sip);
 #if ENABLE_VOSF
@@ -932,7 +932,10 @@ void QuitEmulator(void)
  *  Code was patched, flush caches if neccessary (i.e. when using a real 680x0
  *  or a dynamically recompiling emulator)
  */
-
+void FlushCodeCache(unsigned int start, unsigned int size)
+{
+	FlushCodeCache((void *)start, (uint32)size);
+}
 void FlushCodeCache(void *start, uint32 size)
 {
 #if USE_JIT

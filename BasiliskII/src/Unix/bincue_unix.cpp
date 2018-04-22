@@ -41,16 +41,15 @@
 #include <sys/stat.h>
 #include <errno.h>
 
-#ifdef OSX_CORE_AUDIO
+/*#ifdef OSX_CORE_AUDIO
 #include "../MacOSX/MacOSX_sound_if.h"
 static int bincue_core_audio_callback(void);
-#endif
+#endif*/
 
 #ifdef USE_SDL_AUDIO
-#include <SDL.h>
-#include <SDL_audio.h>
+#include <SDL/SDL.h>
+#include <SDL/SDL_audio.h>
 #endif
-
 #include "bincue_unix.h"
 #define DEBUG 0
 #include "debug.h"
@@ -111,9 +110,9 @@ typedef struct {
 	unsigned int silence;		// pregap (silence) bytes
 	unsigned char audiostatus;	// See defines above for status
 	loff_t fileoffset;			// offset from file beginning to audiostart
-#ifdef OSX_CORE_AUDIO
+/*#ifdef OSX_CORE_AUDIO
 	OSXsoundOutput soundoutput;
-#endif
+#endif*/
 } CDPlayer;
 
 // Minute,Second,Frame data type
@@ -434,9 +433,9 @@ void *open_bincue(const char *name)
 
 		if (LoadCueSheet(name, cs)) {
 			player.cs = cs;
-#ifdef OSX_CORE_AUDIO
+/*#ifdef OSX_CORE_AUDIO
 			audio_enabled = true;
-#endif
+#endif*/
 			if (audio_enabled)
 				player.audiostatus = CDROM_AUDIO_NO_STATUS;
 			else
@@ -631,9 +630,9 @@ bool CDStop_bincue(void *fh)
 	CueSheet *cs = (CueSheet *) fh;
 
 	if (cs && cs == player.cs) {
-#ifdef OSX_CORE_AUDIO
+/*#ifdef OSX_CORE_AUDIO
 		player.soundoutput.stop();
-#endif
+#endif*/
 		if (player.audiostatus != CDROM_AUDIO_INVALID)
 			player.audiostatus = CDROM_AUDIO_NO_STATUS;
 		return true;
@@ -712,12 +711,12 @@ bool CDPlay_bincue(void *fh, uint8 start_m, uint8 start_s, uint8 start_f,
 
 		if (audio_enabled) {
 			player.audiostatus = CDROM_AUDIO_PLAY;
-#ifdef OSX_CORE_AUDIO
+/*#ifdef OSX_CORE_AUDIO
 			D(bug("starting os x sound"));
 			player.soundoutput.setCallback(bincue_core_audio_callback);
 			// should be from current track !
 			player.soundoutput.start(16, 2, 44100);
-#endif
+#endif*/
 			return true;
 		}
 	}
@@ -819,7 +818,7 @@ void OpenAudio_bincue(int freq, int format, int channels, uint8 silence)
 }
 #endif
 
-#ifdef OSX_CORE_AUDIO
+/*#ifdef OSX_CORE_AUDIO
 static int bincue_core_audio_callback(void)
 {
 	int frames = player.soundoutput.bufferSizeFrames();
@@ -831,4 +830,4 @@ static int bincue_core_audio_callback(void)
 
 	return 1;
 }
-#endif
+#endif*/

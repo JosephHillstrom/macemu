@@ -203,14 +203,16 @@ const uintptr VMBaseDiff = NATMEM_OFFSET;
 #endif
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
-static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
+/*static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
 	return (uint8 *)vm_wrap_address(VMBaseDiff + addr);
-}
-static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
+}*/
+#define vm_do_get_real_address(addr) ((uint8 *)addr)
+/*static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
 {
 	return vm_wrap_address((uintptr)addr - VMBaseDiff);
-}
+}*/
+#define vm_do_get_virtual_address(addr) ((vm_addr_t)addr)
 static inline uint32 vm_read_memory_1(vm_addr_t addr)
 {
 	uint8 * const m = vm_do_get_real_address(addr);

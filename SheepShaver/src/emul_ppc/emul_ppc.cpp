@@ -98,23 +98,7 @@ crxor
 creqv
  */
 /*FOR SOME NEW CODE:*/
-uint32 make_mask(uint32 mstart, uint32 mstop) 
-{
-	if (mstart < (mstop + 1)) {
-		for (i = mstart; i < mstop; i ++) {
-			gCPU.gpr[rA] |= (1 << (32 - i));
-		}
-	}
-	else if (mstart == (mstop + 1)) {
-		gCPU.gpr[rA] = 0xFFFFFFFF;
-	}
-	else {
-		gCPU.gpr[rA] = 0xFFFFFFFF;
-		for (i = (mstop + 1); i < (mstart - 1); i ++) {
-			gCPU.gpr[rA] &= (~(1 << (32 - i)));
-		}
-	}
-}
+
 #include <stdio.h>
 #include <signal.h>
 
@@ -136,36 +120,32 @@ uint32 make_mask(uint32 mstart, uint32 mstop)
 
 
 /*function-like macros for new code*/
-#define MAKE_RD (op & 0x03E00000 >> 21)
-#define MAKE_RA (op & 0x001F0000 >> 16)
-#define MAKE_RB (op & 0x0000FC00 >> 10)
+#define MAKE_RD ((op & 0x03E00000) >> 21)
+#define MAKE_RA ((op & 0x001F0000) >> 16)
+#define MAKE_RB ((op & 0x0000FC00) >> 10)
 #define MAKE_IMMEDIATE (op & 0x0000FFFF)
 #define OPC_UPDATE_CRO(opcode) (opcode & 1)
 #define CLEAR_CRO cr &= 0x0FFFFFFFF
-#define	UPDATE_CRO(value) CLEAR_CRO; \
-  (signed int32)value < 0 ? cr |= (8 << 28) : (value == 0 ? cr |= (2 << 28) : cr |= (4 << 28))
+#define	UPDATE_CRO record
 #ifdef __x86_64__
 #define ___X86___
 #elif defined i386
 #define ___X86___
 #endif
 #ifdef ___X86___
-#define rol(v, r) asm const("roll %k1, %k0" : "=r" (v) : "0" (v) "r" (r) :)
-#define ror(v, r) asm const("rorl %k1, %k0" : "=r" (v) : "0" (v) "r" (r) :)
-#define bswap(word) asm const("bswap %k0" : "=r" (word) : "0" (word) : );
+#define bswap(word) __asm__("bswap %k0" : "=r" (word) : "0" (word));
 static inline uint32 ppc_bswap_word(uint32 word)
 {
 	bswap(word);
 	return word;
 }
 #else
-#define rol(v, r) for(int i = 0; i < r; i ++) v = ((v << 1) | (v >> 31))
-#define ror(v, r) for (int i = 0; i < r; i ++) v = ((v >> 1) | (v << 31))
 #define ppc_bswap_word(data) (data>>24)|((data>>8)&0xff00)|((data<<8)&0xff0000)|(data<<24)
 #endif
 #define ppc_bswap_dword(data) (((uint64)ppc_bswap_word((uint32)data)) << 32) | (uint64)ppc_bswap_word((uint32)(data >> 32))
 #define ppc_bswap_half(data) (data<<8)|(data>>8)
-
+#define rol(v, r) v = ((v << r) | (v >> (32 - r)))
+#define ror(v, r) v = ((v >> r) | (v << (32 - r)))
 
 // PowerPC user mode registers
 uint32 r[32];
@@ -178,7 +158,37 @@ uint32 pc;
 // Convert 8-bit field mask (e.g. mtcrf) to bit mask
 static uint32 field2mask[256];
 
-
+uint32 make_mask(uint32 mstart, uint32 mstop)
+{
+    uint32 tmp = 0;
+    if (mstart < (mstop + 1)) {
+        for (int i = mstart; i < mstop; i ++) {
+            tmp |= (1 << (32 - i));
+        }
+    }
+    else if (mstart == (mstop + 1)) {
+        tmp = 0xFFFFFFFF;
+    }
+    else {
+        tmp = 0xFFFFFFFF;
+        for (int i = (mstop + 1); i < (mstart - 1); i ++) {
+            tmp &= (~(1 << (32 - i)));
+        }
+    }
+    return tmp;
+}
+uint32 use_mask(uint32 mask, uint32 value, uint32 start)
+{
+    uint32 ret = start;
+    int i;
+    for (i = 0; i < 32; i ++) {
+        if (mask & (1 << i)) {
+            ret &= (~(1 << i));
+            ret |= (start & (1 << i));
+        }
+    }
+    return ret;
+}
 /*
  *  Flight recorder
  */
@@ -193,13 +203,18 @@ struct rec_step {
 	uint32 pc;
 	uint32 opcode;
 };
-
+void TriggerInterrupt(void)
+{
+	/*dummy function*/
+	return;
+}
 const int LOG_SIZE = 8192;
 static rec_step log[LOG_SIZE];
 static int log_ptr = 0;
 
 static void record_step(uint32 opcode)
 {
+    /*turn recording off for speed
 	for (int i=0; i<32; i++) {
 		log[log_ptr].r[i] = r[i];
 		log[log_ptr].fr[i] = fr[i];
@@ -213,7 +228,7 @@ static void record_step(uint32 opcode)
 	log[log_ptr].opcode = opcode;
 	log_ptr++;
 	if (log_ptr == LOG_SIZE)
-		log_ptr = 0;
+		log_ptr = 0;*/
 }
 
 static void dump_log(void)
@@ -510,7 +525,7 @@ static void emul31(uint32 op)
 				record(r[rd]);
 			break;
 		}
-		case 11: /* mulhwu based on pearPC ppc_alu.cc GPL2 (C) 2003, 2004 Sebastian Biallas*/
+        case 11: {/* mulhwu based on pearPC ppc_alu.cc GPL2 (C) 2003, 2004 Sebastian Biallas*/
 			int rD = MAKE_RD;
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
@@ -518,9 +533,9 @@ static void emul31(uint32 op)
 			uint64 b = r[rB];
 			uint64 c = a * b;
 			r[rD] = c >> 32;
-			if (OPC_UPDATE_CRO(op)) {
-				UPDATE_CRO(r[rD]);
-			}
+			if ((OPC_UPDATE_CRO(op))) {
+				record(r[rD]);
+            }}
 			break;
 		case 19:	// mfcr
 			r[rd] = cr;
@@ -560,14 +575,14 @@ cntlzw_done:if (op & 1)
 			if (op & 1)
 				record(r[ra]);
 			break;
-		case 29: /*G1 maskg*/
-			uint32 rS = MAKE_RD;
-			uint32 rA = MAKE_RA;
-			uint32 rB = MAKE_RB;
+        case 29:{ /*G1 maskg*/
+			int rS = MAKE_RD;
+			int rA = MAKE_RA;
+			int rB = MAKE_RB;
 			r[rA] = make_mask((r[rS] & 0x0000001F), (r[rB] & 0x0000001F));
-			if (OPC_UPDATE_CRO(gCPU.current_opc)) {
-				UPDATE_CRO(gCPU.gpr[rA]);
-			}
+			if (OPC_UPDATE_CRO(op)) {
+				record(r[rA]);
+            }}
 			break;
 		case 32: {	// cmplw
 			uint32 crfd = 0x1c - (rd & 0x1c);
@@ -682,14 +697,14 @@ cntlzw_done:if (op & 1)
 			r[ra] += r[rb];
 			WriteMacInt32(r[ra], r[rd]);
 			break;
-		case 200: /*subfze based on code in ppc_alu.cc GPL2 (C) 2003, 2004 Sebastian Biallas*/
+        case 200:{ /*subfze based on code in ppc_alu.cc GPL2 (C) 2003, 2004 Sebastian Biallas*/
 			int rD = MAKE_RD;
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
 			if (rB != 0) {
 				/*AAAAAAAAAAAAAAA! Those bits are reserved, and should be zero!  Maybe error here?*/
 				rB = 0;
-			}
+            }
 			uint32 a = r[rA];
 			uint32 ca = ((xer&0x20000000)>>29);
 			r[rD] = ~a + ca;
@@ -700,10 +715,10 @@ cntlzw_done:if (op & 1)
 				xer &= 0xDFFFFFFF;
 			}
 			if(OPC_UPDATE_CRO(op)) {
-				UPDATE_CRO(r[rD]);
-			}
+				record(r[rD]);
+            }}
 			break;
-		case 202: /*addze based on code in ppc_alu.cc GPL2 (C) 2003, 2004 Sebastian Biallas*/
+        case 202:{ /*addze based on code in ppc_alu.cc GPL2 (C) 2003, 2004 Sebastian Biallas*/
 			int rD = MAKE_RD;
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
@@ -721,13 +736,13 @@ cntlzw_done:if (op & 1)
 				xer &= 0xDFFFFFFF;
 			}
 			if(OPC_UPDATE_CRO(op)) {
-				UPDATE_CRO(r[rD]);
-			}
+				record(r[rD]);
+            }}
 			break;
 		case 215:	// stbx
 			WriteMacInt8(r[rb] + (ra ? r[ra] : 0), r[rd]);
 			break;
-		case 232: /*subfme Based on code in PearPC ppc_alu.cc (C) 2003, 2004 Sebastian Biallas*/
+        case 232:{ /*subfme Based on code in PearPC ppc_alu.cc (C) 2003, 2004 Sebastian Biallas*/
 			int rD = MAKE_RD;
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
@@ -746,10 +761,10 @@ cntlzw_done:if (op & 1)
 				xer &= 0xDFFFFFFF;
 			}
 			if(OPC_UPDATE_CRO(op)) {
-				UPDATE_CRO(r[rD]);
-			}
+				record(r[rD]);
+            }}
 			break;
-		case 234: /*addme Based on code in PearPC ppc_alu.cc (C) 2003, 2004 Sebastian Biallas*/
+        case 234: {/*addme Based on code in PearPC ppc_alu.cc (C) 2003, 2004 Sebastian Biallas*/
 			int rD = MAKE_RD;
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
@@ -767,8 +782,8 @@ cntlzw_done:if (op & 1)
 				xer &= 0xDFFFFFFF;
 			}
 			if(OPC_UPDATE_CRO(op)) {
-				UPDATE_CRO(r[rD]);
-			}
+				record(r[rD]);
+            }}
 			break;
 		case 235:	// mullw
 			r[rd] = (int32)r[ra] * (int32)r[rb];
@@ -890,11 +905,11 @@ cntlzw_done:if (op & 1)
 			if (op & 1)
 				record(r[rd]);
 			break;
-		case 512: /*mcrxr from PearPC ppc_opc.cc GPL2 (C) 2003 Sebastian Biallas (C) 2004 Dainel Foesch*/
-			uint32 crfD = ((gCPU.current_opc & 0x03800000) >> 23);
+        case 512: {/*mcrxr from PearPC ppc_opc.cc GPL2 (C) 2003 Sebastian Biallas (C) 2004 Dainel Foesch*/
+			uint32 crfD = ((op & 0x03800000) >> 23);
 			cr &= (~(0xF0000000 >> (crfD * 4)));
-			cr |= (((gCPU.xer & 0xF) << 28) >> (crfD * 4));
-			xer &= ~0xF;
+			cr |= (((xer & 0xF) << 28) >> (crfD * 4));
+            xer &= ~0xF;}
 			break;
 		case 520: {	// subfco
 			uint64 tmp = (uint64)r[rb] - (uint64)r[ra];
@@ -953,23 +968,23 @@ cntlzw_done:if (op & 1)
 			}
 			break;
 		}
-		case 534: /*lwbrx based on code in PearPC ppc_mmu.cc GPL2 (C) 2003, 2004 Sebastian Biallas, portions (C) 2004 Daniel Foesch, portions (C) 2004 Apple Computer*/
+        case 534:{ /*lwbrx based on code in PearPC ppc_mmu.cc GPL2 (C) 2003, 2004 Sebastian Biallas, portions (C) 2004 Daniel Foesch, portions (C) 2004 Apple Computer*/
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
 			int rD = MAKE_RD;
-			uint32 r = ReadMacInt32((rA?gCPU.gpr[rA]:0)+gCPU.gpr[rB]);
-			r[rD] = ppc_bswap_word(r);
+			uint32 tmp = ReadMacInt32((rA?r[rA]:0)+r[rB]);
+            r[rD] = ppc_bswap_word(tmp);}
 			break;
 		case 567: /*lfsux is lfsx, but it adds rA + rB if rA!=0*/
-		case 535: /*lfsx based on code in PearPC ppc_mmu.cc GPL2 (C) 2003, 2004 Sebastian Biallas, portions (C) 2004 Daniel Foesch, portions (C) 2004 Apple Computer*/
+        case 535: {/*lfsx based on code in PearPC ppc_mmu.cc GPL2 (C) 2003, 2004 Sebastian Biallas, portions (C) 2004 Daniel Foesch, portions (C) 2004 Apple Computer*/
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
 			int frD = MAKE_RD;
-			uint32 r = ReadMacInt32((rA?gCPU.gpr[rA]:0)+gCPU.gpr[rB]);/*read single precision float as uint32*/
-			fr[frD] = ((double)(*((float *)((void *)(&r)))));/*then use pointers to "convert" it to a real float without changing the value, and acturally convert to double*/
+			uint32 tmp = ReadMacInt32((rA?r[rA]:0)+r[rB]);/*read single precision float as uint32*/
+			fr[frD] = ((double)(*((float *)((void *)(&tmp)))));/*then use pointers to "convert" it to a real float without changing the value, and acturally convert to double*/
 			if ((exop == 567) && (rA != 0)) {
 				r[rA] += r[rB];
-			}
+            }}
 			break;
 		case 536:	// srw
 			r[ra] = r[rd] >> (r[rb] & 0x3f);
@@ -1004,15 +1019,15 @@ cntlzw_done:if (op & 1)
 		case 598:	// sync
 			break;
 		case 599: /*lfdx based on code in PearPC ppc_mmu.cc GPL2 (C) 2003, 2004 Sebastian Biallas, portions (C) 2004 Daniel Foesch, portions (C) 2004 Apple Computer*/
-		case 631: /*lfdux is lfdx, but does rA += rB if rA !=0*/
+        case 631:{ /*lfdux is lfdx, but does rA += rB if rA !=0*/
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
 			int frD = MAKE_RD;
-			uint64 r = ReadMacInt64((rA?gCPU.gpr[rA]:0)+gCPU.gpr[rB]);
-			fr[frD] = (*((double *)((void *)(&r))));
+			uint64 tmp = ReadMacInt64((rA?r[rA]:0)+r[rB]);
+			fr[frD] = (*((double *)((void *)(&tmp))));
 			if ((exop == 631) && (rA != 0)) {
 				r[rA] += r[rB];
-			}
+            }}
 			break;
 		case 648: {	// subfeo
 			uint64 tmp = (uint64)r[rb] - (uint64)r[ra];
@@ -1224,7 +1239,11 @@ static void emul63(uint32 op)
 /*
  *  Emulation loop
  */
-
+void exit_emul_ppc()
+{
+	/*dummy to stop link errors*/
+	return;
+}
 void emul_ppc(uint32 start)
 {
 	pc = start;
@@ -1239,7 +1258,7 @@ void emul_ppc(uint32 start)
 #if FLIGHT_RECORDER
 		record_step(op);
 #endif
-//		printf("%08lx at %08lx\n", op, pc);
+		//printf("%08lx at %08lx ctr=%d\n", op, pc, ctr);
 		uint32 primop = op >> 26;
 		pc += 4;
 		switch (primop) {
@@ -1296,10 +1315,10 @@ void emul_ppc(uint32 start)
 				break;
 			}
 			case 9: {/* G1 instruction dozi*/
-				uint32 rD = MAKE_RD;
-				uint32 rA = MAKE_RA;
+				int rD = MAKE_RD;
+				int rA = MAKE_RA;
 				uint32 immediate = MAKE_IMMEDIATE;
-				if ((signed int32)r[rA] >= (signed int32)immediate) {
+				if ((signed)(int32)r[rA] >= (signed)(int32)immediate) {
 					r[rD] = 0;
 				}
 				else {
@@ -1459,7 +1478,7 @@ bc_nobranch:
 				uint32 toRotate = (r[rB] & 0x0000001F);
 				uint32 mask = make_mask(mask_begin, mask_end);
 				rol(tmp, toRotate);
-				gCPU.gpr[rA] = use_mask(mask, tmp, r[rA]);
+				r[rA] = use_mask(mask, tmp, r[rA]);
 				if (OPC_UPDATE_CRO(op)) {
 					UPDATE_CRO(r[rA]);
 				}
@@ -1526,29 +1545,29 @@ bc_nobranch:
 			case 32: {	// lwz
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[rd] = ReadMacInt32(int16(op & 0xffff) + (ra ? r[ra] : 0));
+				r[rd] = ReadMacInt32((op & 0xffff) + (ra ? r[ra] : 0));
 				break;
 			}
 
 			case 33: {	// lwzu
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += int16(op & 0xffff);
+				r[ra] += (op & 0xffff);
 				r[rd] = ReadMacInt32(r[ra]);
 				break;
 			}
 
 			case 34: {	// lbz
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[rd] = ReadMacInt8(int16(op & 0xffff) + (ra ? r[ra] : 0));
+				uint32 rd = MAKE_RD;
+				uint32 ra = MAKE_RA;
+				r[rd] = ReadMacInt8((op & 0xffff) + (ra ? r[ra] : 0));
 				break;
 			}
 
 			case 35: {	// lbzu
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += int16(op & 0xffff);
+				r[ra] += (op & 0xffff);
 				r[rd] = ReadMacInt8(r[ra]);
 				break;
 			}
@@ -1556,14 +1575,14 @@ bc_nobranch:
 			case 36: {	// stw
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt32(int16(op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
+				WriteMacInt32((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
 				break;
 			}
 
 			case 37: {	// stwu
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += int16(op & 0xffff);
+				r[ra] += (op & 0xffff);
 				WriteMacInt32(r[ra], r[rd]);
 				break;
 			}
@@ -1571,29 +1590,30 @@ bc_nobranch:
 			case 38: {	// stb
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt8(int16(op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
+				WriteMacInt8((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
 				break;
 			}
 
 			case 39: {	// stbu
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += int16(op & 0xffff);
+				r[ra] += (op & 0xffff);
 				WriteMacInt8(r[ra], r[rd]);
 				break;
 			}
 
 			case 40: {	// lhz
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[rd] = ReadMacInt16(int16(op & 0xffff) + (ra ? r[ra] : 0));
+				int rd = MAKE_RD;
+				int ra = MAKE_RA;
+				uint32 imm = MAKE_IMMEDIATE;
+				r[rd] = ReadMacInt16((imm+(ra?r[ra]:0)));
 				break;
 			}
 
 			case 41: {	// lhzu
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += int16(op & 0xffff);
+				r[ra] += (op & 0xffff);
 				r[rd] = ReadMacInt16(r[ra]);
 				break;
 			}
@@ -1601,14 +1621,14 @@ bc_nobranch:
 			case 42: {	// lha
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[rd] = (int32)(int16)ReadMacInt16(int16(op & 0xffff) + (ra ? r[ra] : 0));
+				r[rd] = (int32)(int16)ReadMacInt16((op & 0xffff) + (ra ? r[ra] : 0));
 				break;
 			}
 
 			case 43: {	// lhau
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += int16(op & 0xffff);
+				r[ra] += (op & 0xffff);
 				r[rd] = (int32)(int16)ReadMacInt16(r[ra]);
 				break;
 			}
@@ -1616,14 +1636,14 @@ bc_nobranch:
 			case 44: {	// sth
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt16(int16(op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
+				WriteMacInt16((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
 				break;
 			}
 
 			case 45: {	// sthu
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += int16(op & 0xffff);
+				r[ra] += (op & 0xffff);
 				WriteMacInt16(r[ra], r[rd]);
 				break;
 			}
@@ -1631,7 +1651,7 @@ bc_nobranch:
 			case 46: {	// lmw
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				uint32 addr = int16(op & 0xffff) + (ra ? r[ra] : 0);
+				uint32 addr = (op & 0xffff) + (ra ? r[ra] : 0);
 				while (rd <= 31) {
 					r[rd] = ReadMacInt32(addr);
 					rd++;
@@ -1643,7 +1663,7 @@ bc_nobranch:
 			case 47: {	// stmw
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				uint32 addr = int16(op & 0xffff) + (ra ? r[ra] : 0);
+				uint32 addr = (op & 0xffff) + (ra ? r[ra] : 0);
 				while (rd <= 31) {
 					WriteMacInt32(addr, r[rd]);
 					rd++;
@@ -1655,14 +1675,14 @@ bc_nobranch:
 			case 50: {	// lfd
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				fr[rd] = (double)ReadMacInt64(int16(op & 0xffff) + (ra ? r[ra] : 0));
+				fr[rd] = (double)ReadMacInt64((op & 0xffff) + (ra ? r[ra] : 0));
 				break;
 			}
 
 			case 54: {	// stfd
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt64(int16(op & 0xffff) + (ra ? r[ra] : 0), (uint64)fr[rd]);
+				WriteMacInt64((op & 0xffff) + (ra ? r[ra] : 0), (uint64)fr[rd]);
 				break;
 			}
 
@@ -1720,9 +1740,9 @@ void init_emul_ppc(void)
 
 	// Install SIGSEGV handler
 	sigemptyset(&sigsegv_action.sa_mask);
-	sigsegv_action.sa_handler = (__sighandler_t)sigsegv_handler;
+	sigsegv_action.sa_handler = sigsegv_handler;
 	sigsegv_action.sa_flags = 0;
-	sigsegv_action.sa_restorer = NULL;
+	/*sigsegv_action.sa_restorer = NULL;*/
 	sigaction(SIGSEGV, &sigsegv_action, NULL);
 
 #if FLIGHT_RECORDER && ENABLE_MON
@@ -1824,23 +1844,41 @@ uint32 call_macos7(uint32 tvect, uint32 arg1, uint32 arg2, uint32 arg3, uint32 a
 
 extern int atomic_add(int *var, int v)
 {
+#ifdef __X86__
+	int ret;
+	__asm__ volatile("lock mov (%2), %0\n\tlock add %1, (%2)":"=r"(ret):"r"(v),"r"(var));
+	return ret;
+#else
 	int ret = *var;
 	*var += v;
 	return ret;
+#endif
 }
 
 extern int atomic_and(int *var, int v)
 {
+#ifdef __X86__
+	int ret;
+	__asm__ volatile("lock mov (%2), %0\n\tlock and %1, (%2)":"=r"(ret):"r"(v),"r"(var));
+	return ret;
+#else
 	int ret = *var;
 	*var &= v;
 	return ret;
+#endif
 }
 
 extern int atomic_or(int *var, int v)
 {
+#ifdef __X86__
+	int ret;
+	__asm__ volatile("lock mov (%2), %0\n\tlock and %1, (%2)":"=r"(ret):"r"(v),"r"(var));
+	return ret;
+#else
 	int ret = *var;
 	*var |= v;
 	return ret;
+#endif
 }
 
 

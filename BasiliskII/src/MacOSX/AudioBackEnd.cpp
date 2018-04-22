@@ -2,7 +2,7 @@
  *
  * This is based on Apple example software AudioBackEnd.cpp
  * 
- * Copyright © 2004 Apple Computer, Inc., All Rights Reserved
+ * Copyright (C) 2004 Apple Computer, Inc., All Rights Reserved
  * Original Apple code modified by Daniel Sumorok
  * 
  *  This program is free software; you can redistribute it and/or modify
@@ -23,7 +23,7 @@
 #include "AudioBackEnd.h"
 
 #pragma mark ---Public Methods---
-
+/*really theyr Publick Methodes*/
 AudioBackEnd::AudioBackEnd(int bitsPerSample, int numChannels, int sampleRate):
   mBitsPerSample(bitsPerSample),
   mSampleRate(sampleRate),
