@@ -203,15 +203,20 @@ const uintptr VMBaseDiff = NATMEM_OFFSET;
 #endif
 
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
-/*static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
+static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
-	return (uint8 *)vm_wrap_address(VMBaseDiff + addr);
-}*/
-#define vm_do_get_real_address(addr) ((uint8 *)addr)
-/*static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
+	uintptr a = vm_wrap_address(VMBaseDiff + addr);
+#if defined(__APPLE__) && defined(__x86_64__)
+	extern uint8 gZeroPage[0x3000], gKernelData[0x2000];
+	if (a < 0x3000) return &gZeroPage[a];
+	else if ((a & ~0x1fff) == 0x68ffe000 || (a & ~0x1fff) == 0x5fffe000) return &gKernelData[a & 0x1fff];
+#endif
+	return (uint8 *)a;
+}
+static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
 {
 	return vm_wrap_address((uintptr)addr - VMBaseDiff);
-}*/
+}
 #define vm_do_get_virtual_address(addr) ((vm_addr_t)addr)
 static inline uint32 vm_read_memory_1(vm_addr_t addr)
 {
