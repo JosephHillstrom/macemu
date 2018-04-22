@@ -84,9 +84,8 @@
 		08E877521E0640E800A90A2C /* clip_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CE2C14A99EF0000B1711 /* clip_macosx.cpp */; };
 		A7B1921418C35D4700791D8D /* DiskType.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B1921318C35D4700791D8D /* DiskType.m */; };
 		D042EC4B2083ED4E0026CE59 /* emul_ppc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */; };
-		D049ED4D2086862200AA3823 /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D07ACD042083E37A0024DDC1 /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		D07ACD022083E29A0024DDC1 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D07ACD012083E29A0024DDC1 /* SDL.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		E4302EE31FBFE7FA00A5B500 /* lowmem.c in Sources */ = {isa = PBXBuildFile; fileRef = E4302EE21FBFE7FA00A5B500 /* lowmem.c */; };
+		D0FF5886208D173A00AD139C /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1C834208CEAFB008DE351 /* SDL.framework */; };
+		D0FF5888208D174800AD139C /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D0FF5887208D174800AD139C /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -106,7 +105,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D049ED4D2086862200AA3823 /* SDL.framework in Copy Frameworks */,
+				D0FF5888208D174800AD139C /* SDL.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -352,6 +351,9 @@
 		A7B1921318C35D4700791D8D /* DiskType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiskType.m; sourceTree = "<group>"; };
 		D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = emul_ppc.cpp; path = ../emul_ppc/emul_ppc.cpp; sourceTree = "<group>"; };
 		D07ACD042083E37A0024DDC1 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
+		D0E1C834208CEAFB008DE351 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
+		D0E1C836208CEB11008DE351 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
+		D0FF5887208D174800AD139C /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		E4302EE21FBFE7FA00A5B500 /* lowmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lowmem.c; path = Darwin/lowmem.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -374,7 +376,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D07ACD022083E29A0024DDC1 /* SDL.framework in Frameworks */,
+				D0FF5886208D173A00AD139C /* SDL.framework in Frameworks */,
 				0856D21514A9A6C6000B1711 /* IOKit.framework in Frameworks */,
 				08CD42DC14B7B85B009CA2A2 /* Cocoa.framework in Frameworks */,
 				08CD42E814B7B8AA009CA2A2 /* Carbon.framework in Frameworks */,
@@ -388,10 +390,8 @@
 			isa = PBXGroup;
 			children = (
 				08003F851E0624D100A3ADAB /* basic-dyngen-ops-x86_32.hpp */,
-				E4C9A03D1FD55CDC00CABBF9 /* basic-dyngen-ops-x86_64_macos.hpp */,
 				08003F871E0624D100A3ADAB /* basic-dyngen-ops.hpp */,
 				08003F881E0624D100A3ADAB /* ppc-dyngen-ops-x86_32.hpp */,
-				E4C9A03F1FD55CE700CABBF9 /* ppc-dyngen-ops-x86_64_macos.hpp */,
 				08003F8A1E0624D100A3ADAB /* ppc-dyngen-ops.hpp */,
 				08003F8B1E0624D100A3ADAB /* ppc-execute-impl.cpp */,
 			);
@@ -409,10 +409,10 @@
 		0856CCAC14A99DE0000B1711 = {
 			isa = PBXGroup;
 			children = (
+				D0E1C836208CEB11008DE351 /* SDL.framework */,
+				D0FF5887208D174800AD139C /* SDL.framework */,
 				D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */,
 				D07ACD042083E37A0024DDC1 /* SDL.framework */,
-				D07ACCFD2083E1990024DDC1 /* SDL2.framework */,
-				D07ACD032083E37A0024DDC1 /* SDL2.framework */,
 				0856CCC814A99E30000B1711 /* Sources */,
 				08CD42DF14B7B865009CA2A2 /* Frameworks */,
 				0856CCC214A99E1C000B1711 /* Products */,
@@ -848,7 +848,7 @@
 		08CD42DF14B7B865009CA2A2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D07ACD012083E29A0024DDC1 /* SDL.framework */,
+				D0E1C834208CEAFB008DE351 /* SDL.framework */,
 				08CD42E714B7B8AA009CA2A2 /* Carbon.framework */,
 				08CD42DB14B7B85B009CA2A2 /* Cocoa.framework */,
 				0856D21414A9A6C6000B1711 /* IOKit.framework */,
@@ -1018,7 +1018,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E4302EE31FBFE7FA00A5B500 /* lowmem.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1350,7 +1349,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";							CLANG_ENABLE_OBJC_WEAK = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
 				COPY_PHASE_STRIP = NO;
 				DEAD_CODE_STRIPPING = NO;
 				FRAMEWORK_SEARCH_PATHS = (
