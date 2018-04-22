@@ -44,8 +44,8 @@ static inline void mach_current_time(tm_time_t &t) {
 		host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &host_clock);
 		host_clock_inited = true;
 	}
-
-	clock_get_time(host_clock, &t);
+	
+	clock_get_time(host_clock, (mach_timespec_t *)&t);
 }
 #endif
 

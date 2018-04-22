@@ -1,5 +1,5 @@
 /*
- *  prefs_dummy.cpp - Preferences handling, dummy implementation
+ *  prefs_sdl.cpp - Preferences handling, SDL2 implementation
  *
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
@@ -23,22 +23,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
+#include <SDL.h>
 
 #include "prefs.h"
 
 
 // Platform-specific preferences items
 prefs_desc platform_prefs_items[] = {
+	{"idlewait", TYPE_BOOLEAN, false,      "sleep when idle"},
+	{"sdlrender", TYPE_STRING, false,      "SDL_Renderer driver (\"auto\", \"software\" (may be faster), etc.)"},
 	{NULL, TYPE_END, false}	// End of list
 };
 
 
 // Prefs file name and path
-#if defined(__APPLE__) && defined(__MACH__)
-const char PREFS_FILE_NAME[] = "/tmp/BasiliskII/BasiliskII_Prefs";	// HACK: for now, just load stuff from a fixed dir, inside /tmp
-#else
-const char PREFS_FILE_NAME[] = "BasiliskII_Prefs";
-#endif
+const char PREFS_FILE_NAME[] = ".basilisk_ii_prefs";
 
 std::string UserPrefsPath;
 
@@ -49,8 +48,18 @@ std::string UserPrefsPath;
 
 void LoadPrefs(const char * vmdir)	// TODO: load prefs from 'vmdir'
 {
+	// Build a full-path to the settings file
+	char prefs_path[4096];
+	if (!vmdir) {
+		vmdir = SDL_getenv("HOME");
+	}
+	if (!vmdir) {
+		vmdir = "./";
+	}
+	SDL_snprintf(prefs_path, sizeof(prefs_path), "%s/%s", vmdir, PREFS_FILE_NAME);
+	
 	// Read preferences from settings file
-	FILE *f = fopen(PREFS_FILE_NAME, "r");
+	FILE *f = fopen(prefs_path, "r");
 	if (f != NULL) {
 
 		// Prefs file found, load settings
@@ -71,8 +80,16 @@ void LoadPrefs(const char * vmdir)	// TODO: load prefs from 'vmdir'
 
 void SavePrefs(void)
 {
+	// Build a full-path to the settings file
+	char prefs_path[4096];
+	const char * dir = SDL_getenv("HOME");
+	if (!dir) {
+		dir = "./";
+	}
+	SDL_snprintf(prefs_path, sizeof(prefs_path), "%s/%s", dir, PREFS_FILE_NAME);
+
 	FILE *f;
-	if ((f = fopen(PREFS_FILE_NAME, "w")) != NULL) {
+	if ((f = fopen(prefs_path, "w")) != NULL) {
 		SavePrefsToStream(f);
 		fclose(f);
 	}
