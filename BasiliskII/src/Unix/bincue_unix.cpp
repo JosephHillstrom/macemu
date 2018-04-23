@@ -47,8 +47,8 @@ static int bincue_core_audio_callback(void);
 #endif*/
 
 #ifdef USE_SDL_AUDIO
-#include <SDL/SDL.h>
-#include <SDL/SDL_audio.h>
+#include <SDL.h>
+#include <SDL_audio.h>
 #endif
 #include "bincue_unix.h"
 #define DEBUG 0

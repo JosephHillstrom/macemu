@@ -42,7 +42,7 @@
 
 #include "../CrossPlatform/sysdeps.h"
 
-#include <SDL/SDL.h>
+#include <SDL.h>
 #if (SDL_COMPILEDVERSION < SDL_VERSIONNUM(2, 0, 0))
 #include <SDL/SDL_mutex.h>
 #include <SDL/SDL_thread.h>

@@ -60,17 +60,17 @@ extern uint8 *ROMBaseHost;		// Base address of Mac ROM (host address space)
 // Mac memory access functions
 #if EMULATED_PPC
 #include "cpu/vm.hpp"
-static inline uint32 ReadMacInt8(uint32 addr) {return vm_read_memory_1(addr);}
-static inline void WriteMacInt8(uint32 addr, uint32 v) {vm_write_memory_1(addr, v);}
-static inline uint32 ReadMacInt16(uint32 addr) {return vm_read_memory_2(addr);}
-static inline void WriteMacInt16(uint32 addr, uint32 v) {vm_write_memory_2(addr, v);}
-static inline uint32 ReadMacInt32(uint32 addr) {return vm_read_memory_4(addr);}
-static inline void WriteMacInt32(uint32 addr, uint32 v) {vm_write_memory_4(addr, v);}
-static inline uint64 ReadMacInt64(uint32 addr) {return vm_read_memory_8(addr);}
-static inline void WriteMacInt64(uint32 addr, uint64 v) {vm_write_memory_8(addr, v);}
+static inline uint32 ReadMacInt8(uint32 addr) {return vm_read_memory_1((vm_addr_t)addr);}
+static inline void WriteMacInt8(uint32 addr, uint32 v) {vm_write_memory_1((vm_addr_t)addr, v);}
+static inline uint32 ReadMacInt16(uint32 addr) {return vm_read_memory_2((vm_addr_t)addr);}
+static inline void WriteMacInt16(uint32 addr, uint32 v) {vm_write_memory_2((vm_addr_t)addr, v);}
+static inline uint32 ReadMacInt32(uint32 addr) {return vm_read_memory_4((vm_addr_t)addr);}
+static inline void WriteMacInt32(uint32 addr, uint32 v) {vm_write_memory_4((vm_addr_t)addr, v);}
+static inline uint64 ReadMacInt64(uint32 addr) {return vm_read_memory_8((vm_addr_t)addr);}
+static inline void WriteMacInt64(uint32 addr, uint64 v) {vm_write_memory_8((vm_addr_t)addr, v);}
 static inline uint32 Host2MacAddr(uint8 *addr) {return vm_do_get_virtual_address(addr);}
-static inline uint8 *Mac2HostAddr(uint32 addr) {return vm_do_get_real_address(addr);}
-static inline void *Mac_memset(uint32 addr, int c, size_t n) {return vm_memset(addr, c, n);}
+static inline uint8 *Mac2HostAddr(uint32 addr) {return vm_do_get_real_address((vm_addr_t)addr);}
+static inline void *Mac_memset(uint32 addr, int c, size_t n) {return vm_memset((vm_addr_t)addr, c, n);}
 static inline void *Mac2Host_memcpy(void *dest, uint32 src, size_t n) {return vm_memcpy(dest, src, n);}
 static inline void *Host2Mac_memcpy(uint32 dest, const void *src, size_t n) {return vm_memcpy(dest, src, n);}
 static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return vm_memcpy(dest, src, n);}

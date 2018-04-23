@@ -161,10 +161,10 @@ typedef long long int64;
 #else
 #error "No 8 byte type, you lose."
 #endif
-#if SIZEOF_VOID_P == 4
+#ifdef i386
 typedef uint32 uintptr;
 typedef int32 intptr;
-#elif SIZEOF_VOID_P == 8
+#elif defined __x86_64__
 typedef uint64 uintptr;
 typedef int64 intptr;
 #else

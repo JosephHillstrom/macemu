@@ -1,3 +1,4 @@
+#ifdef i386
 /*
  *  clip_macosx.cpp - Clipboard handling, MacOS X (Carbon) implementation
  *
@@ -211,3 +212,4 @@ void PutScrap(uint32 type, void *scrap, int32 length)
 	SwapScrapData(type, scrap, length, FALSE); // swap it back
 #endif
 }
+#endif

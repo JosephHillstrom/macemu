@@ -86,16 +86,11 @@
 		D042EC4B2083ED4E0026CE59 /* emul_ppc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */; };
 		D04E74E1208E711500561B08 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D04E74E0208E711500561B08 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D04E74E2208E713200561B08 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D04E74E0208E711500561B08 /* SDL2.framework */; };
+		D05E7905208E9F9E003668C6 /* clip_macosx64.mm in Sources */ = {isa = PBXBuildFile; fileRef = 08D93A15159FE174003B04EC /* clip_macosx64.mm */; };
+		D05E7908208EA211003668C6 /* pict.c in Sources */ = {isa = PBXBuildFile; fileRef = 0879BD5D15A88F7600DC277D /* pict.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		082AC26714AA5A4800071F5E /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0856CCAE14A99DE0000B1711 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 082AC25114AA59B600071F5E;
-			remoteInfo = lowmem;
-		};
 		7539EDE81F50C3D600454E81 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7539EDE11F50C3D600454E81 /* SDL.xcodeproj */;
@@ -969,14 +964,12 @@
 				0856CCBD14A99E1C000B1711 /* Resources */,
 				0856CCBE14A99E1C000B1711 /* Sources */,
 				0856CCBF14A99E1C000B1711 /* Frameworks */,
-				082AC26A14AA5A5A00071F5E /* Run lowmem */,
 				08CD43CF14B7BD01009CA2A2 /* Change SDL load path */,
 				08CD3F3214B665E1009CA2A2 /* Preprocess Info.plist */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				082AC26814AA5A4800071F5E /* PBXTargetDependency */,
 				7539EDF81F50C40100454E81 /* PBXTargetDependency */,
 			);
 			name = SheepShaver;
@@ -1064,21 +1057,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		082AC26A14AA5A5A00071F5E /* Run lowmem */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(BUILT_PRODUCTS_DIR)/$(EXECUTABLE_PATH)",
-			);
-			name = "Run lowmem";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${BUILT_PRODUCTS_DIR}/lowmem\" \"${BUILT_PRODUCTS_DIR}/${EXECUTABLE_PATH}\"";
-		};
 		08CD3F3214B665E1009CA2A2 /* Preprocess Info.plist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1128,6 +1106,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D05E7908208EA211003668C6 /* pict.c in Sources */,
+				D05E7905208E9F9E003668C6 /* clip_macosx64.mm in Sources */,
 				D042EC4B2083ED4E0026CE59 /* emul_ppc.cpp in Sources */,
 				08E877521E0640E800A90A2C /* clip_macosx.cpp in Sources */,
 				0856CFC114A99EF0000B1711 /* adb.cpp in Sources */,
@@ -1206,11 +1186,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		082AC26814AA5A4800071F5E /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 082AC25114AA59B600071F5E /* lowmem */;
-			targetProxy = 082AC26714AA5A4800071F5E /* PBXContainerItemProxy */;
-		};
 		7539EDF81F50C40100454E81 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework;
@@ -1488,17 +1463,8 @@
 					../kpx_cpu/src,
 					../kpx_cpu/include,
 					../include,
-				);
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					"$(BUILT_PRODUCTS_DIR)/SDL2.framework/Headers",
-					./config/,
-					../Unix,
-					../MacOSX/Launcher,
-					../slirp,
-					../kpx_cpu/src,
-					../kpx_cpu/include,
-					../include,
 					../CrossPlatform,
+					../MacOSX/SDL2.framework/Headers,
 				);
 				INFOPLIST_FILE = Info.plist.in;
 				INFOPLIST_PREFIX_HEADER = "";
@@ -1563,17 +1529,8 @@
 					../kpx_cpu/src,
 					../kpx_cpu/include,
 					../include,
-				);
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					"$(BUILT_PRODUCTS_DIR)/SDL2.framework/Headers",
-					./config/,
-					../Unix,
-					../MacOSX/Launcher,
-					../slirp,
-					../kpx_cpu/src,
-					../kpx_cpu/include,
-					../include,
 					../CrossPlatform,
+					../MacOSX/SDL2.framework/Headers,
 				);
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = Info.plist.in;
