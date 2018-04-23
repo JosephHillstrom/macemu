@@ -999,7 +999,7 @@
 				LastUpgradeCheck = 0930;
 			};
 			buildConfigurationList = 0856CCB114A99DE0000B1711 /* Build configuration list for PBXProject "SheepShaver_Xcode8" */;
-			compatibilityVersion = "Xcode 8.0";
+			compatibilityVersion = "Xcode 6.3";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -1302,7 +1302,7 @@
 					_REENTRANT,
 				);
 				HEADER_SEARCH_PATHS = (
-					/Library/Frameworks/SDL.framework/Versions/A/Headers/,
+					"$(BUILT_PRODUCTS_DIR)/SDL2.framework/Headers",
 					./config/,
 					../Unix,
 					../MacOSX/Launcher,
@@ -1337,7 +1337,7 @@
 					_REENTRANT,
 				);
 				HEADER_SEARCH_PATHS = (
-					/Library/Frameworks/SDL.framework/Versions/A/Headers/,
+					"$(BUILT_PRODUCTS_DIR)/SDL2.framework/Headers",
 					./config/,
 					../Unix,
 					../MacOSX/Launcher,
@@ -1508,7 +1508,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "-D__MACH__";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-liconv",
@@ -1575,7 +1575,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
-				OTHER_CFLAGS = "";
+				OTHER_CFLAGS = "-D__MACH__";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
 				OTHER_LDFLAGS = (
 					"-liconv",
