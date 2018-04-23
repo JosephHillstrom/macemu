@@ -4,12 +4,12 @@
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  MC68881/68040 fpu emulation
- *  
+ *
  *  Original UAE FPU, copyright 1996 Herman ten Brugge
  *  Rewrite for x86, copyright 1999-2000 Lauri Pesonen
  *  New framework, copyright 2000 Gwenole Beauchesne
  *  Adapted for JIT compilation (c) Bernd Meyer, 2000
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -54,19 +54,19 @@ struct fpu_t {
 	/* ---------------------------------------------------------------------- */
 	/* --- Floating-Point Data Registers                                  --- */
 	/* ---------------------------------------------------------------------- */
-	
+
 	/* The eight %fp0 .. %fp7 registers */
 	fpu_register	registers[8];
-	
+
 	/* Used for lazy evalualation of FPU flags */
 	fpu_register	result;
-	
+
 	/* ---------------------------------------------------------------------- */
 	/* --- Floating-Point Control Register                                --- */
 	/* ---------------------------------------------------------------------- */
-	
+
 	struct		{
-	
+
 	/* Exception Enable Byte */
 	uae_u32		exception_enable;
 	#define		FPCR_EXCEPTION_ENABLE	0x0000ff00
@@ -78,17 +78,17 @@ struct fpu_t {
 	#define		FPCR_EXCEPTION_DZ		0x00000400
 	#define		FPCR_EXCEPTION_INEX2	0x00000200
 	#define		FPCR_EXCEPTION_INEX1	0x00000100
-	
+
 	/* Mode Control Byte Mask */
 	#define		FPCR_MODE_CONTROL		0x000000ff
-	
+
 	/* Rounding precision */
 	uae_u32		rounding_precision;
 	#define		FPCR_ROUNDING_PRECISION	0x000000c0
 	#define		FPCR_PRECISION_SINGLE	0x00000040
 	#define		FPCR_PRECISION_DOUBLE	0x00000080
 	#define		FPCR_PRECISION_EXTENDED	0x00000000
-	
+
 	/* Rounding mode */
 	uae_u32		rounding_mode;
 	#define		FPCR_ROUNDING_MODE		0x00000030
@@ -96,15 +96,15 @@ struct fpu_t {
 	#define		FPCR_ROUND_ZERO			0x00000010
 	#define		FPCR_ROUND_MINF			0x00000020
 	#define		FPCR_ROUND_PINF			0x00000030
-	
+
 	}			fpcr;
-	
+
 	/* ---------------------------------------------------------------------- */
 	/* --- Floating-Point Status Register                                 --- */
 	/* ---------------------------------------------------------------------- */
-	
+
 	struct		{
-	
+
 	/* Floating-Point Condition Code Byte */
 	uae_u32		condition_codes;
 	#define		FPSR_CCB				0xff000000
@@ -112,13 +112,13 @@ struct fpu_t {
 	#define		FPSR_CCB_ZERO			0x04000000
 	#define		FPSR_CCB_INFINITY		0x02000000
 	#define		FPSR_CCB_NAN			0x01000000
-	
+
 	/* Quotient Byte */
 	uae_u32		quotient;
 	#define		FPSR_QUOTIENT			0x00ff0000
 	#define		FPSR_QUOTIENT_SIGN		0x00800000
 	#define		FPSR_QUOTIENT_VALUE		0x007f0000
-	
+
 	/* Exception Status Byte */
 	uae_u32		exception_status;
 	#define		FPSR_EXCEPTION_STATUS	FPCR_EXCEPTION_ENABLE
@@ -130,7 +130,7 @@ struct fpu_t {
 	#define		FPSR_EXCEPTION_DZ		FPCR_EXCEPTION_DZ
 	#define		FPSR_EXCEPTION_INEX2	FPCR_EXCEPTION_INEX2
 	#define		FPSR_EXCEPTION_INEX1	FPCR_EXCEPTION_INEX1
-	
+
 	/* Accrued Exception Byte */
 	uae_u32		accrued_exception;
 	#define		FPSR_ACCRUED_EXCEPTION	0x000000ff
@@ -139,37 +139,37 @@ struct fpu_t {
 	#define		FPSR_ACCR_UNFL			0x00000020
 	#define		FPSR_ACCR_DZ			0x00000010
 	#define		FPSR_ACCR_INEX			0x00000008
-	
+
 	}			fpsr;
-	
+
 	/* ---------------------------------------------------------------------- */
 	/* --- Floating-Point Instruction Address Register                    --- */
 	/* ---------------------------------------------------------------------- */
-	
+
 	uae_u32		instruction_address;
-	
+
 	/* ---------------------------------------------------------------------- */
 	/* --- Initialization / Finalization                                  --- */
 	/* ---------------------------------------------------------------------- */
-	
+
 	/* Flag set if we emulate an integral 68040 FPU */
 	bool		is_integral;
-	
+
 	/* ---------------------------------------------------------------------- */
 	/* --- Extra FPE-dependant defines                                    --- */
 	/* ---------------------------------------------------------------------- */
-	
+
 	#if			defined(FPU_X86) \
 			||	(defined(FPU_UAE) && defined(USE_X87_ASSEMBLY)) \
 			||	(defined(FPU_IEEE) && defined(USE_X87_ASSEMBLY))
-	
+
 	#define		CW_RESET				0x0040	// initial CW value after RESET
 	#define		CW_FINIT				0x037F	// initial CW value after FINIT
 	#define		SW_RESET				0x0000	// initial SW value after RESET
 	#define		SW_FINIT				0x0000	// initial SW value after FINIT
 	#define		TW_RESET				0x5555	// initial TW value after RESET
 	#define		TW_FINIT				0x0FFF	// initial TW value after FINIT
-	
+
 	#define		CW_X					0x1000	// infinity control
 	#define		CW_RC_ZERO				0x0C00	// rounding control toward zero
 	#define		CW_RC_UP				0x0800	// rounding control toward +
@@ -185,7 +185,7 @@ struct fpu_t {
 	#define		CW_ZM					0x0004	// zero divide exception mask
 	#define		CW_DM					0x0002	// denormalized operand exception mask
 	#define		CW_IM					0x0001	// invalid operation exception mask
-	
+
 	#define		SW_B					0x8000	// busy flag
 	#define		SW_C3					0x4000	// condition code flag 3
 	#define		SW_TOP_7				0x3800	// top of stack = ST(7)
@@ -207,12 +207,12 @@ struct fpu_t {
 	#define		SW_ZE					0x0004	// zero divide exception flag
 	#define		SW_DE					0x0002	// denormalized operand exception flag
 	#define		SW_IE					0x0001	// invalid operation exception flag
-	
+
 	#define		X86_ROUNDING_MODE		0x0C00
 	#define		X86_ROUNDING_PRECISION	0x0300
-	
+
 	#endif		/* FPU_X86 */
-	
+
 };
 
 /* We handle only one global fpu */
@@ -233,7 +233,7 @@ static inline void set_fpcr(uae_u32 new_fpcr);
 /* Accessors to FPU Status Register */
 static inline uae_u32 get_fpsr(void);
 static inline void set_fpsr(uae_u32 new_fpsr);
-	
+
 /* Accessors to FPU Instruction Address Register */
 static inline uae_u32 get_fpiar();
 static inline void set_fpiar(uae_u32 new_fpiar);
@@ -242,7 +242,7 @@ static inline void set_fpiar(uae_u32 new_fpiar);
 extern void fpu_init(bool integral_68040);
 extern void fpu_exit(void);
 extern void fpu_reset(void);
-	
+
 /* Floating-point arithmetic instructions */
 void fpuop_arithmetic(uae_u32 opcode, uae_u32 extra) REGPARAM;
 

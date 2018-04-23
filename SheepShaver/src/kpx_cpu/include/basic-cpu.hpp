@@ -35,7 +35,7 @@ union any_register
 	uint64 j;
 	float  f;
 	double d;
-	
+
 	// Explicit casts may be required to use those constructors
 	any_register(uint32 v = 0)	: i(v) { }
 	any_register(uint64 v)		: j(v) { }

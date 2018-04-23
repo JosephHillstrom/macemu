@@ -72,7 +72,7 @@ enum {
 	cscGetDDCBlock					= 27,
 	cscGetMultiConnect				= 28,
 	cscGetClutBehavior				= 29
-};	
+};
 
 enum {	// VDSwitchInfo struct
 	csMode = 0,

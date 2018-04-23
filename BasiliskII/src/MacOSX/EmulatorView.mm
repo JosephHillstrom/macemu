@@ -96,7 +96,7 @@ static int prevFlags;
 
 	if ( (flags & NSControlKeyMask) != (prevFlags & NSControlKeyMask) )
 		if ( flags & NSControlKeyMask )
-			ADBKeyDown(0x36);	// CTL_LEFT
+			ADBKeyDown(0x36);	// CTRL_LEFT
 		else
 			ADBKeyUp(0x36);
 
@@ -174,7 +174,7 @@ static int prevFlags;
 		[bitmap draw];
 #endif
 #ifdef CGIMAGEREF
-		cgDrawInto([self bounds], cgImgRep);
+		[self cgDrawInto:[ self bounds ] withImage:cgImgRep];
 #endif
 #ifdef CGDRAWBITMAP
 		[self CGDrawBitmap];
@@ -204,14 +204,15 @@ static int prevFlags;
 - (NSData *) TIFFrep
 {
 #ifdef NSBITMAP
-	return [bitmap TIFFRepresentation];
+	return [ bitmap TIFFRepresentation ];
 #else
-	NSBitmapImageRep	*b = [NSBitmapImageRep alloc];
+	NSBitmapImageRep* b = nil;
+	NSUInteger bytesInImage = (x * y) >> 3;
 
-	b = [b initWithBitmapDataPlanes: (unsigned char **) &bitmap
+	b = [b initWithBitmapDataPlanes: (unsigned char **)&bitmap
 						 pixelsWide: x
 						 pixelsHigh: y
-  #ifdef CGIMAGEREF
+#ifdef CGIMAGEREF
 					  bitsPerSample: CGImageGetBitsPerComponent(cgImgRep)
 					samplesPerPixel: 3
 						   hasAlpha: NO
@@ -219,8 +220,9 @@ static int prevFlags;
 					 colorSpaceName: NSCalibratedRGBColorSpace
 						bytesPerRow: CGImageGetBytesPerRow(cgImgRep)
 					   bitsPerPixel: CGImageGetBitsPerPixel(cgImgRep)];
-  #endif
-  #ifdef CGDRAWBITMAP
+	bytesInImage = y * CGImageGetBytesPerRow(cgImgRep);
+#endif
+#ifdef CGDRAWBITMAP
 					  bitsPerSample: bps
 					samplesPerPixel: spp
 						   hasAlpha: hasAlpha
@@ -228,15 +230,17 @@ static int prevFlags;
 					 colorSpaceName: NSCalibratedRGBColorSpace
 						bytesPerRow: bytesPerRow
 					   bitsPerPixel: bpp];
-  #endif
+	bytesInImage = y * bytesPerRow;
+#endif
 
     if ( ! b )
 	{
-		ErrorAlert("Could not allocate an NSBitmapImageRep for the TIFF\nTry setting the emulation to millions of colours?");
-		return nil;
+		//ErrorAlert( "Can't initialize NSBitmapImageRep for the TIFF" );
+
+		return [ [[ NSData alloc ] retain] initWithBytes:(unsigned char *)bitmap length:bytesInImage ];
 	}
 
-	return [b TIFFRepresentation];
+	return [ b TIFFRepresentation ];
 #endif
 }
 
@@ -276,14 +280,14 @@ static int prevFlags;
 	hasAlpha = alpha;
 	numBytes = bpr * height;
 #endif
-	D(NSLog(@"readyToDraw: theBitmap=%lx\n", theBitmap));
+	D(NSLog( @"readyToDraw (CGDrawBitmap): theBitmap=%lx\n", theBitmap ));
 
 	bitmap = theBitmap;
 	x = width, y = height;
 	drawView = YES;
 	[[self window] setAcceptsMouseMovedEvents:	YES];
 //	[[self window] setInitialFirstResponder:	self];
-	[[self window] makeFirstResponder:			self];
+	[[self window] makeFirstResponder:		self];
 }
 
 - (void) disableDrawing
@@ -297,6 +301,18 @@ static int prevFlags;
 
 	fullScreen = YES;
 	memcpy(&displayBox, &displayBounds, sizeof(displayBox));
+}
+
+#ifdef CGIMAGEREF
+- (CGImageRef) cgImgRep
+{
+	return cgImgRep;
+}
+#endif
+
+- (void*) bitmap
+{
+	return bitmap;
 }
 
 - (short) width
@@ -439,16 +455,15 @@ static NSPoint	mouse;			// Previous/current mouse location
 	ADBMouseUp(0);
 }
 
-#if DEBUG
+//#if DEBUG
 - (void) randomise		// Draw some coloured snow in the bitmap
 {
-	unsigned char	*data,
-					*pixel;
+	unsigned char	*data, *pixel;
 
   #ifdef NSBITMAP
 	data = [bitmap bitmapData];
   #else
-	data = bitmap;
+	data = (unsigned char *)bitmap;
   #endif
 
 	for ( int i = 0; i < 1000; ++i )
@@ -457,12 +472,18 @@ static NSPoint	mouse;			// Previous/current mouse location
 		*pixel = (unsigned char) (256.0 * rand() / RAND_MAX);
 	}
 }
-#endif
+//#endif
 
 - (void) drawRect: (NSRect) rect
 {
 	if ( ! drawView )		// If the emulator is still being setup,
 		return;				// we do not want to draw
+
+	NSGraphicsContext* theContext = [ NSGraphicsContext currentContext ];
+	if ( ! theContext )
+		return;
+
+	//[ theContext saveGraphicsState ];
 
 #if DEBUG
 	NSLog(@"In drawRect");
@@ -474,11 +495,13 @@ static NSPoint	mouse;			// Previous/current mouse location
 	[bitmap draw];
 #endif
 #ifdef CGIMAGEREF
-	cgDrawInto(rect, cgImgRep);
+	[ self cgDrawInto:rect withImage:cgImgRep ];
 #endif
 #ifdef CGDRAWBITMAP
 	[self CGDrawBitmap];
 #endif
+
+	//[ theContext restoreGraphicsState ];
 }
 
 - (void) setTo: (int) val		// Set all of bitmap to val
@@ -508,43 +531,50 @@ static NSPoint	mouse;			// Previous/current mouse location
 //
 
 #ifdef CGDRAWBITMAP
+
 extern "C" void CGDrawBitmap(...);
 
 - (void) CGDrawBitmap
 {
-	CGContextRef	cgContext = (CGContextRef) [[NSGraphicsContext currentContext]
-												graphicsPort];
 	NSRect			rect = [self bounds];
 	CGRect			cgRect = {
-								{rect.origin.x, rect.origin.y},
-								{rect.size.width, rect.size.height}
-							 };
+						{ rect.origin.x, rect.origin.y },
+						{ rect.size.width, rect.size.height }
+					};
+
+	NSGraphicsContext* theContext = [ NSGraphicsContext currentContext ];
+	CGContextRef cgContext = (CGContextRef)[ theContext graphicsPort ];
 
 	CGColorSpaceRef	colourSpace = CGColorSpaceCreateDeviceRGB();
 
 
 //	CGContextSetShouldAntialias(cgContext, NO);		// Seems to have no effect?
 
-	CGDrawBitmap(cgContext, cgRect, x, y, bps, spp, bpp,
-					bytesPerRow, isPlanar, hasAlpha, colourSpace, &bitmap);
+	if ( cgContext )
+		CGDrawBitmap( cgContext, cgRect, x, y, bps, spp, bpp,
+					bytesPerRow, isPlanar, hasAlpha, colourSpace, &bitmap );
 }
+
 #endif
 
 #ifdef CGIMAGEREF
-void
-cgDrawInto(NSRect rect, CGImageRef cgImgRep)
+
+- (void) cgDrawInto: (NSRect) rect withImage: (CGImageRef) cgImage
 {
-	CGContextRef	cgContext = (CGContextRef) [[NSGraphicsContext currentContext]
-												graphicsPort];
-	CGRect			cgRect = {
-								{rect.origin.x, rect.origin.y},
-								{rect.size.width, rect.size.height}
-							 };
+	CGRect cgRect = {
+				{ rect.origin.x, rect.origin.y },
+				{ rect.size.width, rect.size.height }
+			};
 
 //	CGContextSetShouldAntialias(cgContext, NO);		// Seems to have no effect?
 
-	CGContextDrawImage(cgContext, cgRect, cgImgRep);
+	NSGraphicsContext* theContext = [ NSGraphicsContext currentContext ];
+	CGContextRef cgContext = (CGContextRef)[ theContext graphicsPort ];
+
+	if ( cgContext )
+		CGContextDrawImage( cgContext, cgRect, cgImage );
 }
+
 #endif
 
 @end

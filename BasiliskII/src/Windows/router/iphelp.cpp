@@ -219,7 +219,7 @@ void error_winsock_2_icmp( int err, ip_t *ip_err, int dlen_err )
 			memset( (char *)icmp + sizeof(icmp_t), 0, sizeof(uint32) );
 
 			// copy 64 bits of original message
-			memcpy( 
+			memcpy(
 				(char *)icmp + sizeof(icmp_t) + sizeof(uint32),
 				(char *)ip_err + sizeof(mac_t),
 				msg_size

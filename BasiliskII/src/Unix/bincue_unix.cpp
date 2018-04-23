@@ -17,7 +17,7 @@
  */
 
 /* Geoffrey Brown 2010
- * Includes ideas from dosbox src/dos/cdrom_image.cpp 
+ * Includes ideas from dosbox src/dos/cdrom_image.cpp
  *
  * Limitations:	1) cue files must reference single bin file
  *              2) only supports raw mode1 data and audio
@@ -232,7 +232,7 @@ static bool ParseCueSheet(FILE *fh, CueSheet *cs, const char *cuefile)
 	char line[MAXLINE];
 	unsigned int i_line=0;
 	char *keyword;
-	
+
 	totalPregap = 0;
 	prestart = 0;
 
@@ -255,8 +255,8 @@ static bool ParseCueSheet(FILE *fh, CueSheet *cs, const char *cuefile)
 
 				if (i_line > 1) {
 					D(bug("More than one FILE token\n"));
-					goto fail;	
-				}	
+					goto fail;
+				}
 				filename = strtok(NULL, "\"\t\n\r");
 				filetype = strtok(NULL, " \"\t\n\r");
 				if (strcmp("BINARY", filetype)) {
@@ -289,7 +289,7 @@ static bool ParseCueSheet(FILE *fh, CueSheet *cs, const char *cuefile)
 				field = strtok(NULL, " \t\n\r");
 				if (1 != sscanf(field, "%d", &i_track)) {
 					D(bug("Expected  track number\n"));
-					goto fail;		
+					goto fail;
 				}
 				curr->number = i_track;
 
@@ -321,7 +321,7 @@ static bool ParseCueSheet(FILE *fh, CueSheet *cs, const char *cuefile)
 				// parse INDEX start
 
 				field = strtok(NULL, " \t\n\r");
-				if (3 != sscanf(field, "%d:%d:%d", 
+				if (3 != sscanf(field, "%d:%d:%d",
 								 &msf.m, &msf.s, &msf.f)) {
 					D(bug("Expected index start frame\n"));
 					goto fail;
@@ -334,10 +334,10 @@ static bool ParseCueSheet(FILE *fh, CueSheet *cs, const char *cuefile)
 			} else if (!strcmp("PREGAP", keyword)) {
 				MSF msf;
 				char *field = strtok(NULL, " \t\n\r");
-				if (3 != sscanf(field, "%d:%d:%d", 
+				if (3 != sscanf(field, "%d:%d:%d",
 								 &msf.m, &msf.s, &msf.f)) {
 					D(bug("Expected pregap frame\n"));
-					goto fail;	
+					goto fail;
 				}
 				curr->pregap = MSFToFrames(msf);
 
@@ -350,7 +350,7 @@ static bool ParseCueSheet(FILE *fh, CueSheet *cs, const char *cuefile)
 			} else if (!strcmp("SONGWRITER", keyword)) {
 			} else {
 				D(bug("Unexpected keyword %s\n", keyword));
-				goto fail;		
+				goto fail;
 			}
 		}
 	}
@@ -391,12 +391,12 @@ static bool LoadCueSheet(const char *cuefile, CueSheet *cs)
 
 
 		tlast = &cs->tracks[cs->tcnt - 1];
-		tlast->length = buf.st_size/RAW_SECTOR_SIZE 
+		tlast->length = buf.st_size/RAW_SECTOR_SIZE
 						- tlast->start + totalPregap;
 
 		if (tlast->length < 0) {
 			D(bug("Binary file too short \n"));
- 		  	goto fail;	
+ 		  	goto fail;
    	    }
 
 		// save bin file length and pointer
@@ -409,7 +409,7 @@ static bool LoadCueSheet(const char *cuefile, CueSheet *cs)
 
 	  fail:
 		if (binfh >= 0)
-			close(binfh);	
+			close(binfh);
 		fclose(fh);
 		free(cs->binfile);
 		return false;
@@ -694,7 +694,7 @@ bool CDPlay_bincue(void *fh, uint8 start_m, uint8 start_s, uint8 start_f,
 			// fix up file offset if beyond the silence bytes
 
 			if (!player.silence) // not at the beginning
-				player.fileoffset += (player.audiostart - 
+				player.fileoffset += (player.audiostart -
 									  player.cs->tracks[track].start -
 									  player.cs->tracks[track].pregap) * RAW_SECTOR_SIZE;
 
@@ -792,7 +792,7 @@ static uint8 *fill_buffer(int stream_len)
 				player.audioposition++;
 			}
 		}
-	}		
+	}
 	return buf;
 }
 

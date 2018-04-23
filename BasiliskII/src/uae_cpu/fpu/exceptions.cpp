@@ -4,12 +4,12 @@
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  MC68881/68040 fpu emulation
- *  
+ *
  *  Original UAE FPU, copyright 1996 Herman ten Brugge
  *  Rewrite for x86, copyright 1999-2000 Lauri Pesonen
  *  New framework, copyright 2000 Gwenole Beauchesne
  *  Adapted for JIT compilation (c) Bernd Meyer, 2000
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -47,7 +47,7 @@ void FFPU fpu_init_native_exceptions(void)
 	// Mapping for "sw" -> fpsr exception byte
 	for (uae_u32 i = 0; i < 0x80; i++) {
 		exception_host2mac[i] = 0;
-		
+
 		if(i & SW_FAKE_BSUN) {
 			exception_host2mac[i] |= FPSR_EXCEPTION_BSUN;
 		}
@@ -77,12 +77,12 @@ void FFPU fpu_init_native_exceptions(void)
 			exception_host2mac[i] |= FPSR_EXCEPTION_OPERR;
 		}
 	}
-	
+
 	// Mapping for fpsr exception byte -> "sw"
 	for (uae_u32 i = 0; i < 0x100; i++) {
 		uae_u32 fpsr = (i << 8);
 		exception_mac2host[i] = 0;
-		
+
 		// BSUN; make sure that you don't generate FPU stack faults.
 		if(fpsr & FPSR_EXCEPTION_BSUN) {
 			exception_mac2host[i] |= SW_FAKE_BSUN;

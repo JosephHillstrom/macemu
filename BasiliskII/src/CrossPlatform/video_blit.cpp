@@ -60,7 +60,7 @@ static void Blit_Copy_Raw(uint8 * dest, const uint8 * source, uint32 length)
 
 #define FB_BLIT_1(dst, src) \
 	(dst = (((src) >> 8) & 0xff) | (((src) & 0xff) << 8))
-	
+
 #define FB_BLIT_2(dst, src) \
 	(dst = (((src) >> 8) & 0x00ff00ff) | (((src) & 0x00ff00ff) << 8))
 
@@ -196,7 +196,7 @@ static void Blit_Copy_Raw(uint8 * dest, const uint8 * source, uint32 length)
 
 #define FB_BLIT_1(dst, src) \
 	(dst = (((src) >> 8) & 0x001f) | (((src) << 9) & 0xfe00) | (((src) >> 7) & 0x01c0))
-	
+
 #define FB_BLIT_2(dst, src) \
 	(dst = (((src) >> 8) & 0x001f001f) | (((src) << 9) & 0xfe00fe00) | (((src) >> 7) & 0x01c001c0))
 
@@ -582,7 +582,7 @@ bool Screen_blitter_init(VisualFormat const & visual_format, bool native_byte_or
 			break;
 		}
 		bool blitter_found = (Screen_blit != NULL);
-	
+
 		// Search for an adequate blit function
 		const int blitters_count = sizeof(Screen_blitters)/sizeof(Screen_blitters[0]);
 		for (int i = 0; !blitter_found && (i < blitters_count); i++) {
@@ -599,7 +599,7 @@ bool Screen_blitter_init(VisualFormat const & visual_format, bool native_byte_or
 							;
 			}
 		}
-	
+
 		// No appropriate blitter found, dump RGB mask values and abort()
 		if (!blitter_found) {
 			fprintf(stderr, "### No appropriate blitter found\n");
@@ -622,7 +622,7 @@ bool Screen_blitter_init(VisualFormat const & visual_format, bool native_byte_or
 		Screen_blit = Blit_Copy_Raw;
 	}
 #endif
-	
+
 	// If the blitter simply reduces to a copy, we don't need VOSF in DGA mode
 	// --> In that case, we return FALSE
 	return (Screen_blit != Blit_Copy_Raw);

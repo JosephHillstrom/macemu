@@ -571,7 +571,7 @@ void sheepshaver_cpu::execute_68k(uint32 entry, M68kRegisters *r)
 	// Push return address (points to EXEC_RETURN opcode) on stack
 	gpr(1) -= 4;
 	WriteMacInt32(gpr(1), XLM_EXEC_RETURN_OPCODE);
-	
+
 	// Rentering 68k emulator
 	WriteMacInt32(XLM_RUN_MODE, MODE_68K);
 
@@ -772,7 +772,7 @@ sigsegv_return_t sigsegv_handler(sigsegv_info_t *sip)
 	// Get program counter of target CPU
 	sheepshaver_cpu * const cpu = ppc_cpu;
 	const uint32 pc = cpu->pc();
-	
+
 	// Fault in Mac ROM or RAM?
 	bool mac_fault = (pc >= ROMBase && pc < (ROMBase + ROM_AREA_SIZE)) || (pc >= RAMBase && pc < (RAMBase + RAMSize)) || (pc >= DR_CACHE_BASE && pc < (DR_CACHE_BASE + DR_CACHE_SIZE));
 	if (mac_fault) {
@@ -780,21 +780,21 @@ sigsegv_return_t sigsegv_handler(sigsegv_info_t *sip)
 		// "VM settings" during MacOS 8 installation
 		if (pc == ROMBase + 0x488160 && cpu->gpr(20) == 0xf8000000)
 			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
-	
+
 		// MacOS 8.5 installation
 		else if (pc == ROMBase + 0x488140 && cpu->gpr(16) == 0xf8000000)
 			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
-	
+
 		// MacOS 8 serial drivers on startup
 		else if (pc == ROMBase + 0x48e080 && (cpu->gpr(8) == 0xf3012002 || cpu->gpr(8) == 0xf3012000))
 			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
-	
+
 		// MacOS 8.1 serial drivers on startup
 		else if (pc == ROMBase + 0x48c5e0 && (cpu->gpr(20) == 0xf3012002 || cpu->gpr(20) == 0xf3012000))
 			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
 		else if (pc == ROMBase + 0x4a10a0 && (cpu->gpr(20) == 0xf3012002 || cpu->gpr(20) == 0xf3012000))
 			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
-	
+
 		// MacOS 8.6 serial drivers on startup (with DR Cache and OldWorld ROM)
 		else if ((pc - DR_CACHE_BASE) < DR_CACHE_SIZE && (cpu->gpr(16) == 0xf3012002 || cpu->gpr(16) == 0xf3012000))
 			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
@@ -905,7 +905,7 @@ void init_emul_op_trampolines(basic_dyngen & dg)
 	// NativeOp
 	native_op_trampoline = dg.gen_start();
 	func = (func_t)nv_mem_fun(&sheepshaver_cpu::execute_native_op).ptr();
-	dg.gen_invoke_CPU_T0(func);	
+	dg.gen_invoke_CPU_T0(func);
 	dg.gen_exec_return();
 	dg.gen_end();
 
@@ -966,7 +966,7 @@ void HandleInterrupt(powerpc_registers *r)
 		WriteMacInt16(ReadMacInt32(KERNEL_DATA_BASE + 0x67c), 1);
 		r->cr.set(r->cr.get() | ReadMacInt32(KERNEL_DATA_BASE + 0x674));
 		break;
-    
+
 #if INTERRUPTS_IN_NATIVE_MODE
 	case MODE_NATIVE:
 		// 68k emulator inactive, in nanokernel?
@@ -975,10 +975,9 @@ void HandleInterrupt(powerpc_registers *r)
 			// Prepare for 68k interrupt level 1
 			WriteMacInt16(ReadMacInt32(KERNEL_DATA_BASE + 0x67c), 1);
 			WriteMacInt32(ReadMacInt32(KERNEL_DATA_BASE + 0x658) + 0xdc,
-						  ReadMacInt32(ReadMacInt32(KERNEL_DATA_BASE + 0x658) + 0xdc)
+			ReadMacInt32(ReadMacInt32(KERNEL_DATA_BASE + 0x658) + 0xdc)
 						  | ReadMacInt32(KERNEL_DATA_BASE + 0x674));
-      
-			// Execute nanokernel interrupt routine (this will activate the 68k emulator)
+      			// Execute nanokernel interrupt routine (this will activate the 68k emulator)
 			DisableInterrupt();
 			if (ROMType == ROMTYPE_NEWWORLD)
 				ppc_cpu->interrupt(ROMBase + 0x312b1c);
@@ -987,7 +986,7 @@ void HandleInterrupt(powerpc_registers *r)
 		}
 		break;
 #endif
-    
+
 #if INTERRUPTS_IN_EMUL_OP_MODE
 	case MODE_EMUL_OP:
 		// 68k emulator active, within EMUL_OP routine, execute 68k interrupt routine directly when interrupt level is 0

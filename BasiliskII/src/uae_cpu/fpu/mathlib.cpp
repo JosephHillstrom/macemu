@@ -4,12 +4,12 @@
  *  Basilisk II (C) 1997-2008 Christian Bauer
  *
  *  MC68881/68040 fpu emulation
- *  
+ *
  *  Original UAE FPU, copyright 1996 Herman ten Brugge
  *  Rewrite for x86, copyright 1999-2001 Lauri Pesonen
  *  New framework, copyright 2000-2001 Gwenole Beauchesne
  *  Adapted for JIT compilation (c) Bernd Meyer, 2000-2001
- *  
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -44,14 +44,14 @@ PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y)
 {
 	fpu_extended value, exponent;
 	uae_s64 p = (uae_s64)y;
-	
+
 	if (x == 0.0) {
 		if (y > 0.0)
 			return (y == (double) p && (p & 1) != 0 ? x : 0.0);
 		else if (y < 0.0)
 			return (y == (double) p && (-p & 1) != 0 ? 1.0 / x : 1.0 / fp_fabs (x));
     }
-	
+
 	if (y == (double) p) {
 		fpu_extended r = 1.0;
 		if (p == 0)
@@ -69,7 +69,7 @@ PRIVATE fpu_extended fp_do_pow(fpu_extended x, fpu_extended y)
 			x *= x;
 		}
     }
-	
+
 	__asm__ __volatile__("fyl2x" : "=t" (value) : "0" (x), "u" (1.0) : "st(1)");
 	__asm__ __volatile__("fmul		%%st(1)		# y * log2(x)\n\t"
 				 "fst		%%st(1)\n\t"

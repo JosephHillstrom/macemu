@@ -91,11 +91,11 @@ struct ScreenPageInfo {
 struct ScreenInfo {
     uintptr memStart;			// Start address aligned to page boundary
     uint32 memLength;			// Length of the memory addressed by the screen pages
-    
+
     uintptr pageSize;			// Size of a page
     int pageBits;				// Shift count to get the page number
     uint32 pageCount;			// Number of pages allocated to the screen
-    
+
 	bool dirty;					// Flag: set if the frame buffer was touched
 	bool very_dirty;			// Flag: set if the frame buffer was completely modified (e.g. colormap changes)
     char * dirtyPages;			// Table of flags set if page was altered
@@ -278,33 +278,33 @@ static bool video_vosf_init(MONITOR_INIT)
 
 	const uintptr page_size = vm_get_page_size();
 	const uintptr page_mask = page_size - 1;
-	
+
 	// Round up frame buffer base to page boundary
 	mainBuffer.memStart = (((uintptr) the_buffer) + page_mask) & ~page_mask;
-	
+
 	// The frame buffer size shall already be aligned to page boundary (use page_extend)
 	mainBuffer.memLength = the_buffer_size;
-	
+
 	mainBuffer.pageSize = page_size;
 	mainBuffer.pageBits = log_base_2(mainBuffer.pageSize);
 	mainBuffer.pageCount =  (mainBuffer.memLength + page_mask)/mainBuffer.pageSize;
-	
+
 	// The "2" more bytes requested are a safety net to insure the
 	// loops in the update routines will terminate.
 	// See "How can we deal with array overrun conditions ?" hereunder for further details.
 	mainBuffer.dirtyPages = (char *) malloc(mainBuffer.pageCount + 2);
 	if (mainBuffer.dirtyPages == NULL)
 		return false;
-		
+
 	PFLAG_CLEAR_ALL;
 	PFLAG_CLEAR(mainBuffer.pageCount);
 	PFLAG_SET(mainBuffer.pageCount+1);
-	
+
 	// Allocate and fill in pageInfo with start and end (inclusive) row in number of bytes
 	mainBuffer.pageInfo = (ScreenPageInfo *) malloc(mainBuffer.pageCount * sizeof(ScreenPageInfo));
 	if (mainBuffer.pageInfo == NULL)
 		return false;
-	
+
 	uint32 a = 0;
 	for (unsigned i = 0; i < mainBuffer.pageCount; i++) {
 		unsigned y1 = a / VIDEO_MODE_ROW_BYTES;
@@ -322,11 +322,11 @@ static bool video_vosf_init(MONITOR_INIT)
 		if (a > mainBuffer.memLength)
 			a = mainBuffer.memLength;
 	}
-	
+
 	// We can now write-protect the frame buffer
 	if (vm_protect((char *)mainBuffer.memStart, mainBuffer.memLength, VM_PAGE_READ) != 0)
 		return false;
-	
+
 	// The frame buffer is sane, i.e. there is no write to it yet
 	mainBuffer.dirty = false;
 	return true;
@@ -424,7 +424,7 @@ static void vosf_set_dirty_area(int x, int y, int w, int h, unsigned screen_widt
 bool Screen_fault_handler(sigsegv_info_t *sip)
 {
   const uintptr addr = (uintptr)sigsegv_get_fault_address(sip);
-	
+
 	/* Someone attempted to write to the frame buffer. Make it writeable
 	 * now so that the data could actually be written to. It will be made
 	 * read-only back in one of the screen update_*() functions.
@@ -440,7 +440,7 @@ bool Screen_fault_handler(sigsegv_info_t *sip)
 		UNLOCK_VOSF;
 		return true;
 	}
-	
+
 	/* Otherwise, we don't know how to handle the fault, let it crash */
 	return false;
 }
@@ -451,19 +451,19 @@ bool Screen_fault_handler(sigsegv_info_t *sip)
  */
 
 /*	How can we deal with array overrun conditions ?
-	
+
 	The state of the framebuffer pages that have been touched are maintained
 	in the dirtyPages[] table. That table is (pageCount + 2) bytes long.
 
 Terminology
-	
+
 	"Last Page" denotes the pageCount-nth page, i.e. dirtyPages[pageCount - 1].
 	"CLEAR Page Guard" refers to the page following the Last Page but is always
 	in the CLEAR state. "SET Page Guard" refers to the page following the CLEAR
 	Page Guard but is always in the SET state.
 
 Rough process
-	
+
 	The update routines must determine which pages have to be blitted to the
 	screen. This job consists in finding the first_page that was touched.
 	i.e. find the next page that is SET. Then, finding how many pages were
@@ -474,7 +474,7 @@ There are two cases to check:
 	- Last Page is CLEAR: find_next_page_set() will reach the SET Page Guard
 	but it is beyond the valid pageCount value. Therefore, we exit from the
 	update routine.
-	
+
 	- Last Page is SET: first_page equals (pageCount - 1) and
 	find_next_page_clear() will reach the CLEAR Page Guard. We blit the last
 	page to the screen. On the next iteration, page equals pageCount and
@@ -501,7 +501,7 @@ static void update_display_window_vosf(VIDEO_DRV_WIN_INIT)
 		const int32 offset  = first_page << mainBuffer.pageBits;
 		const uint32 length = (page - first_page) << mainBuffer.pageBits;
 		vm_protect((char *)mainBuffer.memStart + offset, length, VM_PAGE_READ);
-		
+
 		// There is at least one line to update
 		const int y1 = mainBuffer.pageInfo[first_page].top;
 		const int y2 = mainBuffer.pageInfo[page - 1].bottom;

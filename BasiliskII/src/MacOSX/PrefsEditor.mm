@@ -23,6 +23,9 @@
 
 #import "PrefsEditor.h"
 
+#import "video.h"
+#import "video_macosx.h" // for get_current_video_mode()
+
 @implementation TableDS
 
 - (TableDS *) init
@@ -165,6 +168,8 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 #if DEBUG
 	[self ShowPrefs: self];			// For testing
 #endif
+
+	[self updateBitsPerPixelPopup];
 }
 
 - (BOOL) hasEdited
@@ -181,7 +186,7 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 {
 	NSOpenPanel *oP = [NSOpenPanel openPanel];
 
-	if ( [oP runModalForDirectory:home file:nil types:nil] == NSOKButton )
+	if ( [oP runModalForDirectory:nil file:nil types:nil] == NSOKButton )
 	{
 		[SCSIds addInt: -1
 			  withPath: [oP filename] ];
@@ -194,7 +199,7 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 {
 	NSOpenPanel *oP = [NSOpenPanel openPanel];
 
-	if ( [oP runModalForDirectory:home file:nil types:nil] == NSOKButton )
+	if ( [oP runModalForDirectory:nil file:nil types:nil] == NSOKButton )
 	{
 		[volsDS addObject: (NSObject *) locked
 				 withPath: [oP filename] ];
@@ -214,7 +219,7 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 	[oP setTitle:  @"Select a directory to mount"];
 	D(NSLog(@"%s - home = %@, [extFS stringValue] = %@",
 			__PRETTY_FUNCTION__, home, [extFS stringValue]));
-	if ( [oP runModalForDirectory: ([extFS stringValue] ? [extFS stringValue] : home)
+	if ( [oP runModalForDirectory: ([extFS stringValue] ? [extFS stringValue] : nil)
 							 file:nil
 							types:nil] == NSOKButton )
 	{
@@ -247,7 +252,7 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 	[oP setCanChooseFiles: YES];
 	[oP setTitle:  @"Open a ROM file"];
 	D(NSLog(@"%s - home = %@", __PRETTY_FUNCTION__, home));
-	if ( [oP runModalForDirectory: ([ROMfile stringValue] ? [ROMfile stringValue] : home)
+	if ( [oP runModalForDirectory: ([ROMfile stringValue] ? [ROMfile stringValue] : nil)
 							 file:nil
 							types:nil] == NSOKButton )
 	{
@@ -331,6 +336,7 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 
 - (short) testWinDepth: (int) newbpp
 {
+/*
 #ifdef CGIMAGEREF
 	return newbpp;
 #else
@@ -338,6 +344,8 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 		WarningSheet(@"Sorry - In windowed mode, depth must be 32", panel);
 	return 32;
 #endif
+*/
+	return newbpp;
 }
 
 // This is called when the screen/window,
@@ -351,13 +359,16 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 
 	short newx		= [width  intValue];
 	short newy		= [height intValue];
-	short newbpp	= [depth  intValue];
+	NSString* newbppStr = [[depth selectedItem] title];
+	NSString* newbppNumInStr = [ newbppStr substringWithRange:NSMakeRange(0, 2) ];
+	short newbpp	= [newbppNumInStr intValue];
+
 	short newtype;
 	char  str[20];
 
-	if ( cell == screen )
+	if ( cell == fullScreen )
 		newtype = DISPLAY_SCREEN;
-	else if ( cell == window )
+	else if ( cell == inWindow )
 		newtype = DISPLAY_WINDOW;
 	else
 		newtype = display_type;
@@ -366,7 +377,7 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 	if ( newbpp == init_depth && newx == init_width &&
 		 newy == init_height && newtype == display_type )
 	{
-		D(NSLog(@"No changed GUI items in ChangeScreen"));
+		// nothing changed in ChangeScreen
 		return;
 	}
 
@@ -436,6 +447,30 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 	}
 }
 
+- (void) updateBitsPerPixelPopup
+{
+	[ depth selectItemAtIndex:0 ];
+
+/*
+	video_mode currentVideo = get_current_video_mode();
+	uint16 currentBitsPerPixel = bppForDepthMode( currentVideo.depth );
+
+	size_t itemsInDepthMenu = [ depthMenu numberOfItems ];
+	for( uint16 j = 0; j < itemsInDepthMenu; j++ )
+	{
+		NSMenuItem* itemAtIndex = [ depthMenu itemAtIndex:j ];
+		NSString* itemTitle = [ itemAtIndex title ];
+		NSString* itemTitleFirstTwo = [ itemTitle substringWithRange:NSMakeRange(0, 2) ];
+		uint16 bpp = [ itemTitleFirstTwo intValue ];
+
+		if( bpp == currentBitsPerPixel ){
+			[ depth selectItemAtIndex:j ];
+			break;
+		}
+	}
+*/
+}
+
 - (IBAction) CreateVolume: (id)sender
 {
 	NSSavePanel *sP = [NSSavePanel savePanel];
@@ -444,7 +479,7 @@ extern string UserPrefsPath;	// from prefs_unix.cpp
 	[sP setPrompt:        @"Create"];
 	[sP setTitle:         @"Create new volume as"];
 
-	if ( [sP runModalForDirectory:NSHomeDirectory() file:@"basilisk-II.vol"] == NSOKButton )
+	if ( [sP runModalForDirectory:nil file:@"basilisk-II.vol"] == NSOKButton )
 	{
 		char		cmd[1024];
 		const char	*filename = [[sP filename] UTF8String];
@@ -476,8 +511,8 @@ shouldProceedAfterError: (NSDictionary *) errorDict
 {
 	NSRunAlertPanel(@"File operation error",
 					@"%@ %@, toPath %@",
-					@"Bugger!", nil, nil, 
-					[errorDict objectForKey:@"Error"], 
+					@"Bugger!", nil, nil,
+					[errorDict objectForKey:@"Error"],
 					[errorDict objectForKey:@"Path"],
 					[errorDict objectForKey:@"ToPath"]);
 	return NO;
@@ -490,12 +525,10 @@ shouldProceedAfterError: (NSDictionary *) errorDict
 	if ( ! Path )
 		return;
 
-	if ( ! [[NSFileManager defaultManager] removeFileAtPath: Path
-													handler: self] )
+	if ( ! [[NSFileManager defaultManager] removeFileAtPath: Path handler: self] )
 	{
 		WarningSheet(@"Unable to delete volume", panel);
-		NSLog(@"%s unlink(%s) failed - %s", __PRETTY_FUNCTION__,
-									[Path cString], strerror(errno));
+		NSLog(@"%s unlink(%s) failed - %s", __PRETTY_FUNCTION__, [Path UTF8String], strerror(errno));
 	}
 }
 
@@ -614,7 +647,7 @@ shouldProceedAfterError: (NSDictionary *) errorDict
 							   "Are you sure you want to delete the file",
 							   path];
 
-		if ( ! ChoiceAlert([prompt cString], "Delete", "Cancel") )
+		if ( ! ChoiceAlert([prompt UTF8String], "Delete", "Cancel") )
 			return NULL;
 
 		while ( (str = PrefsFindString("disk", tmp) ) != NULL )
@@ -675,10 +708,11 @@ shouldProceedAfterError: (NSDictionary *) errorDict
 
 - (IBAction) LoadPrefs: (id)sender
 {
-	int		argc = 2;
+	int	argc = 2;
 	char	*argv[2];
 
-	argv[0] = "--prefs",
+	NSString* prefsStr = @"--prefs";
+	argv[0] = (char *) [prefsStr UTF8String];
 	argv[1] = (char *) [[prefsFile stringValue] UTF8String];
 
 	[self loadPrefs: argc
@@ -704,6 +738,9 @@ shouldProceedAfterError: (NSDictionary *) errorDict
 {
 	SavePrefs();
 	edited = NO;
+
+	// close window
+	[ panel performClose: sender ];
 }
 
 - (IBAction) ShowPrefs: (id)sender
@@ -745,11 +782,11 @@ shouldProceedAfterError: (NSDictionary *) errorDict
 	[height setIntValue: init_height];
 	[depth	setIntValue: init_depth];
 
-	[screen setState: NO];
+	[fullScreen setState: NO];
 	switch ( display_type )
 	{
-		case DISPLAY_WINDOW: [window setState: YES]; break;
-		case DISPLAY_SCREEN: [screen setState: YES]; break;
+		case DISPLAY_WINDOW: [inWindow setState: YES]; break;
+		case DISPLAY_SCREEN: [fullScreen setState: YES]; break;
 	}
 
 	[newVolumeSize setIntValue: 10];

@@ -30,7 +30,7 @@
  *   - error messages that only go to the shell ("FATAL"/"WARNING", those are really debugging messages)
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "user_strings.h"
 
 #ifdef __BEOS__

@@ -171,7 +171,7 @@ bool router_init(void)
 				struct in_addr *ina = (struct in_addr *) *hent->h_addr_list;
 				router_ip_address = ntohl(ina->s_addr);
 			  D(bug("router protocol address seems to be %s (used only in icmp error messages)\r\n", _inet_ntoa(*ina)));
-			} 
+			}
 		}
 		is_router_shutting_down = false;
 		r_handle = (HANDLE)_beginthreadex( 0, 0, router_expire_thread, 0, 0, &rh_tid );

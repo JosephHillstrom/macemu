@@ -113,7 +113,7 @@ static bool load_sockets()
  		_WSASend = (int (WSAAPI *)(SOCKET, LPWSABUF, DWORD, LPDWORD, DWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE))GetProcAddress( hWinsock32, "WSASend" );
  		_WSARecv = (int (WSAAPI *)(SOCKET, LPWSABUF, DWORD, LPDWORD, LPDWORD, LPWSAOVERLAPPED, LPWSAOVERLAPPED_COMPLETION_ROUTINE))GetProcAddress( hWinsock32, "WSARecv" );
  		_inet_addr = (unsigned long (WSAAPI *)(const char *))GetProcAddress( hWinsock32, "inet_addr" );
- 		
+
 		if( _WSAStartup && _WSACleanup && _gethostname && _inet_ntoa && _gethostbyname &&
 				_send && _sendto && _recv && _recvfrom && _listen && _accept && _socket && _bind &&
 				_WSAAsyncSelect && _closesocket && _getsockname && _WSARecvFrom && _WSAGetLastError &&

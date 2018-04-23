@@ -1,5 +1,5 @@
 /*
- *	Controller.m - Simple application window management. 
+ *	Controller.m - Simple application window management.
  *
  *	$Id$
  *
@@ -167,7 +167,7 @@
 				( [[theEmulator window] isKeyWindow] || [view isFullScreen] ) )
 			break;
 	}
-	
+
 	if ( tmp < [emulators count] )		// i.e. if we exited the for loop
 #else
 	view = [theEmulator screen];
@@ -201,7 +201,7 @@
 }
 
 - (void) dispatchEvent: (NSEvent *)event
-				  type: (NSEventType)type				
+				  type: (NSEventType)type
 {
 	EmulatorView	*view;
 	BOOL			fullScreen;
@@ -222,7 +222,7 @@
 				( fullScreen || [[theEmulator window] isMainWindow] ) )
 			break;
 	}
-	
+
 	if ( tmp < [emulators count] )		// i.e. if we exited the for loop
 #else
 	view = [theEmulator screen];
@@ -362,7 +362,7 @@
 	for ( tmp = 0; tmp < [emulators count], ++tmp )
 		if ( [[[emulators objectAtIndex: tmp] window] attachedSheet] )
 			break;
-	
+
 	if ( tmp < [emulators count] )		// i.e. if we exited the for loop
 #else
 	if ( [[theEmulator window] attachedSheet] )
@@ -380,7 +380,7 @@
 	for ( tmp = 0; tmp < [emulators count], ++tmp )
 		if ( [[emulators objectAtIndex: tmp] isRunning] )
 			break;
-	
+
 	if ( tmp < [emulators count] )		// i.e. if we exited the for loop
 #else
 	if ( [theEmulator isRunning] )

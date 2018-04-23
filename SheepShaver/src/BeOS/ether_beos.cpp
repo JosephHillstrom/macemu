@@ -74,10 +74,10 @@ i_wanna_try_that_again:
 			while (get_next_image_info(t_info.team,&i_cookie,&i_info) == B_NO_ERROR) {
 				if (strstr(i_info.name,"sheep_net")!=NULL) {
 					found_add_on = true;
-					break;					
+					break;
 				}
 			}
-		} 
+		}
 		if (found_add_on) break;
 	}
 	if (!found_add_on) {
@@ -204,7 +204,7 @@ void EtherExit(void)
 		delete_sem(read_sem);
 		delete_area(buffer_area);
 	}
-	
+
 #if STATISTICS
 	// Show statistics
 	printf("%ld messages put on write queue\n", num_wput);

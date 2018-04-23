@@ -1452,7 +1452,7 @@ DEFINE_OP(31);
 void OPPROTO op_load_ad_V##REG##_VR##N(void)	\
 {												\
 	reg_V##REG = (uintptr)&CPU->vr(N);			\
-}												
+}
 #define DEFINE_REG(N)							\
 DEFINE_OP(D,N);									\
 DEFINE_OP(0,N);									\

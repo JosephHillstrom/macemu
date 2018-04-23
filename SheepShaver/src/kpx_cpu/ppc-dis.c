@@ -173,7 +173,7 @@ extern const int powerpc_num_opcodes;
 
 /* A macro to extract the major opcode from an instruction.  */
 #define PPC_OP(i) (((i) >> 26) & 0x3f)
-
+
 /* The operands table is an array of struct powerpc_operand.  */
 
 struct powerpc_operand
@@ -321,7 +321,7 @@ extern const unsigned int num_powerpc_operands;
 
 /* Valid range of operand is 0..n rather than 0..n-1.  */
 #define PPC_OPERAND_PLUS1 (0x10000)
-
+
 /* The POWER and PowerPC assemblers use a few macros.  We keep them
    with the operands table for simplicity.  The macro table is an
    array of struct powerpc_macro.  */
@@ -379,7 +379,7 @@ extern const int powerpc_num_macros;
    This file also holds the operand table.  All knowledge about
    inserting operands into instructions and vice-versa is kept in this
    file.  */
-
+
 /* Local insertion and extraction functions.  */
 
 static unsigned long insert_bat (unsigned long, long, int, const char **);
@@ -417,7 +417,7 @@ static unsigned long insert_sprg (unsigned long, long, int, const char **);
 static long extract_sprg (unsigned long, int, int *);
 static unsigned long insert_tbr (unsigned long, long, int, const char **);
 static long extract_tbr (unsigned long, int, int *);
-
+
 /* The operands table.
 
    The fields are bitm, shift, insert, extract, flags.
@@ -1590,7 +1590,7 @@ extract_tbr (unsigned long insn,
     ret = 0;
   return ret;
 }
-
+
 /* Macros used to form opcodes.  */
 
 /* The main opcode.  */
@@ -1949,7 +1949,7 @@ extract_tbr (unsigned long insn,
 #define TONG	(0x14)
 #define TONE	(0x18)
 #define TOU	(0x1f)
-
+
 /* Smaller names for the flags so each entry in the opcodes table will
    fit on a single line.  */
 #undef	PPC
@@ -1990,7 +1990,7 @@ extract_tbr (unsigned long insn,
 #define PPCCHLK	PPC_OPCODE_CACHELCK
 #define PPCCHLK64	PPC_OPCODE_CACHELCK | PPC_OPCODE_BOOKE64
 #define PPCRFMCI	PPC_OPCODE_RFMCI
-
+
 /* The opcode table.
 
    The format of the opcode table is:
@@ -5021,7 +5021,7 @@ const struct powerpc_opcode powerpc_opcodes[] = {
 
 const int powerpc_num_opcodes =
   sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
-
+
 /* The macro table.  This is only used by the assembler.  */
 
 /* The expressions of the form (-x ! 31) & (x | 31) have the value 0

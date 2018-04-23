@@ -98,7 +98,7 @@ static void FB_FUNC_NAME(uint8 * dest, const uint8 * source, uint32 length)
 #define DEREF_WORD_PTR(ptr, ofs) (((uint16 *)(ptr))[(ofs)])
 #define DEREF_LONG_PTR(ptr, ofs) (((uint32 *)(ptr))[(ofs)])
 #define DEREF_QUAD_PTR(ptr, ofs) (((uint64 *)(ptr))[(ofs)])
-	
+
 #ifndef UNALIGNED_PROFITABLE
 #if FB_DEPTH <= 8
 	// Align source and dest to 16-bit word boundaries
@@ -107,7 +107,7 @@ static void FB_FUNC_NAME(uint8 * dest, const uint8 * source, uint32 length)
 		length -= 1;
 	}
 #endif
-	
+
 #if FB_DEPTH <= 16
 	// Align source and dest to 32-bit word boundaries
 	if (((unsigned long) source) & 2) {
@@ -117,13 +117,13 @@ static void FB_FUNC_NAME(uint8 * dest, const uint8 * source, uint32 length)
 	}
 #endif
 #endif
-	
+
 	// Blit 8-byte words
 	if (length >= 8) {
 		const int remainder = (length / 8) % 8;
 		source += remainder * 8;
 		dest += remainder * 8;
-		
+
 		int n = ((length / 8) + 7) / 8;
 		switch (remainder) {
 		case 0:	do {
@@ -139,7 +139,7 @@ static void FB_FUNC_NAME(uint8 * dest, const uint8 * source, uint32 length)
 				} while (--n > 0);
 		}
 	}
-	
+
 	// There could be one long left to blit
 	if (length & 4) {
 		FB_BLIT_2(DEREF_LONG_PTR(dest, 0), DEREF_LONG_PTR(source, 0));
@@ -148,7 +148,7 @@ static void FB_FUNC_NAME(uint8 * dest, const uint8 * source, uint32 length)
 		source += 4;
 #endif
 	}
-	
+
 #if FB_DEPTH <= 16
 	// There could be one word left to blit
 	if (length & 2) {
@@ -159,13 +159,13 @@ static void FB_FUNC_NAME(uint8 * dest, const uint8 * source, uint32 length)
 #endif
 	}
 #endif
-	
+
 #if FB_DEPTH <= 8
 	// There could be one byte left to blit
 	if (length & 1)
 		*dest = *source;
 #endif
-	
+
 #undef DEREF_QUAD_PTR
 #undef DEREF_LONG_PTR
 #undef DEREF_WORD_PTR

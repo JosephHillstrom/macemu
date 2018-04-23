@@ -363,7 +363,7 @@ typedef struct disassemble_info {
 
 } disassemble_info;
 
-
+
 /* Standard disassemblers.  Disassemble one instruction at the given
    target address.  Return number of bytes processed.  */
 typedef int (*disassembler_ftype) (bfd_vma, disassemble_info *);
@@ -413,7 +413,7 @@ int print_insn_ia64             (bfd_vma, disassemble_info*);
 disassembler_ftype disassembler(bfd *);
 #endif
 
-
+
 /* This block of definitions is for particular callers who read instructions
    into a buffer before calling the instruction decoder.  */
 

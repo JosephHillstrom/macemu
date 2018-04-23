@@ -34,7 +34,7 @@ enum {
 
 #define AREG1 "r12"
   AREG1_ID = 12,
-    
+
 #define AREG2 "r13"
   AREG2_ID = 13,
 
@@ -43,7 +43,7 @@ enum {
 
 #define AREG4 "r15"
   AREG4_ID = 15,
-    
+
 #else
 
 #define AREG1 "rbx"

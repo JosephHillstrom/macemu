@@ -1,131 +1,350 @@
-{
-    IBClasses = (
-        {
-            ACTIONS = {
-                HelpHowTo = id; 
-                HelpToDo = id; 
-                HelpVersions = id; 
-                NewEmulator = id; 
-                PauseAll = id; 
-                RunAll = id; 
-                TerminateAll = id; 
-            }; 
-            CLASS = Controller; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {theEmulator = id; thePrefsEditor = id; }; 
-            SUPERCLASS = NSApplication; 
-        }, 
-        {
-            ACTIONS = {
-                Benchmark = id; 
-                Interrupt = id; 
-                PowerKey = id; 
-                Restart = id; 
-                Resume = id; 
-                ScreenHideShow = id; 
-                Snapshot = id; 
-                SpeedChange = id; 
-                Suspend = id; 
-                Terminate = id; 
-                ToggleState = id; 
-                ZapPRAM = id; 
-            }; 
-            CLASS = Emulator; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {barberPole = id; runOrPause = id; screen = id; speed = id; win = id; }; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {CLASS = EmulatorView; LANGUAGE = ObjC; SUPERCLASS = NSView; }, 
-        {
-            ACTIONS = {
-                Interrupt = id; 
-                PowerKey = id; 
-                Restart = id; 
-                Resume = id; 
-                Snapshot = id; 
-                Suspend = id; 
-                Terminate = id; 
-                ZapPRAM = id; 
-            }; 
-            CLASS = FirstResponder; 
-            LANGUAGE = ObjC; 
-            SUPERCLASS = NSObject; 
-        }, 
-        {
-            ACTIONS = {
-                AddSCSI = id; 
-                AddVolume = id; 
-                BrowseExtFS = id; 
-                BrowsePrefs = id; 
-                BrowseROM = id; 
-                ChangeBootFrom = id; 
-                ChangeCPU = id; 
-                ChangeDisableCD = id; 
-                ChangeDisableSound = id; 
-                ChangeFPU = id; 
-                ChangeKeyboard = id; 
-                ChangeModel = id; 
-                ChangeScreen = id; 
-                CreateVolume = id; 
-                DeleteVolume = id; 
-                EditBytes = id; 
-                EditDelay = id; 
-                EditEtherNetDevice = id; 
-                EditExtFS = id; 
-                EditFrequency = id; 
-                EditMB = id; 
-                EditModemDevice = id; 
-                EditPrinterDevice = id; 
-                EditROMpath = id; 
-                LoadPrefs = id; 
-                RemoveSCSI = id; 
-                RemoveVolume = id; 
-                ResetPrefs = id; 
-                SavePrefs = id; 
-                ShowPrefs = id; 
-            }; 
-            CLASS = PrefsEditor; 
-            LANGUAGE = ObjC; 
-            OUTLETS = {
-                CPU68000 = id; 
-                CPU68020 = id; 
-                CPU68030 = id; 
-                CPU68040 = id; 
-                FPU = id; 
-                IIci = id; 
-                MB = id; 
-                ROMfile = id; 
-                SCSIdisks = id; 
-                bootFromAny = id; 
-                bootFromCD = id; 
-                bytes = id; 
-                classic = id; 
-                delay = id; 
-                depth = id; 
-                disableCD = id; 
-                disableSound = id; 
-                diskImages = id; 
-                emuFreq = id; 
-                emuWin = id; 
-                etherNet = id; 
-                extFS = id; 
-                frequency = id; 
-                height = id; 
-                keyboard = id; 
-                modem = id; 
-                newVolumeSize = id; 
-                newVolumeView = id; 
-                panel = id; 
-                prefsFile = id; 
-                printer = id; 
-                quadra900 = id; 
-                screen = id; 
-                theEmulator = id; 
-                width = id; 
-                window = id; 
-            }; 
-            SUPERCLASS = NSObject; 
-        }
-    ); 
-    IBVersion = 1; 
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IBClasses</key>
+	<array>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>pasteFont</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>CocoaTextViewWithText</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSTextView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>AddSCSI</key>
+				<string>id</string>
+				<key>AddVolume</key>
+				<string>id</string>
+				<key>BrowseExtFS</key>
+				<string>id</string>
+				<key>BrowsePrefs</key>
+				<string>id</string>
+				<key>BrowseROM</key>
+				<string>id</string>
+				<key>ChangeBootFrom</key>
+				<string>NSMatrix</string>
+				<key>ChangeCPU</key>
+				<string>NSMatrix</string>
+				<key>ChangeDisableCD</key>
+				<string>NSButton</string>
+				<key>ChangeDisableSound</key>
+				<string>NSButton</string>
+				<key>ChangeFPU</key>
+				<string>NSButton</string>
+				<key>ChangeKeyboard</key>
+				<string>NSPopUpButton</string>
+				<key>ChangeModel</key>
+				<string>NSMatrix</string>
+				<key>ChangeScreen</key>
+				<string>id</string>
+				<key>CreateVolume</key>
+				<string>id</string>
+				<key>DeleteVolume</key>
+				<string>id</string>
+				<key>EditBytes</key>
+				<string>NSTextField</string>
+				<key>EditDelay</key>
+				<string>NSTextField</string>
+				<key>EditEtherNetDevice</key>
+				<string>NSTextField</string>
+				<key>EditExtFS</key>
+				<string>NSTextField</string>
+				<key>EditFrequency</key>
+				<string>NSTextField</string>
+				<key>EditMB</key>
+				<string>NSTextField</string>
+				<key>EditModemDevice</key>
+				<string>NSTextField</string>
+				<key>EditPrinterDevice</key>
+				<string>NSTextField</string>
+				<key>EditROMpath</key>
+				<string>NSTextField</string>
+				<key>LoadPrefs</key>
+				<string>id</string>
+				<key>RemoveSCSI</key>
+				<string>id</string>
+				<key>RemoveVolume</key>
+				<string>id</string>
+				<key>ResetPrefs</key>
+				<string>id</string>
+				<key>SavePrefs</key>
+				<string>id</string>
+				<key>ShowPrefs</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>PrefsEditor</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>CPU68000</key>
+				<string>NSButton</string>
+				<key>CPU68020</key>
+				<string>NSButton</string>
+				<key>CPU68030</key>
+				<string>NSButton</string>
+				<key>CPU68040</key>
+				<string>NSButton</string>
+				<key>FPU</key>
+				<string>NSButton</string>
+				<key>IIci</key>
+				<string>NSButton</string>
+				<key>MB</key>
+				<string>NSTextField</string>
+				<key>ROMfile</key>
+				<string>NSTextField</string>
+				<key>SCSIdisks</key>
+				<string>NSTableView</string>
+				<key>bootFromAny</key>
+				<string>NSButton</string>
+				<key>bootFromCD</key>
+				<string>NSButton</string>
+				<key>bytes</key>
+				<string>NSTextField</string>
+				<key>classic</key>
+				<string>NSButton</string>
+				<key>delay</key>
+				<string>NSTextField</string>
+				<key>depth</key>
+				<string>NSPopUpButton</string>
+				<key>depthMenu</key>
+				<string>NSMenu</string>
+				<key>disableCD</key>
+				<string>NSButton</string>
+				<key>disableSound</key>
+				<string>NSButton</string>
+				<key>diskImages</key>
+				<string>NSTableView</string>
+				<key>emuFreq</key>
+				<string>NSSlider</string>
+				<key>emuWin</key>
+				<string>id</string>
+				<key>etherNet</key>
+				<string>NSTextField</string>
+				<key>extFS</key>
+				<string>NSTextField</string>
+				<key>frequency</key>
+				<string>NSTextField</string>
+				<key>fullScreen</key>
+				<string>NSButton</string>
+				<key>height</key>
+				<string>NSTextField</string>
+				<key>inWindow</key>
+				<string>NSButton</string>
+				<key>keyboard</key>
+				<string>NSPopUpButton</string>
+				<key>modem</key>
+				<string>NSTextField</string>
+				<key>newVolumeSize</key>
+				<string>NSTextField</string>
+				<key>newVolumeView</key>
+				<string>NSView</string>
+				<key>openGL</key>
+				<string>NSButton</string>
+				<key>panel</key>
+				<string>NSWindow</string>
+				<key>prefsFile</key>
+				<string>NSTextField</string>
+				<key>printer</key>
+				<string>NSTextField</string>
+				<key>quadra900</key>
+				<string>NSButton</string>
+				<key>theEmulator</key>
+				<string>Emulator</string>
+				<key>width</key>
+				<string>NSTextField</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>NSTextView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSText</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>Interrupt</key>
+				<string>id</string>
+				<key>PowerKey</key>
+				<string>id</string>
+				<key>Restart</key>
+				<string>id</string>
+				<key>Resume</key>
+				<string>id</string>
+				<key>Snapshot</key>
+				<string>id</string>
+				<key>Suspend</key>
+				<string>id</string>
+				<key>Terminate</key>
+				<string>id</string>
+				<key>ZapPRAM</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>FirstResponder</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>HelpHowTo</key>
+				<string>id</string>
+				<key>HelpToDo</key>
+				<string>id</string>
+				<key>HelpVersions</key>
+				<string>id</string>
+				<key>NewEmulator</key>
+				<string>id</string>
+				<key>PauseAll</key>
+				<string>id</string>
+				<key>RunAll</key>
+				<string>id</string>
+				<key>TerminateAll</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Controller</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>theEmulator</key>
+				<string>Emulator</string>
+				<key>thePrefsEditor</key>
+				<string>PrefsEditor</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSApplication</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>Benchmark</key>
+				<string>id</string>
+				<key>Interrupt</key>
+				<string>id</string>
+				<key>PowerKey</key>
+				<string>id</string>
+				<key>Restart</key>
+				<string>id</string>
+				<key>Resume</key>
+				<string>id</string>
+				<key>Snapshot</key>
+				<string>id</string>
+				<key>SpeedChange</key>
+				<string>NSSlider</string>
+				<key>Suspend</key>
+				<string>id</string>
+				<key>Terminate</key>
+				<string>id</string>
+				<key>ToggleState</key>
+				<string>NSButton</string>
+				<key>ZapPRAM</key>
+				<string>id</string>
+				<key>doUpdateAddressingButton</key>
+				<string>id</string>
+				<key>hideROMInfo</key>
+				<string>id</string>
+				<key>hideXPRAM</key>
+				<string>id</string>
+				<key>hideXPRAMDump</key>
+				<string>id</string>
+				<key>makeKeyAndOrderFront</key>
+				<string>id</string>
+				<key>showOrHideROMInfo</key>
+				<string>id</string>
+				<key>showOrHideXPRAM</key>
+				<string>id</string>
+				<key>showROMInfo</key>
+				<string>id</string>
+				<key>showXPRAM</key>
+				<string>id</string>
+				<key>showXPRAMDump</key>
+				<string>id</string>
+				<key>toggleTwentyFourBitAddressing</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>Emulator</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>OUTLETS</key>
+			<dict>
+				<key>XPRAMScrollView</key>
+				<string>NSScrollView</string>
+				<key>XPRAMTextView</key>
+				<string>CocoaTextViewWithText</string>
+				<key>XPRAMWindow</key>
+				<string>NSWindow</string>
+				<key>addressingMode</key>
+				<string>NSButton</string>
+				<key>barberPole</key>
+				<string>NSProgressIndicator</string>
+				<key>romInfo</key>
+				<string>NSWindow</string>
+				<key>romInfoTextView</key>
+				<string>CocoaTextViewWithText</string>
+				<key>romInfoView</key>
+				<string>NSScrollView</string>
+				<key>romInfoWindow</key>
+				<string>NSWindow</string>
+				<key>runOrPause</key>
+				<string>NSButton</string>
+				<key>screen</key>
+				<string>EmulatorView</string>
+				<key>showHideROMInfoWindow</key>
+				<string>NSMenuItem</string>
+				<key>showHideXPRAMWindow</key>
+				<string>NSMenuItem</string>
+				<key>speed</key>
+				<string>NSSlider</string>
+				<key>win</key>
+				<string>NSWindow</string>
+			</dict>
+			<key>SUPERCLASS</key>
+			<string>NSObject</string>
+		</dict>
+		<dict>
+			<key>CLASS</key>
+			<string>EmulatorView</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSView</string>
+		</dict>
+		<dict>
+			<key>ACTIONS</key>
+			<dict>
+				<key>myAction1</key>
+				<string>id</string>
+			</dict>
+			<key>CLASS</key>
+			<string>NSPanel</string>
+			<key>LANGUAGE</key>
+			<string>ObjC</string>
+			<key>SUPERCLASS</key>
+			<string>NSWindow</string>
+		</dict>
+	</array>
+	<key>IBVersion</key>
+	<string>1</string>
+</dict>
+</plist>

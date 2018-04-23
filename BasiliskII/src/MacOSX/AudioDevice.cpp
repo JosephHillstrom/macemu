@@ -37,7 +37,7 @@
 */
 /*=============================================================================
 	AudioDevice.cpp
-	
+
 =============================================================================*/
 
 #include "AudioDevice.h"
@@ -47,15 +47,15 @@ void	AudioDevice::Init(AudioDeviceID devid, bool isInput)
 	mID = devid;
 	mIsInput = isInput;
 	if (mID == kAudioDeviceUnknown) return;
-	
+
 	UInt32 propsize;
-	
+
 	propsize = sizeof(UInt32);
 	verify_noerr(AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertySafetyOffset, &propsize, &mSafetyOffset));
-	
+
 	propsize = sizeof(UInt32);
 	verify_noerr(AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertyBufferFrameSize, &propsize, &mBufferSizeFrames));
-	
+
 	propsize = sizeof(AudioStreamBasicDescription);
 	verify_noerr(AudioDeviceGetProperty(mID, 0, mIsInput, kAudioDevicePropertyStreamFormat, &propsize, &mFormat));
 
@@ -75,7 +75,7 @@ int		AudioDevice::CountChannels()
 	OSStatus err;
 	UInt32 propSize;
 	int result = 0;
-	
+
 	err = AudioDeviceGetPropertyInfo(mID, 0, mIsInput, kAudioDevicePropertyStreamConfiguration, &propSize, NULL);
 	if (err) return 0;
 

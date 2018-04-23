@@ -93,11 +93,11 @@
 #include <sys/param.h>
 #include <signal.h>
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 #include "main.h"
 #include "version.h"
 #include "prefs.h"
-#include "prefs_editor.h"
+//#include "prefs_editor.h"
 #include "cpu_emulation.h"
 #include "emul_op.h"
 #include "xlowmem.h"
@@ -109,8 +109,8 @@
 #include "macos_util.h"
 #include "rom_patches.h"
 #include "user_strings.h"
-#include "vm_alloc.h"
-#include "sigsegv.h"
+#include "../CrossPlatform/vm_alloc.h"
+#include "../CrossPlatform/sigsegv.h"
 #include "sigregs.h"
 #include "rpc.h"
 
@@ -601,7 +601,7 @@ static bool load_mac_rom(void)
 	rom_tmp = new uint8[ROM_SIZE];
 	actual = read(rom_fd, (void *)rom_tmp, ROM_SIZE);
 	close(rom_fd);
-	
+
 	// Decode Mac ROM
 	if (!DecodeROM(rom_tmp, actual)) {
 		if (rom_size != 4*1024*1024) {
@@ -860,9 +860,9 @@ int main(int argc, char **argv)
 	SysInit();
 
 	// Show preferences editor
-	if (!PrefsFindBool("nogui"))
+/*	if (!PrefsFindBool("nogui"))
 		if (!PrefsEditor())
-			goto quit;
+			goto quit; */
 
 #if !EMULATED_PPC
 	// Check some things
@@ -911,7 +911,6 @@ int main(int argc, char **argv)
 	DRCacheAddr = DR_CACHE_BASE;
 	D(bug("DR Cache at %p\n", DRCacheAddr));
 #endif
-	
 	// Create area for Mac RAM
 	RAMSize = PrefsFindInt32("ramsize");
 	if (RAMSize < 8*1024*1024) {
@@ -1469,7 +1468,7 @@ void Set_pthread_attr(pthread_attr_t *attr, int priority)
 		pthread_attr_setinheritsched(attr, PTHREAD_EXPLICIT_SCHED);
 		pthread_attr_setschedpolicy(attr, SCHED_FIFO);
 		struct sched_param fifo_param;
-		fifo_param.sched_priority = ((sched_get_priority_min(SCHED_FIFO) + 
+		fifo_param.sched_priority = ((sched_get_priority_min(SCHED_FIFO) +
 					      sched_get_priority_max(SCHED_FIFO)) / 2 +
 					     priority);
 		pthread_attr_setschedparam(attr, &fifo_param);
@@ -1495,7 +1494,7 @@ void Set_pthread_attr(pthread_attr_t *attr, int priority)
 #ifdef HAVE_PTHREADS
 
 struct B2_mutex {
-	B2_mutex() { 
+	B2_mutex() {
 	    pthread_mutexattr_t attr;
 	    pthread_mutexattr_init(&attr);
 	    // Initialize the mutex for priority inheritance --
@@ -1512,7 +1511,7 @@ struct B2_mutex {
 	    pthread_mutex_init(&m, &attr);
 	    pthread_mutexattr_destroy(&attr);
 	}
-	~B2_mutex() { 
+	~B2_mutex() {
 	    pthread_mutex_trylock(&m); // Make sure it's locked before
 	    pthread_mutex_unlock(&m);  // unlocking it.
 	    pthread_mutex_destroy(&m);
@@ -1672,7 +1671,7 @@ void sigusr2_handler(int sig, siginfo_t *sip, void *scp)
 
 				// Set extra stack for SIGSEGV handler
 				sigaltstack(&extra_stack, NULL);
-				
+
 				// Prepare for 68k interrupt level 1
 				WriteMacInt16(ReadMacInt32(0x67c), 1);
 				WriteMacInt32(ReadMacInt32(0x658) + 0xdc, ReadMacInt32(ReadMacInt32(0x658) + 0xdc) | ReadMacInt32(0x674));
@@ -1751,7 +1750,7 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 
 	// Get effective address
 	uint32 addr = r->dar();
-	
+
 #ifdef SYSTEM_CLOBBERS_R2
 	// Restore pointer to Thread Local Storage
 	set_r2(TOC);
@@ -1782,19 +1781,19 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 			r->pc() += 4;
 			r->gpr(8) = 0;
 			return;
-	
+
 		// MacOS 8.5 installation
 		} else if (r->pc() == ROMBase + 0x488140 && r->gpr(16) == 0xf8000000) {
 			r->pc() += 4;
 			r->gpr(8) = 0;
 			return;
-	
+
 		// MacOS 8 serial drivers on startup
 		} else if (r->pc() == ROMBase + 0x48e080 && (r->gpr(8) == 0xf3012002 || r->gpr(8) == 0xf3012000)) {
 			r->pc() += 4;
 			r->gpr(8) = 0;
 			return;
-	
+
 		// MacOS 8.1 serial drivers on startup
 		} else if (r->pc() == ROMBase + 0x48c5e0 && (r->gpr(20) == 0xf3012002 || r->gpr(20) == 0xf3012000)) {
 			r->pc() += 4;
@@ -1802,7 +1801,7 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 		} else if (r->pc() == ROMBase + 0x4a10a0 && (r->gpr(20) == 0xf3012002 || r->gpr(20) == 0xf3012000)) {
 			r->pc() += 4;
 			return;
-	
+
 		// MacOS 8.6 serial drivers on startup (with DR Cache and OldWorld ROM)
 		} else if ((r->pc() - DR_CACHE_BASE) < DR_CACHE_SIZE && (r->gpr(16) == 0xf3012002 || r->gpr(16) == 0xf3012000)) {
 			r->pc() += 4;
@@ -1873,7 +1872,7 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 						transfer_type = TYPE_STORE; transfer_size = SIZE_HALFWORD; addr_mode = MODE_UX; break;
 				}
 				break;
-	
+
 			case 32:	// lwz
 				transfer_type = TYPE_LOAD; transfer_size = SIZE_WORD; addr_mode = MODE_NORM; break;
 			case 33:	// lwzu
@@ -1929,7 +1928,7 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 				break;
 #endif
 		}
-	
+
 		// Ignore ROM writes (including to the zero page, which is read-only)
 		if (transfer_type == TYPE_STORE &&
 			((addr >= ROMBase && addr < ROMBase + ROM_SIZE) ||

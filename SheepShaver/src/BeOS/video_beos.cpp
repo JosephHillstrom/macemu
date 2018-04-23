@@ -176,7 +176,7 @@ static status_t display_manager(void *arg)
 					D(bug("Screen closed\n"));
 					break;
 				}
-		
+
 				// Wait for video mem access
 				D(bug("Showing screen\n"));
 				the_screen->Show();

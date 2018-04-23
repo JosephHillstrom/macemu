@@ -449,7 +449,7 @@ bool PrefsEditor(void)
 							if (dev_request) {
 								LT_LockWindow(win);
 								BOOL result = AslRequestTags(dev_request,
-									ASLFR_Window, (ULONG)win, 
+									ASLFR_Window, (ULONG)win,
 									ASLFR_InitialDrawer, (ULONG) "Devs:",
 									TAG_END);
 								LT_UnlockWindow(win);
@@ -467,7 +467,7 @@ bool PrefsEditor(void)
 							if (dev_request) {
 								LT_LockWindow(win);
 								BOOL result = AslRequestTags(dev_request,
-									ASLFR_Window, (ULONG)win, 
+									ASLFR_Window, (ULONG)win,
 									ASLFR_InitialDrawer, (ULONG) "Devs:Networks",
 									TAG_END);
 								LT_UnlockWindow(win);

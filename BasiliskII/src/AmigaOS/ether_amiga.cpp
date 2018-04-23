@@ -142,7 +142,7 @@ bool ether_init(void)
 		NP_Entry, (ULONG)net_func,
 		NP_Name, (ULONG)"Basilisk II Ethernet Task",
 		NP_Priority, 1,
-		TAG_END	
+		TAG_END
 	);
 	if (net_proc == NULL)
 		goto open_error;

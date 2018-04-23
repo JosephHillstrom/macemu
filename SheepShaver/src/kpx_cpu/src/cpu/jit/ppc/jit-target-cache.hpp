@@ -29,7 +29,7 @@ static inline void flush_icache_range(unsigned long start, unsigned long stop)
 
     p = start & ~(MIN_CACHE_LINE_SIZE - 1);
     stop = (stop + MIN_CACHE_LINE_SIZE - 1) & ~(MIN_CACHE_LINE_SIZE - 1);
-    
+
     for (p = start; p < stop; p += MIN_CACHE_LINE_SIZE) {
         asm volatile ("dcbst 0,%0" : : "r"(p) : "memory");
     }

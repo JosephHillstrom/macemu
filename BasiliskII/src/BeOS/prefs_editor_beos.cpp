@@ -115,7 +115,7 @@ public:
 	{
 		if (update_text) {
 			sprintf(update_text, GetString(STR_RAMSIZE_FMT), Value());
-		} 
+		}
 		return update_text;
 	}
 
@@ -154,7 +154,7 @@ public:
 	{
 		SetDivider(divider);
 		for (int c=0; c<256; c++)
-			if (!isdigit(c) && c != B_BACKSPACE && c != B_LEFT_ARROW && c != B_RIGHT_ARROW) 
+			if (!isdigit(c) && c != B_BACKSPACE && c != B_LEFT_ARROW && c != B_RIGHT_ARROW)
 				((BTextView *)ChildAt(0))->DisallowChar(c);
 		SetValue(value);
 	}
@@ -181,7 +181,7 @@ public:
 	PathControl(bool dir_ctrl_, BRect frame, const char *name, const char *label, const char *text, BMessage *message) : BTextControl(frame, name, label, text, message), dir_ctrl(dir_ctrl_)
 	{
 		for (int c=0; c<' '; c++)
-			if (c != B_BACKSPACE && c != B_LEFT_ARROW && c != B_RIGHT_ARROW) 
+			if (c != B_BACKSPACE && c != B_LEFT_ARROW && c != B_RIGHT_ARROW)
 				((BTextView *)ChildAt(0))->DisallowChar(c);
 	}
 

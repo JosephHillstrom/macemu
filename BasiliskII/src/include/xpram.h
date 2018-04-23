@@ -37,4 +37,10 @@ extern void LoadXPRAM(const char *vmdir);
 extern void SaveXPRAM(void);
 extern void ZapPRAM(void);
 
+extern bool getXPRAMat(size_t off, uint8* out);
+extern bool setXPRAMat(size_t off, uint8 byte);
+
+extern size_t XPRAMtoString( const char* symbols );
+extern char* dumpXPRAM();
+
 #endif

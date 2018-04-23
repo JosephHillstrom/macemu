@@ -56,6 +56,226 @@ static void mon_write_byte_b2(uintptr adr, uint32 b)
 }
 #endif
 
+char* romInfoStr = { 0 };
+
+void fillROMInfo()
+{
+	// get some information about the ROM
+	if ( !romInfoStr || strlen( romInfoStr ) < 1 )
+	{
+		romInfoStr = (char*)malloc( 1 << 16 );
+	}
+
+	get_rom_info( romInfoStr );
+}
+
+char* getROMInfo()
+{
+	return romInfoStr;
+}
+
+/*
+ *  Print ROM information to buf
+ *
+ *	note: provide big symbol buffers
+ */
+
+size_t list_rom_resources(const char* buf)
+{
+	char* b = (char*)buf;
+	size_t len;
+
+	const char* resourcesStr = "ROM Resources";
+	len = strlen( resourcesStr );
+	memcpy( b, resourcesStr, len );
+	b += len;
+	*b = '\n'; b++;
+	*b = '\n'; b++;
+	const char* tableHeadStr = "     Offset   Type  ID      Size      Name";
+	len = strlen( tableHeadStr );
+	memcpy( b, tableHeadStr, len );
+	b += len;
+	*b = '\n'; b++;
+	*b = '\n'; b++;
+
+	uint32 lp = ROMBaseMac + ReadMacInt32(ROMBaseMac + 0x1a);
+	uint32 rsrc_ptr = ReadMacInt32(lp);
+
+	for (;;) {
+		lp = ROMBaseMac + rsrc_ptr;
+		uint32 data = ReadMacInt32(lp + 12);
+
+		char name[32];
+		int name_len = ReadMacInt8(lp + 23), i;
+		for ( i = 0; i < name_len; i++ )
+			name[i] = ReadMacInt8(lp + 24 + i);
+		name[i] = 0;
+
+		char resId[32];
+		sprintf( resId, "%d", ReadMacInt16(lp + 20) );
+		len = strlen( resId );
+		while ( len < 8 )
+		{
+			resId[len] = ' ';
+			resId[len+1] = 0;
+			len++;
+		}
+		char resLen[32];
+		sprintf( resLen, "%d", ReadMacInt32(ROMBaseMac + data - 8) );
+		len = strlen( resLen );
+		while ( len < 10 )
+		{
+			resLen[len] = ' ';
+			resLen[len+1] = 0;
+			len++;
+		}
+
+		char s[256];
+		sprintf( s,
+				"    %08x  %c%c%c%c  %s%s%s",
+				data,
+				ReadMacInt8(lp + 16),
+				ReadMacInt8(lp + 17),
+				ReadMacInt8(lp + 18),
+				ReadMacInt8(lp + 19),
+				resId,
+				resLen,
+				name );
+		len = strlen( s );
+		memcpy( b, s, len );
+		b += len;
+		*b = '\n'; b++;
+
+		rsrc_ptr = ReadMacInt32(lp + 8);
+		if ( !rsrc_ptr )
+			break;
+	}
+
+	*b = 0;
+	return b - buf;
+}
+
+size_t print_universal_info(uint32 info, const char* buf)
+{
+	char* b = (char*)buf;
+	size_t len;
+
+	uint8 id = ReadMacInt8(info + 18);
+	uint16 hwcfg = ReadMacInt16(info + 16);
+	uint16 rom85 = ReadMacInt16(info + 20);
+
+	// Find model name
+	const char *name = "unknown";
+	for ( int i = 0; macDesc[i].id >= 0; i++ )
+	{
+		if ( macDesc[i].id == id + 6 ) {
+			name = macDesc[i].name;
+			break;
+		}
+	}
+
+	char s[256];
+	sprintf( s, "    %08x  %02x  %04x  %04x  %s", info - ROMBaseMac, id, hwcfg, rom85, name );
+	len = strlen( s );
+	memcpy( b, s, len );
+	b += len;
+	*b = '\n'; b++;
+
+	*b = 0;
+	return b - buf;
+}
+
+size_t list_universal_infos(const char* buf)
+{
+	char* b = (char*)buf;
+	size_t len;
+	char s[256];
+
+	uint32 ofs = 0x3000;
+	for (int i=0; i<0x2000; i+=2, ofs+=2) {
+		if (ReadMacInt32(ROMBaseMac + ofs) == 0xdc000505) {
+			ofs -= 16;
+			uint32 q;
+			for (q=ofs; q > 0 && ReadMacInt32(ROMBaseMac + q) != ofs - q; q-=4) ;
+			if (q > 0) {
+				sprintf( s, "Universal Table at %08x", q );
+				len = strlen( s );
+				memcpy( b, s, len );
+				b += len;
+				*b = '\n'; b++;
+				*b = '\n'; b++;
+				const char* tableHeadStr = "     Offset   ID  HWCfg ROM85 Model";
+				len = strlen( tableHeadStr );
+				memcpy( b, tableHeadStr, len );
+				b += len;
+				*b = '\n'; b++;
+				while ((ofs = ReadMacInt32(ROMBaseMac + q))) {
+					len = print_universal_info( ROMBaseMac + ofs + q, b );
+					b += len;
+					q += 4;
+				}
+			}
+			break;
+		}
+	}
+
+	*b = 0;
+	return b - buf;
+}
+
+size_t get_rom_info(const char* buf)
+{
+	char* b = (char*)buf;
+	size_t len;
+	char s[256];
+
+	*b = '\n'; b++;
+	const char* infoStr = "ROM Info";
+	len = strlen( infoStr );
+	memcpy( b, infoStr, len );
+	b += len;
+	*b = '\n'; b++;
+	*b = '\n'; b++;
+
+	sprintf( s, "    Checksum        %08x", ReadMacInt32(ROMBaseMac) );
+	len = strlen( s );
+	memcpy( b, s, len );
+	b += len;
+	*b = '\n'; b++;
+	sprintf( s, "    Version         %04x", ROMVersion );
+	len = strlen( s );
+	memcpy( b, s, len );
+	b += len;
+	*b = '\n'; b++;
+	sprintf( s, "    Sub Version     %04x", ReadMacInt16(ROMBaseMac + 18) );
+	len = strlen( s );
+	memcpy( b, s, len );
+	b += len;
+	*b = '\n'; b++;
+	sprintf( s, "    Resource Map    %08x", ReadMacInt32(ROMBaseMac + 26) );
+	len = strlen( s );
+	memcpy( b, s, len );
+	b += len;
+	*b = '\n'; b++;
+	sprintf( s, "    Trap Tables     %08x", ReadMacInt32(ROMBaseMac + 34) );
+	len = strlen( s );
+	memcpy( b, s, len );
+	b += len;
+	*b = '\n'; b++;
+	*b = '\n'; b++;
+
+	if ( ROMVersion == ROM_VERSION_32 ) {
+		len = list_rom_resources( b );
+		b += len;
+		*b = '\n'; b++;
+		len = list_universal_infos( b );
+		b += len;
+		*b = '\n'; b++;
+	}
+
+	*b = 0;
+	return b - buf;
+}
 
 /*
  *  Initialize everything, returns false on error
@@ -77,7 +297,7 @@ bool InitAll(const char *vmdir)
 		case ROM_VERSION_CLASSIC:
 			CPUType = 0;
 			FPUType = 0;
-			TwentyFourBitAddressing = true;
+			//setTwentyFourBitAddressingByComputer( true );
 			break;
 		case ROM_VERSION_II:
 			CPUType = PrefsFindInt32("cpu");
@@ -85,7 +305,7 @@ bool InitAll(const char *vmdir)
 			if (CPUType > 4) CPUType = 4;
 			FPUType = PrefsFindBool("fpu") ? 1 : 0;
 			if (CPUType == 4) FPUType = 1;	// 68040 always with FPU
-			TwentyFourBitAddressing = true;
+			//setTwentyFourBitAddressingByComputer( true );
 			break;
 		case ROM_VERSION_32:
 			CPUType = PrefsFindInt32("cpu");
@@ -93,10 +313,12 @@ bool InitAll(const char *vmdir)
 			if (CPUType > 4) CPUType = 4;
 			FPUType = PrefsFindBool("fpu") ? 1 : 0;
 			if (CPUType == 4) FPUType = 1;	// 68040 always with FPU
-			TwentyFourBitAddressing = false;
+			//setTwentyFourBitAddressingByComputer( false );
 			break;
 	}
+
 	CPUIs68060 = false;
+
 #endif
 
 	// Load XPRAM
@@ -198,6 +420,11 @@ bool InitAll(const char *vmdir)
 	mon_read_byte = mon_read_byte_b2;
 	mon_write_byte = mon_write_byte_b2;
 #endif
+
+	fillROMInfo();
+
+	updateROMInfoWindow( getROMInfo() );
+	//fprintf( stdout, getROMInfo() );
 
 	return true;
 }

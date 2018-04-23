@@ -2,27 +2,27 @@
  *  MibAccess.cpp
  *
  *	The original code by Stas Khirman modified by Lauri Pesonen, December, 2000:
- *	
+ *
  *	SnmpUtilVarBindFree(), SnmpUtilOidNCmp() and SnmpUtilOidCpy() now loaded from
  *	"snmpapi.dll" dynamically instead of linking statically.
- *	
+ *
  *	MibII ctor now takes a parameter whether to load Winsock or not.
  *	WSAStartup maintains an internal reference counter so it would have been ok
  *	to let it load always.
- *	
+ *
  *	Fixed a bug where the return value of LoadLibrary() was compared against
  *	HINSTANCE_ERROR instead of NULL.
- *	
+ *
  *	Removed some type conversion warnings by casting.
- *	
+ *
  *	Added a check in MibExtLoad ctor that the function entry points were found.
- *	
+ *
  *	Added a check in GetIPMask() and GetIPAddress() that the library was loaded
  *	before accessing the functions.
- *	
+ *
  *	Changed the return type of GetIPAddress() and GetIPMask() from BOOL  to void
  *	as they always returned TRUE.
- *	
+ *
  */
 
 /************************************************************************/
@@ -77,7 +77,7 @@ MibExtLoad::MibExtLoad( LPCTSTR MibDllName, LPCTSTR SnmpDllName )
 	m_Init = NULL;
 
 	m_InitEx = NULL;
-	m_Query = NULL;	
+	m_Query = NULL;
 	m_Trap = NULL;
 
 	m_hInst_snmputil = NULL;
@@ -85,7 +85,7 @@ MibExtLoad::MibExtLoad( LPCTSTR MibDllName, LPCTSTR SnmpDllName )
 	m_SnmpUtilVarBindFree = NULL;
 	m_SnmpUtilOidNCmp = NULL;
 	m_SnmpUtilOidCpy = NULL;
-	
+
 	m_hInst = LoadLibrary( MibDllName );
 	if(!m_hInst) {
 		D(bug(TEXT("MIB: library %s could not be loaded.\r\n"), MibDllName));
@@ -158,7 +158,7 @@ BOOL MibExtLoad::InitEx(AsnObjectIdentifier *supportedView)
 {
 	if(m_hInst && m_InitEx)
 		return m_InitEx(supportedView);
-	
+
 	return FALSE;
 }
 
@@ -167,17 +167,17 @@ BOOL MibExtLoad::Query(BYTE requestType,OUT RFC1157VarBindList *variableBindings
 {
 	if(m_hInst && m_Query)
 		return m_Query(requestType,variableBindings,errorStatus,errorIndex);
-	
+
 	return FALSE;
 }
 
 BOOL MibExtLoad::Trap(AsnObjectIdentifier *enterprise, AsnInteger *genericTrap,
-					  AsnInteger *specificTrap, AsnTimeticks *timeStamp, 
+					  AsnInteger *specificTrap, AsnTimeticks *timeStamp,
 					  RFC1157VarBindList  *variableBindings)
 {
 	if(m_hInst && m_Trap)
 		return m_Trap(enterprise, genericTrap,specificTrap, timeStamp, variableBindings);
-	
+
 	return FALSE;
 }
 
@@ -186,7 +186,7 @@ MibII::MibII(bool load_winsock) : MibExtLoad(TEXT("inetmib1.dll"), TEXT("snmpapi
   WSADATA wsa;
 	m_load_winsock = load_winsock;
 	if(load_winsock) {
-		int err = _WSAStartup( 0x0101, &wsa );  
+		int err = _WSAStartup( 0x0101, &wsa );
 	}
 }
 
@@ -211,7 +211,7 @@ void MibII::GetIPAddress( UINT IpArray[], UINT &IpArraySize )
 		IpArraySize = 0;
 		return;
 	}
-	
+
 	UINT OID_ipAdEntAddr[] = { 1, 3, 6, 1, 2, 1, 4 , 20, 1 ,1 };
 	AsnObjectIdentifier MIB_ipAdEntAddr = { sizeof(OID_ipAdEntAddr)/sizeof(UINT), OID_ipAdEntAddr };
 	RFC1157VarBindList  varBindList;
@@ -223,17 +223,17 @@ void MibII::GetIPAddress( UINT IpArray[], UINT &IpArraySize )
 	int                 ret;
 	int                 IpCount=0;
 	DWORD               dtmp;
-	
+
 	varBindList.list = varBind;
 	varBindList.len  = 1;
 	varBind[0].name  = MIB_NULL;
 	SNMP_oidcpy(&varBind[0].name,&MIB_ipAdEntAddr);
 	Exit = FALSE;
-	
+
 	IpCount=0;
 	while(!Exit){
 		ret = Query(ASN_RFC1157_GETNEXTREQUEST,&varBindList,&errorStatus,&errorIndex);
-		
+
 		if(!ret)
 			Exit=TRUE;
 		else{
@@ -250,9 +250,9 @@ void MibII::GetIPAddress( UINT IpArray[], UINT &IpArraySize )
 			}
 		}
 	}
-	
+
 	IpArraySize = IpCount;
-	
+
 	SNMP_FreeVarBind(&varBind[0]);
 }
 
@@ -262,7 +262,7 @@ void MibII::GetIPMask( UINT IpArray[], UINT &IpArraySize )
 		IpArraySize = 0;
 		return;
 	}
-	
+
 	UINT OID_ipAdEntMask[] = { 1, 3, 6, 1, 2, 1, 4 , 20, 1 ,3 };
 	AsnObjectIdentifier MIB_ipAdEntMask = { sizeof(OID_ipAdEntMask)/sizeof(UINT), OID_ipAdEntMask };
 	RFC1157VarBindList  varBindList;
@@ -274,17 +274,17 @@ void MibII::GetIPMask( UINT IpArray[], UINT &IpArraySize )
 	int                 ret;
 	int                 IpCount=0;
 	DWORD               dtmp;
-	
+
 	varBindList.list = varBind;
 	varBindList.len  = 1;
 	varBind[0].name  = MIB_NULL;
 	SNMP_oidcpy(&varBind[0].name,&MIB_ipAdEntMask);
 	Exit = FALSE;
-	
+
 	IpCount=0;
 	while(!Exit){
 		ret = Query(ASN_RFC1157_GETNEXTREQUEST,&varBindList,&errorStatus,&errorIndex);
-		
+
 		if(!ret)
 			Exit=TRUE;
 		else{
@@ -301,8 +301,8 @@ void MibII::GetIPMask( UINT IpArray[], UINT &IpArraySize )
 			}
 		}
 	}
-	
+
 	IpArraySize = IpCount;
-	
+
 	SNMP_FreeVarBind(&varBind[0]);
 }

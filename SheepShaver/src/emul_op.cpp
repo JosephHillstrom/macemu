@@ -20,7 +20,7 @@
 
 #include <stdio.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "main.h"
 #include "version.h"
 #include "prefs.h"

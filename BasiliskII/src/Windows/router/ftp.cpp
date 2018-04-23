@@ -67,7 +67,7 @@ void init_ftp()
 	}
 }
 
-void ftp_modify_port_command( 
+void ftp_modify_port_command(
 	char *buf,
 	int &count,
 	const uint32 max_size,
@@ -81,8 +81,8 @@ void ftp_modify_port_command(
 		return;
 	}
 
-	sprintf( 
-		buf, 
+	sprintf(
+		buf,
 		(is_pasv ? "227 Entering Passive Mode (%d,%d,%d,%d,%d,%d).%c%c" : "PORT %d,%d,%d,%d,%d,%d%c%c"),
 		ip >> 24,
 		(ip >> 16) & 0xFF,
@@ -180,9 +180,9 @@ void ftp_parse_port_command(
 				}
 				ftp_data_port = (ftp_data_port << 8) + atoi(s);
 				while( *s && *s != ',' && *s != ')' ) s++;
-				if(!*s) 
-					break; 
-				else 
+				if(!*s)
+					break;
+				else
 					s++;
 			}
 		}

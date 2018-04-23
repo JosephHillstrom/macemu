@@ -24,7 +24,7 @@
  *    Inside Macintosh: Sound, chapter 5 "Sound Components"
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "cpu_emulation.h"
 #include "macos_util.h"
 #include "emul_op.h"

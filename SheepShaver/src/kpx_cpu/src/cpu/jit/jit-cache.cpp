@@ -76,7 +76,7 @@ basic_jit_cache::init_translation_cache(uint32 size)
 		tcode_start = NULL;
 		return false;
 	}
-	
+
 	D(bug("basic_jit_cache: Translation cache: %d KB at %p\n", cache_size / 1024, tcode_start));
 	code_start = tcode_start;
 	code_p = code_start;

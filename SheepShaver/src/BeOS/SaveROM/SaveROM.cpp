@@ -57,7 +57,7 @@ public:
  */
 
 int main(int argc, char **argv)
-{	
+{
 	SaveROM *the_app = new SaveROM();
 	the_app->Run();
 	delete the_app;

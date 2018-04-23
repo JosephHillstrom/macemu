@@ -58,6 +58,7 @@
 	IBOutlet NSSlider		*emuFreq;
 	IBOutlet NSView			*newVolumeView;
 	IBOutlet NSTextField	*newVolumeSize;
+
 	IBOutlet NSWindow		*panel;
 	IBOutlet Emulator		*theEmulator;
 
@@ -70,8 +71,9 @@
 							*CPU68020,
 							*CPU68030,
 							*CPU68040;
-	IBOutlet NSTextField	*delay,
-							*depth;
+	IBOutlet NSTextField	*delay;
+	IBOutlet NSPopUpButton	*depth;
+	IBOutlet NSMenu			*depthMenu;
 	IBOutlet NSButton		*disableCD,
 							*disableSound;
 	IBOutlet NSTableView	*diskImages;
@@ -89,10 +91,10 @@
 							*printer;
 	IBOutlet NSButton		*quadra900;
 	IBOutlet NSTextField	*ROMfile;
-	IBOutlet NSButton		*screen;
+	IBOutlet NSButton		*fullScreen;
+	IBOutlet NSButton		*inWindow;
 	IBOutlet NSTableView	*SCSIdisks;
 	IBOutlet NSTextField	*width;
-	IBOutlet NSButton		*window;
 
 	NSString	*devs,
 				*home;
@@ -141,5 +143,7 @@
 - (IBAction) ResetPrefs:	(id)sender;
 - (IBAction) ShowPrefs: 	(id)sender;
 - (IBAction) SavePrefs:		(id)sender;
+
+- (void) updateBitsPerPixelPopup;
 
 @end

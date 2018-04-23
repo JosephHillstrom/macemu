@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -428,7 +428,7 @@ static bool cdrom_open_1(mac_file_handle *fh)
 	// (it seems to have extra data padded in)
 	//
 	// So, we keep the already opened file handle,
-	// and open a slightly different file for CDROM data 
+	// and open a slightly different file for CDROM data
 	//
 	fh->ioctl_fd = fh->fd;
 	fh->ioctl_name = fh->name;
@@ -522,7 +522,7 @@ static bool is_drive_mounted(const char *dev_name, char *mount_name)
 /*
  *  Open file/device, create new file handle (returns NULL on error)
  */
- 
+
 static mac_file_handle *open_filehandle(const char *name)
 {
 		mac_file_handle *fh = new mac_file_handle;
@@ -759,7 +759,7 @@ size_t Sys_read(void *arg, void *buffer, loff_t offset, size_t length)
 
 	if (fh->generic_disk)
 		return fh->generic_disk->read(buffer, offset, length);
-	
+
 	// Seek to position
 	if (lseek(fh->fd, offset + fh->start_byte, SEEK_SET) < 0)
 		return 0;
@@ -805,7 +805,7 @@ loff_t SysGetFileSize(void *arg)
 #if defined(BINCUE)
 	if (fh->is_bincue)
 		return size_bincue(fh->bincue_fd);
-#endif 
+#endif
 
 	if (fh->generic_disk)
 		return fh->file_size;
@@ -969,7 +969,7 @@ bool SysIsDiskInserted(void *arg)
 
 	if (fh->generic_disk)
 		return true;
-	
+
 	if (fh->is_file) {
 		return true;
 
@@ -1031,7 +1031,7 @@ void SysPreventRemoval(void *arg)
 
 #if defined(__linux__) && defined(CDROM_LOCKDOOR)
 	if (fh->is_cdrom)
-		ioctl(fh->fd, CDROM_LOCKDOOR, 1);	
+		ioctl(fh->fd, CDROM_LOCKDOOR, 1);
 #endif
 }
 
@@ -1048,7 +1048,7 @@ void SysAllowRemoval(void *arg)
 
 #if defined(__linux__) && defined(CDROM_LOCKDOOR)
 	if (fh->is_cdrom)
-		ioctl(fh->fd, CDROM_LOCKDOOR, 0);	
+		ioctl(fh->fd, CDROM_LOCKDOOR, 0);
 #endif
 }
 

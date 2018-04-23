@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 #include "macos_util.h"
 #include "timer.h"
 
@@ -44,8 +44,7 @@ static inline void mach_current_time(tm_time_t &t) {
 		host_get_clock_service(mach_host_self(), SYSTEM_CLOCK, &host_clock);
 		host_clock_inited = true;
 	}
-	
-	clock_get_time(host_clock, (mach_timespec_t *)&t);
+	clock_get_time(host_clock, &t);
 }
 #endif
 

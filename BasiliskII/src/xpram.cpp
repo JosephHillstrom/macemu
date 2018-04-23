@@ -25,13 +25,25 @@
 
 #include <string.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "xpram.h"
 
 
 // Extended parameter RAM
 uint8 XPRAM[XPRAM_SIZE];
 
+char* xpramStr = { 0 };
+
+char* dumpXPRAM()
+{
+	if ( !xpramStr || strlen( xpramStr ) < 1 )
+	{
+		xpramStr = (char*)malloc( 1 << 16 );
+	}
+
+	XPRAMtoString( xpramStr );
+	return xpramStr;
+}
 
 /*
  *  Initialize XPRAM
@@ -55,4 +67,71 @@ void XPRAMExit(void)
 {
 	// Save XPRAM to settings file
 	SaveXPRAM();
+}
+
+size_t XPRAMtoString( const char* buf )
+{
+	char* b = (char*)buf;
+	size_t len;
+
+	*b = '\n'; b++;
+	const char* str = "XPRAM";
+	len = strlen( str );
+	memcpy( b, str, len );
+	b += len;
+	*b = '\n'; b++;
+	*b = '\n'; b++;
+
+	char s[256];
+	for ( size_t offset = 0; offset < XPRAM_SIZE; offset += 16 ) {
+		sprintf( s, "    %08x", offset );
+		len = strlen( s );
+		memcpy( b, s, len );
+		b += len;
+		*b = ' '; b++;
+		*b = ' '; b++;
+
+		//char ascii[17];
+		for ( size_t bytePos = 0; bytePos < 16; bytePos++ )
+		{
+			uint8 symbol = XPRAM[offset + bytePos];
+			//if ( symbol >= 32 && symbol < 128 )
+			//	ascii[bytePos] = (char)symbol;
+			//else
+			//	ascii[bytePos] = ' ';
+			sprintf( s, "%02x", symbol );
+			len = strlen( s );
+			memcpy( b, s, len );
+			b += len;
+			*b = ' '; b++;
+		}
+		//*b = ' '; b++;
+		//memcpy( b, ascii, 16 );
+		//b += 16;
+
+		*b = '\n'; b++;
+	}
+
+	*b = 0;
+	return b - buf;
+}
+
+bool getXPRAMat(size_t off, uint8* out)
+{
+	if ( !out )
+		return false;
+	if ( off >= XPRAM_SIZE )
+		return false;
+
+	*out = XPRAM[ off ];
+	return true;
+}
+
+bool setXPRAMat(size_t off, uint8 byte)
+{
+	if ( off >= XPRAM_SIZE )
+		return false;
+
+	XPRAM[ off ] = byte;
+	return true;
 }

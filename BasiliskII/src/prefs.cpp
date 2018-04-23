@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <ctype.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "sys.h"
 #include "prefs.h"
 

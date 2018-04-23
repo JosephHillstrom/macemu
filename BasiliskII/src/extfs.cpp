@@ -33,7 +33,7 @@
  *    (SetForeignPrivs)
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>

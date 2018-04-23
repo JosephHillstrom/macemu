@@ -771,7 +771,7 @@ void MacWindow::MessageReceived(BMessage *msg)
 				delete msg2;
 			}
 			MessageQueue()->Unlock();
-			
+
 			// Convert Mac screen buffer to BeOS palette and blit
 			const video_mode &mode = monitor.get_current_mode();
 			BRect update_rect = BRect(0, 0, mode.x-1, mode.y-1);
@@ -1016,7 +1016,7 @@ void MacScreen::ScreenConnected(bool active)
 		// Copy from backup store to frame buffer
 		if (frame_backup != NULL) {
 			memcpy(info->frame_buffer, frame_backup, mode.bytes_per_row * mode.y);
-			delete[] frame_backup;			
+			delete[] frame_backup;
 			frame_backup = NULL;
 		}
 

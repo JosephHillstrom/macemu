@@ -88,7 +88,7 @@ void CheckLoad(uint32 type, int16 id, uint8 *p, uint32 size)
 	uint16 *p16;
 	uint32 base;
 	D(bug("vCheckLoad %c%c%c%c (%08x) ID %d, data %p, size %d\n", (char)(type >> 24), (char)((type >> 16) & 0xff), (char )((type >> 8) & 0xff), (char )(type & 0xff), type, id, p, size));
-	
+
 	if (type == FOURCC('b','o','o','t') && id == 3) {
 		D(bug(" boot 3 found\n"));
 
@@ -342,7 +342,7 @@ void CheckLoad(uint32 type, int16 id, uint8 *p, uint32 size)
 
 	} else if (type == FOURCC('D','R','V','R') && id == 41) {
 		D(bug(" DRVR 41 found\n"));
-		
+
 		// Don't access ROM85 as it it was a pointer to a ROM version number (8.0, 8.1)
 		static const uint8 dat[] = {0x3a, 0x2e, 0x00, 0x0a, 0x55, 0x4f, 0x3e, 0xb8, 0x02, 0x8e, 0x30, 0x1f, 0x48, 0xc0, 0x24, 0x40, 0x20, 0x40};
 		base = find_rsrc_data(p, size, dat, sizeof(dat));

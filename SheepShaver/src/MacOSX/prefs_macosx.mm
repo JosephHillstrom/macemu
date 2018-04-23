@@ -22,7 +22,7 @@
  */
 
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 // The _UINT64 define is needed to guard against a typedef mismatch with Snow Leopard headers.
 #define _UINT64
@@ -45,7 +45,7 @@
 {
 	NSNib *nib = [[NSNib alloc] initWithNibNamed:@"VMSettingsWindow" bundle:nil];
 	NSArray *objects = nil;
- 
+
 	if (![nib instantiateNibWithOwner:[VMSettingsController sharedInstance] topLevelObjects:&objects]) {
 		NSLog(@"Could not load Prefs NIB file!\n");
 		return nil;
@@ -55,7 +55,7 @@
 
 	// Release the raw nib data.
 	[nib release];
- 
+
 	// Release the top-level objects so that they are just owned by the array.
 	[objects makeObjectsPerformSelector:@selector(release)];
 
@@ -115,7 +115,7 @@ void prefs_init(void)
 	[appMenu insertItem:menuItem atIndex:2];
 	[appMenu insertItem:[NSMenuItem separatorItem] atIndex:3];
 	[menuItem release];
-	
+
 	[NSApp setDelegate:[[SheepShaverMain alloc] init]];
 
 	[pool release];

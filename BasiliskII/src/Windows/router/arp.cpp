@@ -54,7 +54,7 @@ bool write_arp( arp_t *req, int len )
 	if( len >= sizeof(arp_t) &&
 			req->htype == htons(arp_hwtype_enet) &&
 			req->ptype == htons(mac_type_ip4) &&
-			req->opcode == htons(arp_request) &&	
+			req->opcode == htons(arp_request) &&
 			req->halen == 6 &&
 			req->palen == 4
 	)

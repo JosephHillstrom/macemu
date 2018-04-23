@@ -28,7 +28,7 @@
 #include <dirent.h>
 #include <errno.h>
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 #include "prefs.h"
 #include "extfs.h"
 #include "extfs_defs.h"
@@ -125,7 +125,7 @@ void add_path_component(char *path, const char *component)
 		path[l] = '/';
 		path[l+1] = 0;
 	}
-	strlcat(path, component, MAX_PATH_LENGTH);
+	strncat(path, component, MAX_PATH_LENGTH-1);
 }
 
 
@@ -185,11 +185,11 @@ static void make_finf_path(const char *src, char *dest, bool only_dir = false)
 	dest[last_part-src] = 0;
 
 	// Add additional component
-	strlcat(dest, ".finf/", MAX_PATH_LENGTH);
+	strncat(dest, ".finf/", MAX_PATH_LENGTH-1);
 
 	// Add last component
 	if (!only_dir)
-		strlcat(dest, last_part, MAX_PATH_LENGTH);
+		strncat(dest, last_part, MAX_PATH_LENGTH-1);
 }
 
 static int create_finf_dir(const char *path)
@@ -512,7 +512,7 @@ uint32 get_rfork_size(const char *path)
 
 	// Get size
 	off_t size = lseek(fd, 0, SEEK_END);
-	
+
 	// Close file and return size
 	close(fd);
 	return size < 0 ? 0 : size;

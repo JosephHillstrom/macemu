@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "main.h"
 #include "macos_util.h"
 #include "serial.h"
@@ -244,7 +244,7 @@ int16 SerialStatus(uint32 pb, uint32 dce)
 				WriteMacInt16(pb + csParam + 6, 0x0616);
 				res = noErr;
 				break;
-	
+
 			default:
 				res = the_port->status(pb, dce, code);
 				break;

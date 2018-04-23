@@ -35,7 +35,7 @@ protected:
 
 public:
 	SOCKET s;				// Always a valid socket
-	BOOL permanent; // T: a user-defined listening socket, 
+	BOOL permanent; // T: a user-defined listening socket,
 	int proto;			// udp/icmp
 	WSABUF buffers[1];
 	WSABUF out_buffers[1];

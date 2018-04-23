@@ -220,6 +220,10 @@ int inet_aton _P((const char *cp, struct in_addr *ia));
 
 #if defined __GNUC__
 #define PACKED__ __attribute__ ((packed))
+#elif defined _MSC_VER
+#define PRAGMA_PACK_SUPPORTED 1
+#define PACK_RESET
+#define PACKED__
 #elif defined __sgi
 #define PRAGMA_PACK_SUPPORTED 1
 #define PACKED__

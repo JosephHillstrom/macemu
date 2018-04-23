@@ -21,7 +21,7 @@
 #ifndef DISK_UNIX_H
 #define DISK_UNIX_H
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 struct disk_generic {
 	enum status {
@@ -29,10 +29,10 @@ struct disk_generic {
 		DISK_INVALID,
 		DISK_VALID,
 	};
-	
+
 	disk_generic() { }
 	virtual ~disk_generic() { };
-	
+
 	virtual bool is_read_only() = 0;
 	virtual size_t read(void *buf, loff_t offset, size_t length) = 0;
 	virtual size_t write(void *buf, loff_t offset, size_t length) = 0;

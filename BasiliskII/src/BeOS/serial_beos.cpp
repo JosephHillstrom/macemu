@@ -62,7 +62,7 @@ public:
 			device = NULL;
 		} else {
 			is_parallel = false;
-			device = new BSerialPort;	
+			device = new BSerialPort;
 		}
 		device_sem = create_sem(1, "serial port");
 		input_thread = output_thread = 0;
@@ -237,7 +237,7 @@ int16 BeSERDPort::prime_out(uint32 pb, uint32 dce)
 /*
  *	Control calls
  */
- 
+
 int16 BeSERDPort::control(uint32 pb, uint32 dce, uint16 code)
 {
 	switch (code) {
@@ -679,7 +679,7 @@ status_t BeSERDPort::input_func(void *arg)
 
 		// Buffer in kernel space?
 		if ((uint32)buf < 0x80000000) {
-	
+
 			// Yes, transfer via buffer
 			actual = 0;
 			while (length) {
@@ -747,7 +747,7 @@ status_t BeSERDPort::input_func(void *arg)
 				WriteMacInt32(p.pb + ioActCount, 0);
 				WriteMacInt32(s->input_dt + serdtResult, readErr);
 			}
-	
+
 			// Trigger serial interrupt
 			D(bug(" triggering serial interrupt\n"));
 			s->read_done = true;
@@ -794,7 +794,7 @@ status_t BeSERDPort::output_func(void *arg)
 
 		// Buffer in kernel space?
 		if ((uint32)buf < 0x80000000) {
-	
+
 			// Yes, transfer via buffer
 			actual = 0;
 			while (length) {
@@ -830,7 +830,7 @@ status_t BeSERDPort::output_func(void *arg)
 			}
 
 		} else {
-	
+
 			// No, transfer directly
 			acquire_sem(s->device_sem);
 			if (s->is_parallel)
@@ -861,7 +861,7 @@ status_t BeSERDPort::output_func(void *arg)
 				WriteMacInt32(p.pb + ioActCount, 0);
 				WriteMacInt32(s->output_dt + serdtResult, writErr);
 			}
-	
+
 			// Trigger serial interrupt
 			D(bug(" triggering serial interrupt\n"));
 			s->write_done = true;

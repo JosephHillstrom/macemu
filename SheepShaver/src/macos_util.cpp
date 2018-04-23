@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "cpu_emulation.h"
 #include "main.h"
 #include "sony.h"
@@ -179,7 +179,7 @@ uint32 FindLibSymbol(const char *lib_str, const char *sym_str)
 
 	if (ReadMacInt32(XLM_RUN_MODE) == MODE_EMUL_OP) {
 		M68kRegisters r;
-	
+
 		// Find shared library
 		static const uint8 proc1_template[] = {
 			0x55, 0x8f,							// subq.l	#2,a7
@@ -203,7 +203,7 @@ uint32 FindLibSymbol(const char *lib_str, const char *sym_str)
 		D(bug(" GetSharedLibrary: ret %d, connection ID %ld, main %p\n", (int16)r.d[0], conn_id.value(), main_addr.value()));
 		if (r.d[0])
 			return 0;
-	
+
 		// Find symbol
 		static const uint8 proc2_template[] = {
 			0x55, 0x8f,					// subq.l	#2,a7

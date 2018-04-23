@@ -64,6 +64,8 @@ extern void flush_icache_range(uint8 *start, uint32 size); // from compemu_suppo
 #define DEBUG 0
 #include "debug.h"
 
+#include "Emulator.h"
+#include "main.h"
 
 #include "main_macosx.h"		// To bridge between main() and misc. classes
 
@@ -80,8 +82,16 @@ static char *bundle = NULL;		// If in an OS X application bundle, its path
 int CPUType;
 bool CPUIs68060;
 int FPUType;
-bool TwentyFourBitAddressing;
 
+bool getTwentyFourBitAddressing()
+{
+	return [ [ Emulator currentEmulator ] twentyFourBitAddressing ] ? true : false;
+}
+
+void setTwentyFourBitAddressingByComputer(bool b)
+{
+	[ [ Emulator currentEmulator ] setTwentyFourBitAddressingByComputer: ( b ? YES : NO ) ];
+}
 
 // Global variables
 
@@ -245,10 +255,11 @@ int main(int argc, char **argv)
 				UserPrefsPath = argv[i];
 				argv[i] = NULL;
 			}
-		} else if (strcmp(argv[i], "--rominfo") == 0) {
+		}
+		/* else if (strcmp(argv[i], "--rominfo") == 0) {
 			argv[i] = NULL;
 			PrintROMInfo = true;
-		}
+		} */
 	}
 
 	// Remove processed arguments
@@ -314,7 +325,6 @@ bool InitEmulator (void)
 	const char *vmdir = NULL;
 	char str[256];
 
-
 	// Install the handler for SIGSEGV
 	if (!sigsegv_install_handler(sigsegv_handler)) {
 		sprintf(str, GetString(STR_SIG_INSTALL_ERR), "SIGSEGV", strerror(errno));
@@ -337,7 +347,7 @@ bool InitEmulator (void)
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 	RAMSize = RAMSize & -getpagesize();					// Round down to page boundary
 #endif
-	
+
 	// Initialize VM system
 	vm_init();
 
@@ -353,20 +363,20 @@ bool InitEmulator (void)
 #else
 	const bool can_map_all_memory = false;
 #endif
-	
+
 	// Try to allocate all memory from 0x0000, if it is not known to crash
 	if (can_map_all_memory && (vm_acquire_mac_fixed(0, RAMSize + 0x100000) == 0)) {
 		D(bug("Could allocate RAM and ROM from 0x0000\n"));
 		memory_mapped_from_zero = true;
 	}
-	
+
 #ifndef PAGEZERO_HACK
 	// Otherwise, just create the Low Memory area (0x0000..0x2000)
 	else if (vm_acquire_mac_fixed(0, 0x2000) == 0) {
 		D(bug("Could allocate the Low Memory globals\n"));
 		lm_area_mapped = true;
 	}
-	
+
 	// Exit on failure
 	else {
 		sprintf(str, GetString(STR_LOW_MEM_MMAP_ERR), strerror(errno));
@@ -388,7 +398,7 @@ bool InitEmulator (void)
 #endif
 	{
 		uint8 *ram_rom_area = (uint8 *)vm_acquire_mac(RAMSize + 0x100000);
-		if (ram_rom_area == VM_MAP_FAILED) { 
+		if (ram_rom_area == VM_MAP_FAILED) {
 			ErrorAlert(STR_NO_MEM_ERR);
 			QuitEmulator();
 		}
@@ -416,9 +426,9 @@ bool InitEmulator (void)
 	RAMBaseMac = Host2MacAddr(RAMBaseHost);
 	ROMBaseMac = Host2MacAddr(ROMBaseHost);
 #endif
-	D(bug("Mac RAM starts at %p (%08x)\n", RAMBaseHost, RAMBaseMac));
-	D(bug("Mac ROM starts at %p (%08x)\n", ROMBaseHost, ROMBaseMac));
-	
+	NSLog( @"Mac RAM starts at %p (%08x)", RAMBaseHost, RAMBaseMac );
+	NSLog( @"Mac ROM starts at %p (%08x)", ROMBaseHost, ROMBaseMac );
+
 	// Get rom file path from preferences
 	const char *rom_path = PrefsFindString("rom");
 	if ( ! rom_path )
@@ -435,7 +445,8 @@ bool InitEmulator (void)
 	}
 	printf(GetString(STR_READING_ROM_FILE));
 	ROMSize = lseek(rom_fd, 0, SEEK_END);
-	if (ROMSize != 64*1024 && ROMSize != 128*1024 && ROMSize != 256*1024 && ROMSize != 512*1024 && ROMSize != 1024*1024) {
+	NSLog( @"ROM size %d K", ROMSize >> 10 );
+	if ( ROMSize != 64*1024 && ROMSize != 128*1024 && ROMSize != 256*1024 && ROMSize != 512*1024 && ROMSize != 1024*1024 ) {
 		ErrorAlert(STR_ROM_SIZE_ERR);
 		close(rom_fd);
 		QuitEmulator();
@@ -447,11 +458,17 @@ bool InitEmulator (void)
 		QuitEmulator();
 	}
 
+	lseek(rom_fd, 8, SEEK_SET);
+	short ROMVersion = 0;
+	read(rom_fd, &ROMVersion, 2);
+	NSLog( @"ROM version 0x%04x", ROMVersion );
+
 
 	// Initialize everything
 	if (!InitAll(vmdir))
 		QuitEmulator();
-	D(bug("Initialization complete\n"));
+
+	NSLog( @"Initialization complete" );
 
 
 #ifdef ENABLE_MON
@@ -503,7 +520,7 @@ void QuitEmuNoExit()
 	if (lm_area_mapped)
 		vm_release(0, 0x2000);
 #endif
-	
+
 	// Exit VM wrappers
 	vm_exit();
 

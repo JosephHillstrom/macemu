@@ -202,7 +202,7 @@ int main(int argc, char **argv)
 
 	if (nextch != ':')                        /* Get control flow information */
 	    abort();
-	
+
 	cflow = 0;
 	for(i = 0; i < 2; i++) {
 		getnextch();
@@ -215,7 +215,7 @@ int main(int argc, char **argv)
 		 default: abort();
 		}
 	}
-	
+
 	getnextch();
 	while (isspace(nextch))
 	    getnextch();

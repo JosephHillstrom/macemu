@@ -51,11 +51,11 @@ static int pprintf(const char* format, ...)
 	int len,Ret;
 	char Buffer[1024];
 	va_list ap;
-	
+
 	if ((PortNum = find_port("PortLogger")) == B_NAME_NOT_FOUND)
 		return(PortNum);
 	for (len=0; len<1024; len++)
-		Buffer[len]='\0'; 
+		Buffer[len]='\0';
 	va_start(ap, format);
 	vsprintf(Buffer, format, ap);
 	Ret = write_port(PortNum, 0, Buffer, strlen(Buffer));
@@ -78,7 +78,7 @@ public:
 
 
 // Global variables
-static bool shutdown_now = false; 
+static bool shutdown_now = false;
 static bool	active = false;
 
 static thread_id write_thread;			// Packet writer
@@ -189,7 +189,7 @@ static status_t write_packet_func(void *arg)
 					D(bug("error: unknown port packet type\n"));
 					break;
 			}
-			p->cmd = 0;	// Free packet					
+			p->cmd = 0;	// Free packet
 			wr_pos = (wr_pos + 1) % WRITE_PACKET_COUNT;
 			p = &net_buffer_ptr->write[wr_pos];
 		}
@@ -214,7 +214,7 @@ static void init_addon()
 	if ((buffer_area = create_area("packet buffer", (void **)&net_buffer_ptr, B_ANY_ADDRESS, buffer_size, B_FULL_LOCK, B_READ_AREA | B_WRITE_AREA)) < B_NO_ERROR) {
 		D(bug("FATAL ERROR: can't create shared area\n"));
 		return;
-	}	
+	}
 
 	// Init packet buffer
 	clear();

@@ -176,7 +176,7 @@ static void inline ppc_flush_icache_range(uint32 *start_p, uint32 length)
 
     p = start & ~(MIN_CACHE_LINE_SIZE - 1);
     stop = (stop + MIN_CACHE_LINE_SIZE - 1) & ~(MIN_CACHE_LINE_SIZE - 1);
-    
+
     for (p = start; p < stop; p += MIN_CACHE_LINE_SIZE) {
         asm volatile ("dcbst 0,%0" : : "r"(p) : "memory");
     }
@@ -987,7 +987,7 @@ void powerpc_test_cpu::test_one_1(uint32 *code, const char *insn, uint32 a1, uin
 	const uint32 emul_rd = get_gpr(RD);
 	const uint32 emul_xer = emul_get_xer();
 	const uint32 emul_cr = emul_get_cr();
-	
+
 	++tests;
 
 	bool ok = native_rd == emul_rd

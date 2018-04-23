@@ -60,7 +60,7 @@ extern int broken_in;
 #define cpuop_end()			do { cpuop_tag("end"); } while (0)
 
 typedef void REGPARAM2 cpuop_func (uae_u32) REGPARAM;
- 
+
 struct cputbl {
     cpuop_func *handler;
     uae_u16 specific;
@@ -261,14 +261,14 @@ static __inline__ void m68k_do_rts(void)
 	    m68k_setpc(get_long(m68k_areg(regs, 7)));
 	        m68k_areg(regs, 7) += 4;
 }
- 
+
 static __inline__ void m68k_do_bsr(uaecptr oldpc, uae_s32 offset)
 {
 	    m68k_areg(regs, 7) -= 4;
 	        put_long(m68k_areg(regs, 7), oldpc);
 		    m68k_incpc(offset);
 }
- 
+
 static __inline__ void m68k_do_jsr(uaecptr oldpc, uaecptr dest)
 {
 	    m68k_areg(regs, 7) -= 4;
@@ -351,5 +351,5 @@ static inline void cpu_check_ticks(void)
 #define cpu_check_ticks()
 #define cpu_do_check_ticks()
 #endif
- 
+
 #endif /* NEWCPU_H */

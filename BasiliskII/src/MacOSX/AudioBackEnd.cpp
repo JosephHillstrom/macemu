@@ -4,7 +4,7 @@
  * 
  * Copyright (C) 2004 Apple Computer, Inc., All Rights Reserved
  * Original Apple code modified by Daniel Sumorok
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +18,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */ 
+ */
 
 #include "AudioBackEnd.h"
 
@@ -50,7 +50,7 @@ AudioBackEnd::~AudioBackEnd() {   //clean up
 
   AUGraphClose(mGraph);
   DisposeAUGraph(mGraph);
-        
+
   if(mAudioBuffer != NULL) {
     delete mAudioBuffer;
     mAudioBuffer = NULL;
@@ -61,16 +61,16 @@ AudioBackEnd::~AudioBackEnd() {   //clean up
 OSStatus AudioBackEnd::Init() {
   OSStatus err = noErr;
 
-  err = SetupGraph();   
+  err = SetupGraph();
   checkErr(err);
 
   err = SetupBuffers();
   checkErr(err);
 
-  err = AUGraphInitialize(mGraph); 
+  err = AUGraphInitialize(mGraph);
   checkErr(err);
 
-  return err;   
+  return err;
 }
 
 #pragma mark --- Operation---
@@ -80,12 +80,12 @@ OSStatus AudioBackEnd::Start()
   OSStatus err = noErr;
   if(!IsRunning()) {
     mFramesProcessed = 0;
-    mAudioBufferWriteIndex = 0;         
+    mAudioBufferWriteIndex = 0;
     mAudioBufferReadIndex = 0;
-                
+
     err = AUGraphStart(mGraph);
   }
-  return err;   
+  return err;
 }
 
 OSStatus AudioBackEnd::Stop() {
@@ -97,13 +97,13 @@ OSStatus AudioBackEnd::Stop() {
   return err;
 }
 
-Boolean AudioBackEnd::IsRunning() {     
+Boolean AudioBackEnd::IsRunning() {
   OSStatus err = noErr;
   Boolean graphRunning;
 
   err = AUGraphIsRunning(mGraph,&graphRunning);
-        
-  return (graphRunning);        
+
+  return (graphRunning);
 }
 
 #pragma mark -
@@ -116,30 +116,30 @@ OSStatus AudioBackEnd::SetupGraph() {
   AudioDeviceID out;
 
   //Make a New Graph
-  err = NewAUGraph(&mGraph);  
+  err = NewAUGraph(&mGraph);
   checkErr(err);
 
-  //Open the Graph, AudioUnits are opened but not initialized    
+  //Open the Graph, AudioUnits are opened but not initialized
   err = AUGraphOpen(mGraph);
   checkErr(err);
-  
+
   outDesc.componentType = kAudioUnitType_Output;
   outDesc.componentSubType = kAudioUnitSubType_DefaultOutput;
   outDesc.componentManufacturer = kAudioUnitManufacturer_Apple;
   outDesc.componentFlags = 0;
   outDesc.componentFlagsMask = 0;
-        
+
   //////////////////////////
   ///MAKE NODES
   //This creates a node in the graph that is an AudioUnit, using
-  //the supplied ComponentDescription to find and open that unit        
+  //the supplied ComponentDescription to find and open that unit
   err = AUGraphNewNode(mGraph, &outDesc, 0, NULL, &mOutputNode);
   checkErr(err);
-        
+
   //Get Audio Units from AUGraph node
-  err = AUGraphGetNodeInfo(mGraph, mOutputNode, NULL, NULL, NULL, &mOutputUnit);         
+  err = AUGraphGetNodeInfo(mGraph, mOutputNode, NULL, NULL, NULL, &mOutputUnit);
   checkErr(err);
-        
+
   err = AUGraphUpdate(mGraph, NULL);
   checkErr(err);
 
@@ -148,26 +148,26 @@ OSStatus AudioBackEnd::SetupGraph() {
                                  &size, &out);
   checkErr(err);
   mOutputDevice.Init(out, false);
-        
+
   //Set the Current Device to the Default Output Unit.
   err = AudioUnitSetProperty(mOutputUnit,
-                             kAudioOutputUnitProperty_CurrentDevice, 
-                             kAudioUnitScope_Global, 
-                             0, 
-                             &out, 
+                             kAudioOutputUnitProperty_CurrentDevice,
+                             kAudioUnitScope_Global,
+                             0,
+                             &out,
                              sizeof(out));
   checkErr(err);
-                        
+
   output.inputProc = OutputProc;
   output.inputProcRefCon = this;
-        
-  err = AudioUnitSetProperty(mOutputUnit, 
-                             kAudioUnitProperty_SetRenderCallback, 
+
+  err = AudioUnitSetProperty(mOutputUnit,
+                             kAudioUnitProperty_SetRenderCallback,
                              kAudioUnitScope_Input,
                              0,
-                             &output, 
+                             &output,
                              sizeof(output));
-  checkErr(err);                                          
+  checkErr(err);
   return err;
 }
 
@@ -179,16 +179,16 @@ OSStatus AudioBackEnd::SetupBuffers() {
   UInt32 propertySize;
 
   propertySize = sizeof(mBufferSizeFrames);
-  err = AudioUnitGetProperty(mOutputUnit, kAudioDevicePropertyBufferFrameSize, 
-                             kAudioUnitScope_Global, 0, &mBufferSizeFrames, 
+  err = AudioUnitGetProperty(mOutputUnit, kAudioDevicePropertyBufferFrameSize,
+                             kAudioUnitScope_Global, 0, &mBufferSizeFrames,
                              &propertySize);
 
   propertySize = sizeof(safetyOffset);
   safetyOffset = 0;
-  err = AudioUnitGetProperty(mOutputUnit, kAudioDevicePropertySafetyOffset, 
-                             kAudioUnitScope_Global, 0, &safetyOffset, 
+  err = AudioUnitGetProperty(mOutputUnit, kAudioDevicePropertySafetyOffset,
+                             kAudioUnitScope_Global, 0, &safetyOffset,
                              &propertySize);
-                             
+
 
   asbd.mFormatID = 0x6c70636d; // 'lpcm'
   asbd.mFormatFlags = (kAudioFormatFlagIsSignedInteger |
@@ -196,7 +196,7 @@ OSStatus AudioBackEnd::SetupBuffers() {
                        kAudioFormatFlagIsPacked);
   asbd.mChannelsPerFrame = mNumChannels;
   asbd.mSampleRate = mSampleRate;
-        
+
   if(asbd.mFormatFlags & kAudioFormatFlagIsSignedInteger) {
     asbd.mBitsPerChannel = mBitsPerSample;
   } else if(asbd.mFormatFlags & kAudioFormatFlagIsFloat)        {
@@ -218,7 +218,7 @@ OSStatus AudioBackEnd::SetupBuffers() {
   }
 
   propertySize = sizeof(asbd);
-  err = AudioUnitSetProperty(mOutputUnit, kAudioUnitProperty_StreamFormat, 
+  err = AudioUnitSetProperty(mOutputUnit, kAudioUnitProperty_StreamFormat,
                              kAudioUnitScope_Input, 0, &asbd, propertySize);
   checkErr(err);
 
@@ -258,13 +258,13 @@ OSStatus AudioBackEnd::OutputProc(void *inRefCon,
   bytesToCopy = inNumberFrames * This->mBytesPerFrame;
   bytesUntilEnd = This->mAudioBufferSize - This->mAudioBufferReadIndex;
   if(bytesUntilEnd < bytesToCopy) {
-    memcpy(dstPtr, &This->mAudioBuffer[This->mAudioBufferReadIndex], 
+    memcpy(dstPtr, &This->mAudioBuffer[This->mAudioBufferReadIndex],
            bytesUntilEnd);
     memcpy(dstPtr, This->mAudioBuffer, bytesToCopy - bytesUntilEnd);
 
     This->mAudioBufferReadIndex = bytesToCopy - bytesUntilEnd;
   } else {
-    memcpy(dstPtr, &This->mAudioBuffer[This->mAudioBufferReadIndex], 
+    memcpy(dstPtr, &This->mAudioBuffer[This->mAudioBufferReadIndex],
            bytesToCopy);
     This->mAudioBufferReadIndex += bytesToCopy;
   }
@@ -292,7 +292,7 @@ UInt32 AudioBackEnd::BufferSizeFrames() {
 int AudioBackEnd::sendAudioBuffer(void *buffer, int numFrames) {
   UInt8 *dstBuffer;
   int totalBytes;
-        
+
   mAudioBufferWriteIndex += (mAudioBufferSize / 2);
   mAudioBufferWriteIndex &= (mAudioBufferSize - 1);
 

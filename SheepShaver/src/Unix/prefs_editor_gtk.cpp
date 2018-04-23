@@ -201,14 +201,14 @@ static GtkWidget *table_make_combobox(GtkWidget *table, int row, int label_id, c
 	label = gtk_label_new(GetString(label_id));
 	gtk_widget_show(label);
 	gtk_table_attach(GTK_TABLE(table), label, 0, 1, row, row + 1, (GtkAttachOptions)0, (GtkAttachOptions)0, 4, 4);
-	
+
 	combo = gtk_combo_new();
 	gtk_widget_show(combo);
 	gtk_combo_set_popdown_strings(GTK_COMBO(combo), glist);
 
 	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), default_value);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, row, row + 1, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
-	
+
 	return combo;
 }
 
@@ -240,7 +240,7 @@ static GtkWidget *table_make_file_entry(GtkWidget *table, int row, int label_id,
 	gtk_table_attach(GTK_TABLE(table), box, 1, 2, row, row + 1, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 
 	entry = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(entry), str);
 	gtk_widget_show(entry);
 	gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
 
@@ -294,7 +294,7 @@ static GtkWidget *make_entry(GtkWidget *top, int label_id, const char *prefs_ite
 	const char *str = PrefsFindString(prefs_item);
 	if (str == NULL)
 		str = "";
-	gtk_entry_set_text(GTK_ENTRY(entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(entry), str);
 	gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
 	return entry;
 }
@@ -685,7 +685,7 @@ static void create_jit_pane(GtkWidget *top)
 {
 	GtkWidget *box, *table, *label, *menu;
 	char str[32];
-	
+
 	box = make_pane(top, STR_JIT_PANE_TITLE);
 
 	if (is_jit_capable()) {
@@ -947,7 +947,7 @@ static void create_graphics_pane(GtkWidget *top)
 		sprintf(str, "%d", dis_width);
 	else
 		strcpy(str, GetString(STR_SIZE_MAX_LAB));
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 2, 3, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)0, 4, 4);
 	w_display_x = GTK_COMBO(combo)->entry;
 
@@ -968,7 +968,7 @@ static void create_graphics_pane(GtkWidget *top)
 		sprintf(str, "%d", dis_height);
 	else
 		strcpy(str, GetString(STR_SIZE_MAX_LAB));
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 3, 4, (GtkAttachOptions)GTK_FILL, (GtkAttachOptions)0, 4, 4);
 	w_display_y = GTK_COMBO(combo)->entry;
 
@@ -1047,7 +1047,7 @@ static void create_input_pane(GtkWidget *top)
 		str = "";
 
 	w_keycode_file = gtk_entry_new();
-	gtk_entry_set_text(GTK_ENTRY(w_keycode_file), str); 
+	gtk_entry_set_text(GTK_ENTRY(w_keycode_file), str);
 	gtk_widget_show(w_keycode_file);
 	gtk_box_pack_start(GTK_BOX(hbox), w_keycode_file, TRUE, TRUE, 0);
 
@@ -1211,7 +1211,7 @@ static void create_serial_pane(GtkWidget *top)
 	const char *str = PrefsFindString("seriala");
 	if (str == NULL)
 		str = "";
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 0, 1, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 	w_seriala = GTK_COMBO(combo)->entry;
 
@@ -1225,7 +1225,7 @@ static void create_serial_pane(GtkWidget *top)
 	str = PrefsFindString("serialb");
 	if (str == NULL)
 		str = "";
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 1, 2, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 	w_serialb = GTK_COMBO(combo)->entry;
 
@@ -1240,7 +1240,7 @@ static void create_serial_pane(GtkWidget *top)
 	str = PrefsFindString("ether");
 	if (str == NULL)
 		str = "";
-	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str); 
+	gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(combo)->entry), str);
 	gtk_table_attach(GTK_TABLE(table), combo, 1, 2, 2, 3, (GtkAttachOptions)(GTK_FILL | GTK_EXPAND), (GtkAttachOptions)0, 4, 4);
 	w_ether = GTK_COMBO(combo)->entry;
 }

@@ -32,7 +32,7 @@
 #include <sys/types.h>
 #include <sys/ucontext.h>
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 #include "sigregs.h"
 #include "main.h"
 #include "user_strings.h"

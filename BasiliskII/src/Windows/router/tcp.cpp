@@ -23,46 +23,46 @@
 /*
  *  Features implemented:
  *		state machine, flow control, sequence numbers, RST/SYN/FIN/ACK/PSH
- *  
+ *
  *  Features not implemented:
  *		oob data, urgent pointer, window sliding, some options
  *		"Half-Nagle" implementation is a bit weird (mac-router interface; winsock has it on by default)
- *  
- *  
+ *
+ *
  *  All possible tcp state machine transitions:
- *  
+ *
  *		CLOSED ->	LISTEN						passive open
  *		CLOSED ->	SYN_SENT					active open				SYN->
- *  
+ *
  *		LISTEN ->	SYN_SENT					send data					SYN->
  *		LISTEN ->	SYN_RCVD					->SYN							SYN+ACK->
- *  
+ *
  *		SYN_SENT ->	SYN_RCVD				->SYN							SYN+ACK->
  *		SYN_SENT ->	ESTABLISHED			->SYN+ACK					ACK->
  *		SYN_SENT ->	CLOSED					close/timeout
- *  
+ *
  *		SYN_RCVD ->	CLOSED					timeout						RST->
  *		SYN_RCVD ->	LISTEN					->RST
  *		SYN_RCVD ->	ESTABLISHED			->ACK
  *		SYN_RCVD ->	FINWAIT_1				close							FIN->
- *  
+ *
  *		ESTABLISHED -> FINWAIT_1		close							FIN->
  *		ESTABLISHED -> CLOSE_WAIT		->FIN							ACK->
- *  
+ *
  *		CLOSE_WAIT -> LAST_ACK			close							FIN->
- *  
+ *
  *		LAST_ACK -> CLOSED					->ACK
- *  
+ *
  *		FINWAIT_1 -> CLOSING				->FIN							ACK->
  *		FINWAIT_1 -> FINWAIT_2			->ACK
  *		FINWAIT_1 -> TIME_WAIT			->FIN+ACK					ACK->
- *  
+ *
  *		FINWAIT_2 -> TIME_WAIT			->FIN							ACK->
- *  
+ *
  *		CLOSING -> TIME_WAIT				->ACK
- *  
+ *
  *		TIME_WAIT -> CLOSED					timeout (2*msl)
- *  
+ *
  */
 
 #include "sysdeps.h"
@@ -302,7 +302,7 @@ static int alloc_socket()
 			if(!sockets[i].buffers_read[0].buf) {
 				sockets[i].buffers_read[0].buf = new char [sockets[i].buffers_read[0].len];
 			}
-			
+
 			sockets[i].buffer_count_write = 1;
 			sockets[i].buffers_write[0].len = MAX_SEGMENT_SIZE;
 			if(!sockets[i].buffers_write[0].buf) {
@@ -347,7 +347,7 @@ static int alloc_new_socket( const uint16 src_port, const uint16 dest_port, cons
 		} else {
 			sockets[t].src_port = src_port;
 			sockets[t].dest_port = dest_port;
-			
+
 			sockets[t].from_len = sizeof(sockets[t].from);
 			memset( &sockets[t].from, 0, sockets[t].from_len );
 			sockets[t].from.sin_family = AF_INET;
@@ -729,7 +729,7 @@ static void CALLBACK tcp_read_completion(
 						tcp_reply( ACK|FIN, t );
 						sockets[t].seq_out++;
 						sockets[t].state = FINWAIT_1;
-					} 
+					}
 					break;
 				case LISTEN:
 					tcp_reply( SYN, t );
@@ -1031,7 +1031,7 @@ void write_tcp( tcp_t *tcp, int len )
 
 		D(bug("<%d> From Mac: Seq=%d, Ack=%d, window=%d, router Seq=%d\r\n", t, ntohl(tcp->seq), sockets[t].mac_ack, sockets[t].mac_window, sockets[t].seq_out));
 
-		if( sockets[t].stream_to_mac_stalled_until && 
+		if( sockets[t].stream_to_mac_stalled_until &&
 				sockets[t].mac_ack == sockets[t].seq_out &&
 				(sockets[t].state == ESTABLISHED || sockets[t].state == CLOSE_WAIT) )
 		{
@@ -1233,7 +1233,7 @@ void write_tcp( tcp_t *tcp, int len )
 					// todo -- delayed send
 					send_now = true;
 				}
-				
+
 				if(send_now) {
 
 					// Patch ftp server or client address if needed.
@@ -1245,7 +1245,7 @@ void write_tcp( tcp_t *tcp, int len )
 					if(ftp_is_ftp_port(sockets[t].src_port)) {
 						// Local ftp server may be entering to passive mode.
 						is_pasv = true;
-						ftp_parse_port_command( 
+						ftp_parse_port_command(
 							sockets[t].buffers_write[0].buf,
 							dlen,
 							ftp_data_port,
@@ -1254,7 +1254,7 @@ void write_tcp( tcp_t *tcp, int len )
 					} else if(ftp_is_ftp_port(sockets[t].dest_port)) {
 						// Local ftp client may be using port command.
 						is_pasv = false;
-						ftp_parse_port_command( 
+						ftp_parse_port_command(
 							sockets[t].buffers_write[0].buf,
 							dlen,
 							ftp_data_port,
@@ -1286,7 +1286,7 @@ void write_tcp( tcp_t *tcp, int len )
 								D(bug("_getsockname() failed, error=%d\r\n", _WSAGetLastError() ));
 							}
 
-							ftp_modify_port_command( 
+							ftp_modify_port_command(
 								sockets[t].buffers_write[0].buf,
 								dlen,
 								MAX_SEGMENT_SIZE,

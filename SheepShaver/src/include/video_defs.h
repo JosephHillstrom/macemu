@@ -25,10 +25,10 @@
 #include <stddef.h>
 
 
-/* 
+/*
  * Definitions for Display Manager
  */
- 
+
 /* csMode values describing pixel depth in VDSwitchInfo */
 enum {
 	firstVidMode=128,						// first depth mode, representing lowest supported
@@ -45,7 +45,7 @@ enum {
 	kFixedModeCRTConnect,					// very limited displays
 	kMultiModeCRT1Connect,					// 12" optional, 13" default, 16" required
 	kMultiModeCRT2Connect,					// 12" optional, 13" req., 16" def., 19" req.
-	kMultiModeCRT3Connect,					// 12" optional, 13" req., 16" req., 19" req.,21" def. 
+	kMultiModeCRT3Connect,					// 12" optional, 13" req., 16" req., 19" req.,21" def.
 	kMultiModeCRT4Connect,					// expansion to large multimode (not yet implemented)
 	kModelessConnect,						// expansion to modeless model (not yet implemented)
 	kFullPageConnect,						// 640x818 (to get 8bpp in 512K case) and
@@ -60,7 +60,7 @@ enum {
 
 /* csConnectFlags values in VDDisplayConnectInfoRec */
 enum {
-	kAllModesValid=0,						// all display modes not deleted by PrimaryInit code 
+	kAllModesValid=0,						// all display modes not deleted by PrimaryInit code
 											// are optional
 	kAllModesSafe,							// all display modes not deleted by PrimaryInit code
 											// are required; is you set this bit, set the
@@ -78,7 +78,7 @@ enum {
 #define kDeclROMtables FOURCC('d','e','c','l')	// use information in this record instead of looking
 												// in the decl. ROM for timing info; used for patching
 												// existing card without updating declaration ROM
-										
+
 /* csTimingData values in VDTimingInfoRec */
 enum {
 	timingUnknown = 0,						// unknown timing
@@ -124,8 +124,8 @@ enum {
 enum {
 	kModeValid=0,							// this display mode is optional
 	kModeSafe,								// this display mode is required; if you set this
-											// bit, you should also set the kModeValid bit 
-	kModeDefault,							// this display mode is the default for the attached 
+											// bit, you should also set the kModeValid bit
+	kModeDefault,							// this display mode is the default for the attached
 											// display; if you set this bit, you should also set
 											// the kModeSafe and kModeValid bits
 	kShowModeNow,							// show this mode in Monitors control panel; useful
@@ -156,8 +156,8 @@ enum {
 	cscSetPowerState,
 	cscPrivateControlCall,				// Takes a VDPrivateSelectorDataRec
 	cscSetMultiConnect,					// From a GDI point of view, this call should be implemented completely in the HAL and not at all in the core.
-	cscSetClutBehavior,					// Takes a VDClutBehavior 
-	cscUnusedCall=127					// This call used to expend the scrn resource.  Its imbedded data contains more control info 
+	cscSetClutBehavior,					// Takes a VDClutBehavior
+	cscUnusedCall=127					// This call used to expend the scrn resource.  Its imbedded data contains more control info
 };
 
 /* Constants for the GetNextResolution call */
@@ -174,9 +174,9 @@ enum {
 	cscGetMode=2,
 	cscGetEntries,
 	cscGetPageCnt,
-	cscGetPages=4,					// This is what C&D 2 calls it. 
+	cscGetPages=4,					// This is what C&D 2 calls it.
 	cscGetPageBase,
-	cscGetBaseAddr=5,				// This is what C&D 2 calls it. 
+	cscGetBaseAddr=5,				// This is what C&D 2 calls it.
 	cscGetGray,
 	cscGetInterrupt,
 	cscGetGamma,
@@ -186,8 +186,8 @@ enum {
 	cscGetConnection,				// return information about display capabilities of
 									// connected display
 	cscGetModeTiming,				// return scan timings data for a display mode
-	cscGetModeBaseAddress,			// Return base address information about a particular mode 
-	cscGetScanProc,					// QuickTime scan chasing routine 
+	cscGetModeBaseAddress,			// Return base address information about a particular mode
+	cscGetScanProc,					// QuickTime scan chasing routine
 	cscGetPreferredConfiguration,
 	cscGetNextResolution,
 	cscGetVideoParameters,
@@ -198,10 +198,10 @@ enum {
 	cscGetConvolution,
 	cscGetPowerState,
 	cscPrivateStatusCall,			// Takes a VDPrivateSelectorDataRec
-	cscGetDDCBlock,					// Takes a VDDDCBlockRec  
+	cscGetDDCBlock,					// Takes a VDDDCBlockRec
 	cscGetMultiConnect,				// From a GDI point of view, this call should be implemented completely in the HAL and not at all in the core.
-	cscGetClutBehavior				// Takes a VDClutBehavior 
-};	
+	cscGetClutBehavior				// Takes a VDClutBehavior
+};
 
 enum {	// VDSwitchInfo struct
 	csMode = 0,

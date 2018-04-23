@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 #define _UINT64
 #include <Carbon/Carbon.h>
 
@@ -167,7 +167,7 @@ void GetScrap(void **handle, uint32 type, int32 offset)
 void ZeroScrap()
 {
 	D(bug("ZeroScrap\n"));
-	
+
 	we_put_this_data = false;
 }
 

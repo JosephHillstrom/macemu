@@ -838,7 +838,7 @@ driver_window::driver_window(X11_monitor_desc &m)
 		}
 	}
 	D(bug(" window attributes set\n"));
-	
+
 	// Show window
 	XMapWindow(x_display, w);
 	wait_mapped(w);
@@ -876,7 +876,7 @@ driver_window::driver_window(X11_monitor_desc &m)
 		}
 		D(bug(" shm image attached\n"));
 	}
-	
+
 	// Create normal X image if SHM doesn't work ("height + 2" for safety)
 	if (!have_shm) {
 		int bytes_per_row = (mode.depth == VDEPTH_1BIT ? aligned_width/8 : TrivialBytesPerRow(aligned_width, DepthModeForPixelDepth(xdepth)));
@@ -1079,7 +1079,7 @@ void driver_dga::suspend(void)
 	XSetWindowAttributes wattr;
 	wattr.event_mask = KeyPressMask;
 	wattr.background_pixel = black_pixel;
-		
+
 	suspend_win = XCreateWindow(x_display, rootwin, 0, 0, 512, 1, 0, xdepth,
 		InputOutput, vis, CWEventMask | CWBackPixel, &wattr);
 	set_window_name(suspend_win, STR_SUSPEND_WINDOW_TITLE);
@@ -1107,7 +1107,7 @@ void driver_dga::resume(void)
 	XF86DGASetViewPort(x_display, screen, 0, 0);
 #endif
 	XSync(x_display, false);
-	
+
 	// the_buffer already contains the data to restore. i.e. since a temporary
 	// frame buffer is used when VOSF is actually used, fb_save is therefore
 	// not necessary.
@@ -1119,7 +1119,7 @@ void driver_dga::resume(void)
 		memset(the_buffer_copy, 0, mode.bytes_per_row * mode.y);
 	}
 #endif
-	
+
 	// Restore frame buffer
 	if (fb_save) {
 #ifdef ENABLE_VOSF
@@ -1130,7 +1130,7 @@ void driver_dga::resume(void)
 		free(fb_save);
 		fb_save = NULL;
 	}
-	
+
 	// Unlock frame buffer (and continue MacOS thread)
 	UNLOCK_FRAME_BUFFER;
 	emul_suspended = false;
@@ -1159,7 +1159,7 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 
 	// Set absolute mouse mode
 	ADBSetRelMouseMode(false);
-	
+
 	// Find the maximum depth available
 	int ndepths, max_depth(0);
 	int *depths = XListDepths(x_display, screen, &ndepths);
@@ -1172,10 +1172,10 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 				max_depth = depths[ndepths];
 		}
 	}
-	
+
 	// Get fbdevices file path from preferences
 	const char *fbd_path = PrefsFindString("fbdevicefile");
-	
+
 	// Open fbdevices file
 	FILE *fp = fopen(fbd_path ? fbd_path : FBDEVICES_FILE_NAME, "r");
 	if (fp == NULL) {
@@ -1184,7 +1184,7 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 		ErrorAlert(str);
 		return;
 	}
-	
+
 	int fb_depth;		// supported depth
 	uint32 fb_offset;	// offset used for mmap(2)
 	char fb_name[20];
@@ -1196,21 +1196,21 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 		if (len == 0)
 			continue;
 		line[len - 1] = '\0';
-		
+
 		// Comments begin with "#" or ";"
 		if ((line[0] == '#') || (line[0] == ';') || (line[0] == '\0'))
 			continue;
-		
+
 		if ((sscanf(line, "%19s %d %x", fb_name, &fb_depth, &fb_offset) == 3)
 		 && (strcmp(fb_name, fb_name) == 0) && (fb_depth == max_depth)) {
 			device_found = true;
 			break;
 		}
 	}
-	
+
 	// fbdevices file completely read
 	fclose(fp);
-	
+
 	// Frame buffer name not found ? Then, display warning
 	if (!device_found) {
 		char str[256];
@@ -1218,14 +1218,14 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 		ErrorAlert(str);
 		return;
 	}
-	
+
 	// Create window
 	XSetWindowAttributes wattr;
 	wattr.event_mask = eventmask = dga_eventmask;
 	wattr.background_pixel = white_pixel;
 	wattr.override_redirect = True;
 	wattr.colormap = cmap[0];
-	
+
 	w = XCreateWindow(x_display, rootwin,
 		0, 0, width, height,
 		0, xdepth, InputOutput, vis,
@@ -1241,7 +1241,7 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 	// Show window
 	XMapRaised(x_display, w);
 	wait_mapped(w);
-	
+
 	// Grab mouse and keyboard
 	XGrabKeyboard(x_display, w, True,
 		GrabModeAsync, GrabModeAsync, CurrentTime);
@@ -1249,10 +1249,10 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 		PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 		GrabModeAsync, GrabModeAsync, w, None, CurrentTime);
 	disable_mouse_accel();
-	
+
 	// Calculate bytes per row
 	int bytes_per_row = TrivialBytesPerRow(mode.x, mode.depth);
-	
+
 	// Map frame buffer
 	the_buffer_size = height * bytes_per_row;
 	if ((the_buffer = (uint8 *) mmap(NULL, the_buffer_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fbdev_fd, fb_offset)) == MAP_FAILED) {
@@ -1263,13 +1263,13 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 			return;
 		}
 	}
-	
+
 #if ENABLE_VOSF
 #if REAL_ADDRESSING || DIRECT_ADDRESSING
 	// Screen_blitter_init() returns TRUE if VOSF is mandatory
 	// i.e. the framebuffer update function is not Blit_Copy_Raw
 	use_vosf = Screen_blitter_init(visualFormat, true, mode.depth);
-	
+
 	if (use_vosf) {
 	  // Allocate memory for frame buffer (SIZE is extended to page-boundary)
 	  the_host_buffer = the_buffer;
@@ -1284,7 +1284,7 @@ driver_fbdev::driver_fbdev(X11_monitor_desc &m) : driver_dga(m)
 	use_vosf = false;
 #endif
 #endif
-	
+
 	// Set frame buffer base
 	const_cast<video_mode *>(&mode)->bytes_per_row = bytes_per_row;
 	const_cast<video_mode *>(&mode)->depth = DepthModeForPixelDepth(fb_depth);
@@ -1406,7 +1406,7 @@ driver_xf86dga::driver_xf86dga(X11_monitor_desc &m)
 	// Screen_blitter_init() returns TRUE if VOSF is mandatory
 	// i.e. the framebuffer update function is not Blit_Copy_Raw
 	use_vosf = Screen_blitter_init(visualFormat, x_native_byte_order, depth_of_video_mode(mode));
-	
+
 	if (use_vosf) {
 	  // Allocate memory for frame buffer (SIZE is extended to page-boundary)
 	  the_host_buffer = the_buffer;
@@ -1421,7 +1421,7 @@ driver_xf86dga::driver_xf86dga(X11_monitor_desc &m)
 	use_vosf = false;
 #endif
 #endif
-	
+
 	// Set frame buffer base
 	const_cast<video_mode *>(&mode)->bytes_per_row = bytes_per_row;
 	set_mac_frame_buffer(monitor, mode.depth, true);
@@ -1664,7 +1664,7 @@ bool X11_monitor_desc::video_open(void)
 		}
 	}
 #endif
-	
+
 	// Initialize VideoRefresh function
 	VideoRefreshInit();
 
@@ -1697,12 +1697,12 @@ bool VideoInit(bool classic)
 	mainBuffer.dirtyPages = NULL;
 	mainBuffer.pageInfo = NULL;
 #endif
-	
+
 	// Check if X server runs on local machine
 	local_X11 = (strncmp(XDisplayName(x_display_name), ":", 1) == 0)
  	         || (strncmp(XDisplayName(x_display_name), "/", 1) == 0)
 	         || (strncmp(XDisplayName(x_display_name), "unix:", 5) == 0);
-    
+
 	// Init keycode translation
 	keycode_init();
 
@@ -1722,11 +1722,11 @@ bool VideoInit(bool classic)
 		return false;
 	}
 	std::sort(avail_depths, avail_depths + num_depths);
-	
+
 #ifdef ENABLE_FBDEV_DGA
 	// Frame buffer name
 	char fb_name[20];
-	
+
 	// Could do fbdev DGA?
 	if ((fbdev_fd = open(FBDEVICE_FILE_NAME, O_RDWR)) != -1)
 		has_dga = true;
@@ -1752,7 +1752,7 @@ bool VideoInit(bool classic)
 	if (has_vidmode)
 		XF86VidModeGetAllModeLines(x_display, screen, &num_x_video_modes, &x_video_modes);
 #endif
-	
+
 	// Find black and white colors
 	XParseColor(x_display, DefaultColormap(x_display, screen), "rgb:00/00/00", &black);
 	XAllocColor(x_display, DefaultColormap(x_display, screen), &black);
@@ -2224,7 +2224,7 @@ static void handle_events(void)
 			XDisplayUnlock();
 			break;
 		}
-		
+
 		switch (event.type) {
 
 			// Mouse button
@@ -2367,7 +2367,7 @@ static void update_display_dynamic(int ticker, driver_window *drv)
 	if (y2a) {
 		for (y1=0; y1<16; y1++) {
 			for (y2=y2s; y2 < ry; y2 += y2a) {
-				i = ((y1 * ry) + y2) * bytes_per_row; 
+				i = ((y1 * ry) + y2) * bytes_per_row;
 				for (x1=0; x1<16; x1++, i += rx) {
 					if (updt_box[x1][y1] == false) {
 						if (memcmp(&the_buffer_copy[i], &the_buffer[i], rx)) {
@@ -2387,7 +2387,7 @@ static void update_display_dynamic(int ticker, driver_window *drv)
 				if (updt_box[x1][y1] == true) {
 					if (rxm == 0)
 						xm = x1;
-					rxm += rx; 
+					rxm += rx;
 					updt_box[x1][y1] = false;
 				}
 				if (((updt_box[x1+1][y1] == false) || (x1 == 15)) && (rxm)) {
@@ -2404,7 +2404,7 @@ static void update_display_dynamic(int ticker, driver_window *drv)
 					}
 					rxm = 0;
 					yo = y1;
-				}	
+				}
 				if (xil) {
 					i = (yi * bytes_per_row) + xi;
 					for (y2=0; y2 < yil; y2++, i += bytes_per_row)
@@ -2613,7 +2613,7 @@ static void video_refresh_dga_vosf(void)
 {
 	// Quit DGA mode if requested
 	possibly_quit_dga_mode();
-	
+
 	// Update display (VOSF variant)
 	static int tick_counter = 0;
 	if (++tick_counter >= frame_skip) {
@@ -2631,7 +2631,7 @@ static void video_refresh_window_vosf(void)
 {
 	// Ungrab mouse if requested
 	possibly_ungrab_mouse();
-	
+
 	// Update display (VOSF variant)
 	static int tick_counter = 0;
 	if (++tick_counter >= frame_skip) {

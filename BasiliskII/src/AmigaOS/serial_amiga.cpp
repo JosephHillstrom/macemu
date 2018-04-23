@@ -172,7 +172,7 @@ int16 ASERDPort::open(uint16 config)
 		NP_Entry, (ULONG)serial_func,
 		NP_Name, (ULONG)"Basilisk II Serial Task",
 		NP_Priority, 1,
-		TAG_END	
+		TAG_END
 	);
 	if (serial_proc == NULL)
 		goto open_error;

@@ -33,8 +33,8 @@
 /*
  * Changes and additions relating to SLiRP
  * Copyright (c) 1995 Danny Gasparovski.
- * 
- * Please read the file COPYRIGHT for the 
+ *
+ * Please read the file COPYRIGHT for the
  * terms and conditions of the copyright.
  */
 
@@ -119,7 +119,7 @@ tcp_reass(tp, ti, m)
 	register struct tcpiphdr *q;
 	struct socket *so = tp->t_socket;
 	int flags;
-	
+
 	/*
 	 * Call with ti==0 after become established to
 	 * force pre-ESTABLISHED data up to user socket.
@@ -1544,7 +1544,7 @@ tcp_dooptions(tp, cp, cnt, ti)
  *			memcpy((char *) ts_ecr, (char *)cp + 6, sizeof(*ts_ecr));
  *			NTOHL(*ts_ecr);
  *
- */			/* 
+ */			/*
  *			 * A timestamp received in a SYN makes
  *			 * it ok to send timestamp requests and replies.
  *			 */
@@ -1575,7 +1575,7 @@ tcp_pulloutofband(so, ti, m)
 	register struct mbuf *m;
 {
 	int cnt = ti->ti_urp - 1;
-	
+
 	while (cnt >= 0) {
 		if (m->m_len > cnt) {
 			char *cp = mtod(m, caddr_t) + cnt;
@@ -1612,7 +1612,7 @@ tcp_xmit_timer(tp, rtt)
 	DEBUG_CALL("tcp_xmit_timer");
 	DEBUG_ARG("tp = %lx", (long)tp);
 	DEBUG_ARG("rtt = %d", rtt);
-	
+
 	tcpstat.tcps_rttupdated++;
 	if (tp->t_srtt != 0) {
 		/*
@@ -1641,7 +1641,7 @@ tcp_xmit_timer(tp, rtt)
 		if ((tp->t_rttvar += delta) <= 0)
 			tp->t_rttvar = 1;
 	} else {
-		/* 
+		/*
 		 * No rtt measurement yet - use the unsmoothed rtt.
 		 * Set the variance to half the rtt (so our first
 		 * retransmit happens at 3*rtt).
@@ -1665,7 +1665,7 @@ tcp_xmit_timer(tp, rtt)
 	 */
 	TCPT_RANGESET(tp->t_rxtcur, TCP_REXMTVAL(tp),
 	    (short)tp->t_rttmin, TCPTV_REXMTMAX); /* XXX */
-	
+
 	/*
 	 * We received an ack for a packet that wasn't retransmitted;
 	 * it is probably safe to discard any error indications we've
@@ -1698,25 +1698,24 @@ tcp_mss(tp, offer)
         u_int offer;
 {
 	struct socket *so = tp->t_socket;
-	int mss;
-	
+	u_int mss;
 	DEBUG_CALL("tcp_mss");
 	DEBUG_ARG("tp = %lx", (long)tp);
 	DEBUG_ARG("offer = %d", offer);
-	
+
 	mss = min(if_mtu, if_mru) - sizeof(struct tcpiphdr);
 	if (offer)
 		mss = min(mss, offer);
 	mss = max(mss, 32);
 	if (mss < tp->t_maxseg || offer != 0)
 	   tp->t_maxseg = mss;
-	
+
 	tp->snd_cwnd = mss;
-	
+
 	sbreserve(&so->so_snd, tcp_sndspace+((tcp_sndspace%mss)?(mss-(tcp_sndspace%mss)):0));
 	sbreserve(&so->so_rcv, tcp_rcvspace+((tcp_rcvspace%mss)?(mss-(tcp_rcvspace%mss)):0));
-	
+
 	DEBUG_MISC((dfd, " returning mss = %d\n", mss));
-	
+
 	return mss;
 }

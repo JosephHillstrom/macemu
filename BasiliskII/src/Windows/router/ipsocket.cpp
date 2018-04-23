@@ -64,7 +64,7 @@ socket_t::socket_t( int _proto )
 	buffer_count = 1;
 	buffers[0].len = 1460;
 	buffers[0].buf = new char [buffers[0].len];
-	
+
 	out_buffers[0].len = 1460;
 	out_buffers[0].buf = new char [out_buffers[0].len];
 
@@ -85,7 +85,7 @@ socket_t::~socket_t()
 int socket_t::WSARecvFrom()
 {
 	return _WSARecvFrom(
-		s,                                               
+		s,
 		buffers,
 		buffer_count,
 		&bytes_received,

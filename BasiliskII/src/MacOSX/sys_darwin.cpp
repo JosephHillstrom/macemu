@@ -38,7 +38,7 @@
 #import <IOKit/storage/IOCDMediaBSDClient.h>
 #import <CoreFoundation/CoreFoundation.h>
 
-#include "sysdeps.h"
+#include "../CrossPlatform/sysdeps.h"
 
 #include "sys.h"
 #include "prefs.h"
@@ -236,16 +236,16 @@ void DarwinAddFloppyPrefs(void)
 
 
 	// This selects all partitions of all disks
-	classesToMatch = IOServiceMatching(kIOMediaClass); 
+	classesToMatch = IOServiceMatching(kIOMediaClass);
 	if ( classesToMatch )
 	{
 		// Skip drivers and partitions
 		CFDictionarySetValue(classesToMatch,
-							 CFSTR(kIOMediaWholeKey), kCFBooleanTrue); 
-	
+							 CFSTR(kIOMediaWholeKey), kCFBooleanTrue);
+
 		// Skip fixed drives (hard disks?)
 		CFDictionarySetValue(classesToMatch,
-							 CFSTR(kIOMediaEjectableKey), kCFBooleanTrue); 
+							 CFSTR(kIOMediaEjectableKey), kCFBooleanTrue);
 	}
 
 	if ( IOServiceGetMatchingServices(masterPort,
@@ -374,7 +374,7 @@ void DarwinAddSerialPrefs(void)
 }
 
 
-#ifdef MAC_OS_X_VERSION_10_2
+//#ifdef MAC_OS_X_VERSION_10_2
 /*
  *  Read CD-ROM TOC (binary MSF format, 804 bytes max.)
  */
@@ -437,4 +437,4 @@ bool DarwinCDReadTOC(char *name, uint8 *toc)
 	free(devname);
 	return true;
 }
-#endif
+//#endif

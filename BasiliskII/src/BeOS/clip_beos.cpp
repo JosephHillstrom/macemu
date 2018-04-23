@@ -86,8 +86,8 @@ void PutScrap(uint32 type, void *scrap, int32 length)
 			D(bug(" clipping TEXT\n"));
 			if (be_clipboard->Lock()) {
 				be_clipboard->Clear();
-				BMessage *clipper = be_clipboard->Data(); 
-	
+				BMessage *clipper = be_clipboard->Data();
+
 				if (no_clip_conversion) {
 
 					// Only convert CR->LF
@@ -100,7 +100,7 @@ void PutScrap(uint32 type, void *scrap, int32 length)
 					}
 
 					// Add text to Be clipboard
-					clipper->AddData("text/plain", B_MIME_TYPE, buf, length); 
+					clipper->AddData("text/plain", B_MIME_TYPE, buf, length);
 					be_clipboard->Commit();
 					delete[] buf;
 
@@ -114,9 +114,9 @@ void PutScrap(uint32 type, void *scrap, int32 length)
 						for (int i=0; i<dest_length; i++)
 							if (buf[i] == 13)
 								buf[i] = 10;
-	
+
 						// Add text to Be clipboard
-						clipper->AddData("text/plain", B_MIME_TYPE, buf, dest_length); 
+						clipper->AddData("text/plain", B_MIME_TYPE, buf, dest_length);
 						be_clipboard->Commit();
 					}
 					delete[] buf;

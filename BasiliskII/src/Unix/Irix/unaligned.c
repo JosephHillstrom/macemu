@@ -21,7 +21,7 @@
 #ifdef sgi
 #include "sysdeps.h"
 
-/* Tell the compiler to pack data on 1-byte boundaries 
+/* Tell the compiler to pack data on 1-byte boundaries
  * (i.e. arbitrary alignment).  Requires SGI MIPSPro compilers. */
 #pragma pack(1)
 

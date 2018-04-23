@@ -5,3 +5,16 @@ SheepShaver.xcodeproj/*.pbxuser
 
 # autoconf build generated Info.plist file
 Info.plist
+
+# Autotools generated files
+Makefile
+aclocal.m4
+autom4te.cache/*
+config.h
+config.h.in
+config.log
+config.status
+configure
+
+# application itself
+SheepShaver

@@ -18,7 +18,7 @@
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 
 #include "main.h"
 #include "version.h"
@@ -44,8 +44,8 @@
 #include "macos_util.h"
 #include "rom_patches.h"
 #include "user_strings.h"
-#include "vm_alloc.h"
-#include "sigsegv.h"
+#include "CrossPlatform/vm_alloc.h"
+#include "CrossPlatform/sigsegv.h"
 #include "thunks.h"
 
 #define DEBUG 0
@@ -133,7 +133,7 @@ bool InitAll(const char *vmdir)
 	SCSIInit();
 
 	// Init external file system
-	ExtFSInit(); 
+	ExtFSInit();
 
 	// Init ADB
 	ADBInit();

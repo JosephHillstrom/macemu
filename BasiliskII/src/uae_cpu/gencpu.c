@@ -394,7 +394,7 @@ static void genamode (amodes mode, char *reg, wordsizes size, char *name, int ge
     /* We get here for all non-reg non-immediate addressing modes to
      * actually fetch the value. */
 
-    if (using_exception_3 && getv != 0 && size != sz_byte) {	    
+    if (using_exception_3 && getv != 0 && size != sz_byte) {
 	printf ("\tif ((%sa & 1) != 0) {\n", name);
 	printf ("\t\tlast_fault_for_exception_3 = %sa;\n", name);
 	printf ("\t\tlast_op_for_exception_3 = opcode;\n");
@@ -768,7 +768,7 @@ static void genflags (flagtypes type, wordsizes size, char *value, char *src, ch
 	}
 	printf ("\t}\n");
 	return;
-	
+
      case flag_logical:
 	if (strcmp (value, "0") == 0) {
 	    printf ("\tSET_CZNV (FLAGVAL_Z);\n");
@@ -804,7 +804,7 @@ static void genflags (flagtypes type, wordsizes size, char *value, char *src, ch
 	 case sz_long: printf ("\toptflag_cmpl ((uae_s32)(%s), (uae_s32)(%s));\n", src, dst); break;
 	}
 	return;
-	
+
      default:
 	break;
     }
@@ -2234,18 +2234,18 @@ static void gen_opcode (unsigned long int opcode)
 	swap_opcode ();
 	printf ("\tmmu_op(opcode,extra);\n");
 	break;
-	
+
 	case i_EMULOP_RETURN:
 	printf ("\tm68k_emulop_return();\n");
 	m68k_pc_offset = 0;
 	break;
-	
+
 	case i_EMULOP:
 	printf ("\n");
 	swap_opcode ();
 	printf ("\tm68k_emulop(opcode);\n");
 	break;
-	
+
      default:
 	abort ();
 	break;
@@ -2257,7 +2257,7 @@ static void gen_opcode (unsigned long int opcode)
 static void generate_includes (FILE * f)
 {
     fprintf (f, "#include \"sysdeps.h\"\n");
-	
+
     fprintf (f, "#include \"m68k.h\"\n");
     fprintf (f, "#include \"memory.h\"\n");
     fprintf (f, "#include \"readcpu.h\"\n");
@@ -2265,13 +2265,13 @@ static void generate_includes (FILE * f)
     fprintf (f, "#include \"compiler/compemu.h\"\n");
     fprintf (f, "#include \"fpu/fpu.h\"\n");
     fprintf (f, "#include \"cputbl.h\"\n");
-	
+
 	fprintf (f, "#define SET_CFLG_ALWAYS(x) SET_CFLG(x)\n");
 	fprintf (f, "#define SET_NFLG_ALWAYS(x) SET_NFLG(x)\n");
 	fprintf (f, "#define CPUFUNC_FF(x) x##_ff\n");
 	fprintf (f, "#define CPUFUNC_NF(x) x##_nf\n");
 	fprintf (f, "#define CPUFUNC(x) CPUFUNC_FF(x)\n");
-	
+
 	fprintf (f, "#ifdef NOFLAGS\n");
 	fprintf (f, "# include \"noflags.h\"\n");
 	fprintf (f, "#endif\n");
@@ -2304,7 +2304,7 @@ static void generate_one_opcode (int rp)
 		 opcode, opcode_str);
 	return;
     }
-	
+
 	if (table68k[opcode].flagdead == 0)
 	/* force to the "ff" variant since the instruction doesn't set at all the condition codes */
     fprintf (stblfile, "{ CPUFUNC_FF(op_%lx_%d), 0, %ld }, /* %s */\n", opcode, postfix, opcode, opcode_str);
@@ -2313,7 +2313,7 @@ static void generate_one_opcode (int rp)
 
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_nf;\n", opcode, postfix);
     fprintf (headerfile, "extern cpuop_func op_%lx_%d_ff;\n", opcode, postfix);
-	
+
 	/* gb-- The "nf" variant for an instruction that doesn't set the condition
 	   codes at all is the same as the "ff" variant, so we don't need the "nf"
 	   variant to be compiled since it is mapped to the "ff" variant in the
@@ -2414,7 +2414,7 @@ static void generate_one_opcode (int rp)
 	    /* Check that we can do the little endian optimization safely.  */
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
 		abort ();
-#endif	    
+#endif
 	    printf ("#ifdef HAVE_GET_WORD_UNSWAPPED\n");
 
 	    if (pos < 8 && (dmsk >> (8 - pos)) != 0)
@@ -2497,7 +2497,7 @@ static void generate_func (void)
 	        "#define PART_7 1\n"
 	        "#define PART_8 1\n"
 	        "#endif\n\n");
-	
+
 	rp = 0;
 	for(j=1;j<=8;++j) {
 		int k = (j*nr_cpuop_funcs)/8;

@@ -30,33 +30,32 @@
 @interface EmulatorView : NSView
 {
 #ifdef CGIMAGEREF
-	CGImageRef			cgImgRep;
+	CGImageRef		cgImgRep;
 #endif
 #ifdef NSBITMAP
 	NSBitmapImageRep	*bitmap;
 #else
-	void				*bitmap;
+	void			*bitmap;
 #endif
 #ifdef CGDRAWBITMAP
-	short				bps, spp, bpp;
-	int					bytesPerRow;
-	BOOL				isPlanar, hasAlpha;
+	short			bps, spp, bpp;
+	short			emulationBpp;
+	BOOL			isPlanar, hasAlpha;
 #endif
-	float				numBytes;
+	float			numBytes;
 
-	short				x, y;
+	short			x, y;
 
-	BOOL				drawView,	// Set when the bitmap is all set up
-									// and ready to display
-						fullScreen;	// Is this Emulator using the whole screen?
+	BOOL			drawView,	// set when the bitmap is all set up and ready to display
+				fullScreen;	// using the whole screen?
 
-	NSRect				displayBox;	// Cached dimensions of the screen
+	NSRect			displayBox;	// cached dimensions of the screen
 
-	int					screen_height; // Height of the screen with the key window
+	int			screen_height; // height of the screen with the key window
 }
 
 - (void) benchmark;
-- (NSData *) TIFFrep;				// Used for snapshot function
+- (NSData *) TIFFrep;				// used for snapshot
 
 // Enable display of, and drawing into, the view
 #ifdef NSBITMAP
@@ -88,6 +87,12 @@
 - (void) blacken;
 - (void) clear;
 
+#ifdef CGIMAGEREF
+- (CGImageRef) cgImgRep;
+#endif
+
+- (void*) bitmap;
+
 - (short) width;
 - (short) height;
 
@@ -102,7 +107,7 @@
 #endif
 
 #ifdef CGIMAGEREF
-void cgDrawInto(NSRect rect, CGImageRef bitmap);
+- (void) cgDrawInto: (NSRect) rect withImage: (CGImageRef) cgImage;
 #endif
 
 @end

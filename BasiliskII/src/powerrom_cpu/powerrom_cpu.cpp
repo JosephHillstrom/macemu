@@ -91,7 +91,7 @@ uint32 ROMSize;				// Size of ROM
 
 // Emulator Data
 struct EmulatorData {
-	uint32	v[0x400];	
+	uint32	v[0x400];
 };
 
 
@@ -223,13 +223,13 @@ static void load_rom(void)
 			D(bug("CHRP ROM image\n"));
 			uint32 lzss_offset, lzss_size;
 
-			char *s = strstr((char *)rom, "constant lzss-offset"); 
+			char *s = strstr((char *)rom, "constant lzss-offset");
 			if (s == NULL)
 				throw rom_size_error();
 			s -= 7;
 			if (sscanf(s, "%06lx", &lzss_offset) != 1)
 				throw rom_size_error();
-			s = strstr((char *)rom, "constant lzss-size"); 
+			s = strstr((char *)rom, "constant lzss-size");
 			if (s == NULL)
 				throw rom_size_error();
 			s -= 7;

@@ -26,7 +26,7 @@
 
 #include <stdlib.h>
 
-#include "sysdeps.h"
+#include "CrossPlatform/sysdeps.h"
 #include "cpu_emulation.h"
 #include "emul_op.h"
 #include "main.h"
@@ -245,7 +245,7 @@ void ADBMouseMoved(int x, int y)
 }
 
 
-/* 
+/*
  *  Mouse button pressed
  */
 
@@ -363,7 +363,7 @@ void ADBInterrupt(void)
 				WriteMacInt8(tmp_data, 2);
 				WriteMacInt8(tmp_data + 1, (my & 0x7f) | (mb[0] ? 0 : 0x80));
 				WriteMacInt8(tmp_data + 2, (mx & 0x7f) | (mb[1] ? 0 : 0x80));
-			}	
+			}
 			r.a[0] = tmp_data;
 			r.a[1] = ReadMacInt32(mouse_base);
 			r.a[2] = ReadMacInt32(mouse_base + 4);

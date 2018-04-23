@@ -26,7 +26,7 @@
 #endif
 
 #include "config.h"
-#include "user_strings_unix.h"
+#include "../Unix/user_strings_unix.h"
 
 #ifndef STDC_HEADERS
 #error "You don't have ANSI C header files."
@@ -338,7 +338,7 @@ static inline int testandset(volatile int *p)
 	__asm__ __volatile__("0: cs    %0,%1,0(%2)\n"
 						 "   jl    0b"
 						 : "=&d" (ret)
-						 : "r" (1), "a" (p), "0" (*p) 
+						 : "r" (1), "a" (p), "0" (*p)
 						 : "cc", "memory" );
 	return ret;
 }
@@ -387,7 +387,7 @@ static inline int testandset(volatile int *p)
 	__asm__ __volatile__("swp %0, %1, [%2]"
 						 : "=r"(ret)
 						 : "0"(1), "r"(p));
-	
+
 	return ret;
 }
 #endif

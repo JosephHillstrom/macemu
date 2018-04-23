@@ -20,12 +20,12 @@
 
 #import "PrefsEditor.h"
 
-#import "sysdeps.h"
+#import "../../CrossPlatform/sysdeps.h"
 #import "prefs.h"
 
 const int CDROMRefNum = -62;			// RefNum of driver
 
-#ifdef STANDALONE_PREFS
+//#ifdef STANDALONE_PREFS
 void prefs_init()
 {
 }
@@ -33,7 +33,7 @@ void prefs_init()
 void prefs_exit()
 {
 }
-#endif
+//#endif
 
 @implementation PrefsEditor
 
@@ -155,6 +155,20 @@ NSString *getStringFromPrefs(const char *key)
   [modemPort setStringValue: getStringFromPrefs("seriala") ];
   [printerPort setStringValue: getStringFromPrefs("serialb") ];
   [ethernetInterface setStringValue: getStringFromPrefs("ether") ];
+}
+
+- (IBAction) moveDiskToTop:(id)sender
+{
+	int selectedRow = [disks selectedRow];
+	NSLog(@"selected row %i", selectedRow);
+	if (selectedRow >= 0) {
+		id object = [[diskArray objectAtIndex:selectedRow] retain];
+		[diskArray removeObjectAtIndex:selectedRow];
+		[diskArray insertObject:object atIndex:0];
+		NSIndexSet *indexSet = [NSIndexSet indexSetWithIndex:0];
+		[disks selectRowIndexes:indexSet byExtendingSelection:NO];
+		[disks reloadData];
+	}
 }
 
 - (IBAction) addDisk:(id)sender
