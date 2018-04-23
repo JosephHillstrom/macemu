@@ -3,18 +3,13 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 48;
+	objectVersion = 47;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		082AC22D14AA52E900071F5E /* prefs_editor_dummy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 082AC22C14AA52E900071F5E /* prefs_editor_dummy.cpp */; };
 		083E370C16EFE85000CCCA59 /* disk_sparsebundle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083E370A16EFE85000CCCA59 /* disk_sparsebundle.cpp */; };
 		083E372216EFE87200CCCA59 /* tinyxml2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 083E372016EFE87200CCCA59 /* tinyxml2.cpp */; };
-
-		0846E4B114B1264700574779 /* ieeefp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDF714A99EEF000B1711 /* ieeefp.cpp */; };
-		0846E4B314B1264F00574779 /* mathlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDFD14A99EEF000B1711 /* mathlib.cpp */; };
-		0846E4B514B1265500574779 /* utils-cpuinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CE0214A99EEF000B1711 /* utils-cpuinfo.cpp */; };
-		0846E4B614B1265A00574779 /* ppc-translate.cpp in Sources */ = {isa = 
 		0856CFC114A99EF0000B1711 /* adb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CD4B14A99EEF000B1711 /* adb.cpp */; };
 		0856CFC214A99EF0000B1711 /* audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CD4C14A99EEF000B1711 /* audio.cpp */; };
 		0856CFE214A99EF0000B1711 /* cdrom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CD7814A99EEF000B1711 /* cdrom.cpp */; };
@@ -86,13 +81,11 @@
 		08CD42DC14B7B85B009CA2A2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CD42DB14B7B85B009CA2A2 /* Cocoa.framework */; };
 		08CD42E814B7B8AA009CA2A2 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08CD42E714B7B8AA009CA2A2 /* Carbon.framework */; };
 		08E877521E0640E800A90A2C /* clip_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CE2C14A99EF0000B1711 /* clip_macosx.cpp */; };
-		7539EDF51F50C40100454E81 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7539EDE91F50C3D600454E81 /* SDL2.framework */; };
-		7539EDF61F50C40100454E81 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 7539EDE91F50C3D600454E81 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		75CBCF7E1F5DB94C00830063 /* video_sdl2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75CBCF7D1F5DB94C00830063 /* video_sdl2.cpp */; };
 		A7B1921418C35D4700791D8D /* DiskType.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B1921318C35D4700791D8D /* DiskType.m */; };
 		D042EC4B2083ED4E0026CE59 /* emul_ppc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */; };
-		D0FF5886208D173A00AD139C /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0E1C834208CEAFB008DE351 /* SDL.framework */; };
-		D0FF5888208D174800AD139C /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D0FF5887208D174800AD139C /* SDL.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D04E74E1208E711500561B08 /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D04E74E0208E711500561B08 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		D04E74E2208E713200561B08 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D04E74E0208E711500561B08 /* SDL2.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -102,13 +95,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 082AC25114AA59B600071F5E;
 			remoteInfo = lowmem;
-		};
-		0846E4A614B1253500574779 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0856CCAE14A99DE0000B1711 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0846E49914B124DE00574779;
-			remoteInfo = kpx_cpu;
 		};
 		7539EDE81F50C3D600454E81 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -154,8 +140,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D0FF5888208D174800AD139C /* SDL.framework in Copy Frameworks */,
-				7539EDF61F50C40100454E81 /* SDL2.framework in Copy Frameworks */,
+				D04E74E1208E711500561B08 /* SDL2.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -399,9 +384,8 @@
 		A7B1921218C35D4700791D8D /* DiskType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DiskType.h; sourceTree = "<group>"; };
 		A7B1921318C35D4700791D8D /* DiskType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiskType.m; sourceTree = "<group>"; };
 		D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = emul_ppc.cpp; path = ../emul_ppc/emul_ppc.cpp; sourceTree = "<group>"; };
-		D07ACD042083E37A0024DDC1 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = ../../../../../Library/Frameworks/SDL.framework; sourceTree = "<group>"; };
+		D04E74E0208E711500561B08 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
 		D0E1C834208CEAFB008DE351 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
-		D0E1C836208CEB11008DE351 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		D0FF5887208D174800AD139C /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		E4302EE21FBFE7FA00A5B500 /* lowmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lowmem.c; path = Darwin/lowmem.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -425,10 +409,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D04E74E2208E713200561B08 /* SDL2.framework in Frameworks */,
 				0856D21514A9A6C6000B1711 /* IOKit.framework in Frameworks */,
 				08CD42DC14B7B85B009CA2A2 /* Cocoa.framework in Frameworks */,
 				08CD42E814B7B8AA009CA2A2 /* Carbon.framework in Frameworks */,
-				7539EDF51F50C40100454E81 /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -458,11 +442,13 @@
 		0856CCAC14A99DE0000B1711 = {
 			isa = PBXGroup;
 			children = (
+				D04E74E0208E711500561B08 /* SDL2.framework */,
 				D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */,
 				7539EDE01F50C3BE00454E81 /* external */,
 				0856CCC814A99E30000B1711 /* Sources */,
 				08CD42DF14B7B865009CA2A2 /* Frameworks */,
 				0856CCC214A99E1C000B1711 /* Products */,
+				D04E74DF208E706D00561B08 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -921,6 +907,14 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		D04E74DF208E706D00561B08 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				D0FF5887208D174800AD139C /* SDL.framework */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1217,11 +1211,6 @@
 			target = 082AC25114AA59B600071F5E /* lowmem */;
 			targetProxy = 082AC26714AA5A4800071F5E /* PBXContainerItemProxy */;
 		};
-		0846E4A714B1253500574779 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0846E49914B124DE00574779 /* kpx_cpu */;
-			targetProxy = 0846E4A614B1253500574779 /* PBXContainerItemProxy */;
-		};
 		7539EDF81F50C40100454E81 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = Framework;
@@ -1500,19 +1489,28 @@
 					../kpx_cpu/include,
 					../include,
 				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"$(BUILT_PRODUCTS_DIR)/SDL2.framework/Headers",
+					./config/,
+					../Unix,
+					../MacOSX/Launcher,
+					../slirp,
+					../kpx_cpu/src,
+					../kpx_cpu/include,
+					../include,
+					../CrossPlatform,
+				);
 				INFOPLIST_FILE = Info.plist.in;
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LLVM_LTO = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D__MACH__";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-liconv",
-				);
+				OTHER_LDFLAGS = "-liconv";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = SheepShaver;
@@ -1566,20 +1564,29 @@
 					../kpx_cpu/include,
 					../include,
 				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"$(BUILT_PRODUCTS_DIR)/SDL2.framework/Headers",
+					./config/,
+					../Unix,
+					../MacOSX/Launcher,
+					../slirp,
+					../kpx_cpu/src,
+					../kpx_cpu/include,
+					../include,
+					../CrossPlatform,
+				);
 				INFOPLIST_EXPAND_BUILD_SETTINGS = YES;
 				INFOPLIST_FILE = Info.plist.in;
 				INFOPLIST_PREFIX_HEADER = "";
 				INFOPLIST_PREPROCESS = NO;
 				INSTALL_PATH = "$(HOME)/Applications";
-				LLVM_LTO = NO;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				LLVM_LTO = NO;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D__MACH__";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = (
-					"-liconv",
-				);
+				OTHER_LDFLAGS = "-liconv";
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = SheepShaver;
