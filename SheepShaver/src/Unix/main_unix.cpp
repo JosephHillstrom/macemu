@@ -918,7 +918,7 @@ int main(int argc, char **argv)
 		RAMSize = 8*1024*1024;
 	}
 	memory_mapped_from_zero = false;
-	ram_rom_areas_contiguous = false;
+	/*ram_rom_areas_contiguous = false;
 #if REAL_ADDRESSING && HAVE_LINKER_SCRIPT
 	if (vm_mac_acquire_fixed(0, RAMSize) == 0) {
 		D(bug("Could allocate RAM from 0x0000\n"));
@@ -937,7 +937,7 @@ int main(int argc, char **argv)
 		}
 		lm_area_mapped = true;
 #endif
-#if REAL_ADDRESSING
+#if REAL_ADDRESSING*/
 		// Allocate RAM at any address. Since ROM must be higher than RAM, allocate the RAM
 		// and ROM areas contiguously, plus a little extra to allow for ROM address alignment.
 		RAMBaseHost = vm_mac_acquire(RAMSize + ROM_AREA_SIZE + ROM_ALIGNMENT + SIG_STACK_SIZE);
@@ -946,13 +946,25 @@ int main(int argc, char **argv)
 			ErrorAlert(str);
 			goto quit;
 		}
+		vm_ini((uint8 *)RAMBaseHost);
 		RAMBase = Host2MacAddr(RAMBaseHost);
+		while (RAMBase != 0) {
+			/* wait if it isn't initialized*/
+			int i = 0;
+			sleep(1);
+			RAMBase = Host2MacAddr(RAMBaseHost);
+			i ++;
+			if (i > 10) {
+				fprintf(stderr, "RAM isn't allocated right, so it'll probably crash.\nRAMBase=%d should be RAMBase=0", (int)RAMBase);
+				break;
+			}
+		}
 		ROMBase = (RAMBase + RAMSize + ROM_ALIGNMENT -1) & -ROM_ALIGNMENT;
 		ROMBaseHost = RAMBaseHost + ROMBase - RAMBase;
 		ROMEnd = RAMBase + RAMSize + ROM_AREA_SIZE + ROM_ALIGNMENT;
 
 		ram_rom_areas_contiguous = true;
-#else
+/*#else
 		if (vm_mac_acquire_fixed(RAM_BASE, RAMSize) < 0) {
 			sprintf(str, GetString(STR_RAM_MMAP_ERR), strerror(errno));
 			ErrorAlert(str);
@@ -960,7 +972,7 @@ int main(int argc, char **argv)
 		}
 		RAMBase = RAM_BASE;
 		RAMBaseHost = Mac2HostAddr(RAMBase);
-#endif
+#endif*/
 	}
 #if !EMULATED_PPC
 	if (vm_protect(RAMBaseHost, RAMSize, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE) < 0) {
