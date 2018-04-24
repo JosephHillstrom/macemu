@@ -88,6 +88,7 @@
 		D04E74E2208E713200561B08 /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D04E74E0208E711500561B08 /* SDL2.framework */; };
 		D05E7905208E9F9E003668C6 /* clip_macosx64.mm in Sources */ = {isa = PBXBuildFile; fileRef = 08D93A15159FE174003B04EC /* clip_macosx64.mm */; };
 		D05E7908208EA211003668C6 /* pict.c in Sources */ = {isa = PBXBuildFile; fileRef = 0879BD5D15A88F7600DC277D /* pict.c */; };
+		D0A8D742208FB430003C58B5 /* vm.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0A8D741208FB430003C58B5 /* vm.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -380,6 +381,7 @@
 		A7B1921318C35D4700791D8D /* DiskType.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DiskType.m; sourceTree = "<group>"; };
 		D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = emul_ppc.cpp; path = ../emul_ppc/emul_ppc.cpp; sourceTree = "<group>"; };
 		D04E74E0208E711500561B08 /* SDL2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL2.framework; sourceTree = "<group>"; };
+		D0A8D741208FB430003C58B5 /* vm.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vm.cc; path = ../kpx_cpu/src/cpu/vm.cc; sourceTree = "<group>"; };
 		D0E1C834208CEAFB008DE351 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		D0FF5887208D174800AD139C /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		E4302EE21FBFE7FA00A5B500 /* lowmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lowmem.c; path = Darwin/lowmem.c; sourceTree = "<group>"; };
@@ -437,6 +439,7 @@
 		0856CCAC14A99DE0000B1711 = {
 			isa = PBXGroup;
 			children = (
+				D0A8D741208FB430003C58B5 /* vm.cc */,
 				D04E74E0208E711500561B08 /* SDL2.framework */,
 				D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */,
 				7539EDE01F50C3BE00454E81 /* external */,
@@ -1106,6 +1109,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0A8D742208FB430003C58B5 /* vm.cc in Sources */,
 				D05E7908208EA211003668C6 /* pict.c in Sources */,
 				D05E7905208E9F9E003668C6 /* clip_macosx64.mm in Sources */,
 				D042EC4B2083ED4E0026CE59 /* emul_ppc.cpp in Sources */,

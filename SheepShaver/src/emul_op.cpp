@@ -287,7 +287,7 @@ void EmulOp(M68kRegisters *r, uint32 pc, int selector)
 			AudioReset();
 
 			// Enable DR emulator (disabled for now)
-			if (PrefsFindBool("jit68k") && 0) {
+			/*if (PrefsFindBool("jit68k") && 0) {
 				D(bug("DR activated\n"));
 				WriteMacInt32(KernelDataAddr + 0x17a0, 3);		// Prepare for DR emulator activation
 				WriteMacInt32(KernelDataAddr + 0x17c0, DR_CACHE_BASE);
@@ -296,7 +296,7 @@ void EmulOp(M68kRegisters *r, uint32 pc, int selector)
 				WriteMacInt32(KernelDataAddr + 0x1b00, DR_EMULATOR_BASE);
 				memcpy((void *)DR_EMULATOR_BASE, (void *)(ROMBase + 0x370000), DR_EMULATOR_SIZE);
 				MakeExecutable(0, DR_EMULATOR_BASE, DR_EMULATOR_SIZE);
-			}
+			}*/
 			break;
 
 		case OP_IRQ:			// Level 1 interrupt

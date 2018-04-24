@@ -50,7 +50,7 @@
 
 #define DEBUG 0
 #include "debug.h"
-
+extern uint8 gKernelData[];
 #ifdef ENABLE_MON
 #include "mon.h"
 
@@ -164,7 +164,7 @@ bool InitAll(const char *vmdir)
 	}
 
 	// Initialize Kernel Data
-	Mac_memset(KERNEL_DATA_BASE, 0, sizeof(KernelData));
+	memset(gKernelData, 0, sizeof(KernelData));
 	if (ROMType == ROMTYPE_NEWWORLD) {
 		uint32 of_dev_tree = SheepMem::Reserve(4 * sizeof(uint32));
 		Mac_memset(of_dev_tree, 0, 4 * sizeof(uint32));
@@ -230,7 +230,7 @@ bool InitAll(const char *vmdir)
 	WriteMacInt32(XLM_PVR, PVR);									// Theoretical PVR
 	WriteMacInt32(XLM_BUS_CLOCK, BusClockSpeed);					// For DriverServicesLib patch
 	WriteMacInt16(XLM_EXEC_RETURN_OPCODE, M68K_EXEC_RETURN);		// For Execute68k() (RTS from the executed 68k code will jump here and end 68k mode)
-	WriteMacInt32(XLM_ZERO_PAGE, SheepMem::ZeroPage());				// Pointer to read-only page with all bits set to 0
+	WriteMacInt32(XLM_ZERO_PAGE, /*SheepMem::ZeroPage()*/0);				// Pointer to read-only page with all bits set to 0
 #if !EMULATED_PPC
 #ifdef SYSTEM_CLOBBERS_R2
 	WriteMacInt32(XLM_TOC, (uint32)TOC);							// TOC pointer of emulator

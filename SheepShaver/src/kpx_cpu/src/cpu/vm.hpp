@@ -26,7 +26,7 @@
 ///
 
 /*#if defined(__i386__) || defined(__powerpc__) || defined(__ppc__) || defined(__m68k__) || defined(__x86_64__)*/
-# define VM_CAN_ACCESS_UNALIGNED
+#define VM_CAN_ACCESS_UNALIGNED
 /*#endif*/
 
 #ifdef WORDS_BIGENDIAN
@@ -231,16 +231,24 @@ void vm_ini(uint8 * mem);
 #ifndef vm_wrap_address
 #define vm_wrap_address(ADDR) (ADDR)
 #endif
+#define KERNEL_DATA_BASE  0x68ffe000	// Address of Kernel Data
+#define KERNEL_DATA2_BASE  0x5fffe000	// Alternate address of Kernel Data
+#define KERNEL_AREA_SIZE  0x2000		// Size of Kernel Data area
 
 /*#if REAL_ADDRESSING || DIRECT_ADDRESSING*/
 static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
 	uintptr a = vm_wrap_address(VMBaseDiff + addr);
-/*#if defined(__APPLE__) && defined(__x86_64__)
-	extern uint8 gZeroPage[0x3000], gKernelData[0x2000];
-	if (a < 0x3000) return &gZeroPage[a];
-	else if ((a & ~0x1fff) == 0x68ffe000 || (a & ~0x1fff) == 0x5fffe000) return &gKernelData[a & 0x1fff];
+/*#ifdef __APPLE__
+#ifdef __x86_64__*/
+	extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
+	/*if (a < 0x3000) return &gZeroPage[a];
+	else*/ if (((a >= KERNEL_DATA_BASE) && ((KERNEL_DATA_BASE - a) <= KERNEL_AREA_SIZE)) || ((a >= KERNEL_DATA2_BASE) && ((KERNEL_DATA2_BASE - a) <= KERNEL_AREA_SIZE))) {
+		return &gKernelData[a & 0x1fff];
+	}
+/*#elif defined i386
 #endif*/
+	/*else*/
 	return (uint8 *)a;
 }
 static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)

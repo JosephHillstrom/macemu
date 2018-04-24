@@ -2606,24 +2606,25 @@ sigsegv_address_t sigsegv_get_fault_instruction_address(sigsegv_info_t *SIP)
 	return SIP->pc;
 }
 
-#if defined(__APPLE__) && defined(__x86_64__)
+/*#if defined(__APPLE__) && defined(__x86_64__)*/
 
-extern uint8_t gZeroPage[0x3000], gKernelData[0x2000];
+extern uint8_t /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 extern uint32_t RAMBase, ROMBase, ROMEnd;
-
+extern uint8_t * ROMBaseHost;
+extern uint8_t * RAMBaseHost;
 template<typename T> T safeLoad(uint32_t a) {
-	if (a < 0x3000) return *(T *)&gZeroPage[a];
-	else if ((a & ~0x1fff) == 0x68ffe000 || (a & ~0x1fff) == 0x5fffe000) return *(T *)&gKernelData[a & 0x1fff];
-	else if (a >= RAMBase && a < ROMEnd) return *(T *)(uint64_t)a;
+	/*if (a < 0x3000) return *(T *)&gZeroPage[a];
+	else*/ if ((a & ~0x1fff) == 0x68ffe000 || (a & ~0x1fff) == 0x5fffe000) return *(T *)&gKernelData[a & 0x1fff];
+	else if (a >= RAMBase && a < ROMEnd) return *(T *)(((uint64_t)a)+RAMBaseHost);
 	return 0;
 }
 template<typename T> void safeStore(uint32_t a, T d) {
-	if (a < 0x3000) *(T *)&gZeroPage[a] = d;
-	else if ((a & ~0x1fff) == 0x68ffe000 || (a & ~0x1fff) == 0x5fffe000) *(T *)&gKernelData[a & 0x1fff] = d;
-	else if (a >= RAMBase && a < ROMBase) *(T *)(uint64_t)a = d;
+	/*if (a < 0x3000) *(T *)&gZeroPage[a] = d;
+	else*/ if ((a & ~0x1fff) == 0x68ffe000 || (a & ~0x1fff) == 0x5fffe000) *(T *)&gKernelData[a & 0x1fff] = d;
+	else if (a >= RAMBase && a < ROMBase) *(T *)(((uint64_t)a)+RAMBaseHost) = d;
 }
 
-#endif
+/*#endif*/
 
 // This function handles the badaccess to memory.
 // It is called from the signal handler or the exception handler.

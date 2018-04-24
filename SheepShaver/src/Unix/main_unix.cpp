@@ -162,14 +162,14 @@
 const char ROM_FILE_NAME[] = "ROM";
 const char ROM_FILE_NAME2[] = "Mac OS ROM";
 
-#if !REAL_ADDRESSING
+/*#if !REAL_ADDRESSING
 // FIXME: needs to be >= 0x04000000
 const uintptr RAM_BASE = 0x10000000;		// Base address of RAM
 #endif
 const uintptr ROM_BASE = 0x40800000;		// Base address of ROM
-#if REAL_ADDRESSING
+#if REAL_ADDRESSING*/
 const uint32 ROM_ALIGNMENT = 0x100000;		// ROM must be aligned to a 1MB boundary
-#endif
+/*#endif*/
 const uint32 SIG_STACK_SIZE = 0x10000;		// Size of signal stack
 
 
@@ -192,10 +192,10 @@ uint8 *RAMBaseHost;		// Base address of Mac RAM (host address space)
 uint8 *ROMBaseHost;		// Base address of Mac ROM (host address space)
 uint32 ROMEnd;
 
-#if defined(__APPLE__) && defined(__x86_64__)
-uint8 gZeroPage[0x3000], gKernelData[0x2000];
-#endif
-
+/*#if defined(__APPLE__) && defined(__x86_64__)*/
+uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
+/*#endif*/
+//uintptr SheepMem::zero_page = ((uintptr)calloc((size_t)1,(size_t)4096));			// Address of ro page filled in with zeros
 // Global variables
 #ifndef USE_SDL_VIDEO
 char *x_display_name = NULL;				// X11 display name
@@ -243,7 +243,6 @@ static rpc_connection_t *gui_connection = NULL;	// RPC connection to the GUI
 static const char *gui_connection_path = NULL;	// GUI connection identifier
 
 uint32  SheepMem::page_size;				// Size of a native page
-uintptr SheepMem::zero_page = 0;			// Address of ro page filled in with zeros
 uintptr SheepMem::base = 0x60000000;		// Address of SheepShaver data
 uintptr SheepMem::proc;						// Bottom address of SheepShave procedures
 uintptr SheepMem::data;						// Top of SheepShaver data (stack like storage)
@@ -734,7 +733,7 @@ int main(int argc, char **argv)
 
 	// Parse command line arguments
 	
-#if defined(__APPLE__) && defined(__MACH__)
+/*#if defined(__APPLE__) && defined(__MACH__)*/
 	// Mac OS X likes to pass in various options of its own, when launching an app.
 	// Attempt to ignore these.
 	for (int i=1; i<argc; i++) {
@@ -745,7 +744,7 @@ int main(int argc, char **argv)
 			argv[i] = NULL;
 		}
 	}
-#endif
+/*#endif*/
 	
 	for (int i=1; i<argc; i++) {
 		if (argv[i] == NULL) {
@@ -877,11 +876,11 @@ int main(int argc, char **argv)
 		goto quit;
 	}
 
-#if !defined(__APPLE__) || !defined(__x86_64__)
+/*#if !defined(__APPLE__) || !defined(__x86_64__)
 	// Create areas for Kernel Data
 	if (!kernel_data_init())
 		goto quit;
-#endif
+#endif*/
 	kernel_data = (KernelData *)Mac2HostAddr(KERNEL_DATA_BASE);
 	emulator_data = &kernel_data->ed;
 	KernelDataAddr = KERNEL_DATA_BASE;
@@ -972,8 +971,8 @@ int main(int argc, char **argv)
 		}
 		RAMBase = RAM_BASE;
 		RAMBaseHost = Mac2HostAddr(RAMBase);
-#endif*/
-	}
+#endif
+	}*/
 #if !EMULATED_PPC
 	if (vm_protect(RAMBaseHost, RAMSize, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE) < 0) {
 		sprintf(str, GetString(STR_RAM_MMAP_ERR), strerror(errno));
@@ -997,7 +996,7 @@ int main(int argc, char **argv)
 	}
 	
 	// Create area for Mac ROM
-	if (!ram_rom_areas_contiguous) {
+	/*if (!ram_rom_areas_contiguous) {
 		if (vm_mac_acquire_fixed(ROM_BASE, ROM_AREA_SIZE) < 0) {
 			sprintf(str, GetString(STR_ROM_MMAP_ERR), strerror(errno));
 			ErrorAlert(str);
@@ -1005,7 +1004,7 @@ int main(int argc, char **argv)
 		}
 		ROMBase = ROM_BASE;
 		ROMBaseHost = Mac2HostAddr(ROMBase);
-	}
+	}*/
 #if !EMULATED_PPC
 	if (vm_protect(ROMBaseHost, ROM_AREA_SIZE, VM_PAGE_READ | VM_PAGE_WRITE | VM_PAGE_EXECUTE) < 0) {
 		sprintf(str, GetString(STR_ROM_MMAP_ERR), strerror(errno));
@@ -1016,10 +1015,10 @@ int main(int argc, char **argv)
 	rom_area_mapped = true;
 	D(bug("ROM area at %p (%08x)\n", ROMBaseHost, ROMBase));
 
-	if (RAMBase > ROMBase) {
+	/*if (RAMBase > ROMBase) {
 		ErrorAlert(GetString(STR_RAM_HIGHER_THAN_ROM_ERR));
 		goto quit;
-	}
+	}*/
 
 	// Load Mac ROM
 	if (!load_mac_rom())
@@ -2207,10 +2206,10 @@ bool SheepMem::Init(void)
 	proc = base = Host2MacAddr(adr);
 	// Allocate page with all bits set to 0, right in the middle
 	// This is also used to catch undesired overlaps between proc and data areas
-	zero_page = proc + (size / 2);
+	/*zero_page = proc + (size / 2);
 	Mac_memset(zero_page, 0, page_size);
 	if (vm_protect(Mac2HostAddr(zero_page), page_size, VM_PAGE_READ) < 0)
-		return false;
+		return false;*/
 
 #if EMULATED_PPC
 	sig_stack = ROMEnd;
