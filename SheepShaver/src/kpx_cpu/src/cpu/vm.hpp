@@ -226,11 +226,8 @@ const uintptr VMBaseDiff = NATMEM_OFFSET;
 #else
 const uintptr VMBaseDiff = 0x100000000;
 #endif*/
-uintptr VMBaseDiff;
-void vm_ini(uint8 * mem)
-{
-	VMBaseDiff = (uintptr)mem;
-}
+extern uintptr VMBaseDiff;
+void vm_ini(uint8 * mem);
 #ifndef vm_wrap_address
 #define vm_wrap_address(ADDR) (ADDR)
 #endif
