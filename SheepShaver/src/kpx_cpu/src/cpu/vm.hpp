@@ -27,35 +27,35 @@
 
 /*#if defined(__i386__) || defined(__powerpc__) || defined(__ppc__) || defined(__m68k__) || defined(__x86_64__)*/
 # define VM_CAN_ACCESS_UNALIGNED
-/*#endif
+/*#endif*/
 
 #ifdef WORDS_BIGENDIAN
 
-#ifdef VM_CAN_ACCESS_UNALIGNED
+/*#ifdef VM_CAN_ACCESS_UNALIGNED
 
 #ifndef VM_OPTIMIZED_MEMORY_ACCESS_2
-#define VM_OPTIMIZED_MEMORY_ACCESS_2
+#define VM_OPTIMIZED_MEMORY_ACCESS_2*/
 static inline uint32 vm_do_read_memory_2(uint16 *a) { return *a; }
 static inline void vm_do_write_memory_2(uint16 *a, uint32 v) { *a = v; }
-#endif
+/*#endif
 
 #ifndef VM_OPTIMIZED_MEMORY_ACCESS_4
-#define VM_OPTIMIZED_MEMORY_ACCESS_4
+#define VM_OPTIMIZED_MEMORY_ACCESS_4*/
 static inline uint32 vm_do_read_memory_4(uint32 *a) { return *a; }
 static inline void vm_do_write_memory_4(uint32 *a, uint32 v) { *a = v; }
-#endif
+/*#endif
 
 #ifndef VM_OPTIMIZED_MEMORY_ACCESS_8
-#define VM_OPTIMIZED_MEMORY_ACCESS_8
+#define VM_OPTIMIZED_MEMORY_ACCESS_8*/
 static inline uint64 vm_do_read_memory_8(uint64 *a) { return *a; }
 static inline void vm_do_write_memory_8(uint64 *a, uint64 v) { *a = v; }
-#endif
+/*#endif
 
-#endif  VM_CAN_ACCESS_UNALIGNED
+#endif  VM_CAN_ACCESS_UNALIGNED*/
 
 #else
 
-#ifdef VM_CAN_ACCESS_UNALIGNED
+/*#ifdef VM_CAN_ACCESS_UNALIGNED
 
 #ifndef VM_OPTIMIZED_MEMORY_ACCESS_2
 #define VM_OPTIMIZED_MEMORY_ACCESS_2*/
@@ -75,9 +75,9 @@ static inline uint64 vm_do_read_memory_8(uint64 *a) { return bswap_64(*a); }
 static inline void vm_do_write_memory_8(uint64 *a, uint64 v) { *a = bswap_64(v); }
 /*#endif
 
-#endif  VM_CAN_ACCESS_UNALIGNED
+#endif  VM_CAN_ACCESS_UNALIGNED*/
 
-#endif  WORDS_BIGENDIAN */
+#endif  /* WORDS_BIGENDIAN */
 
 ///
 ///		Generic core memory accessors
@@ -151,43 +151,69 @@ static inline void vm_do_write_memory_8(uint64 *a, uint64 v)
 }
 #endif*/
 
-#ifndef VM_OPTIMIZED_MEMORY_ACCESS_2_REVERSED
+#ifdef WORDS_BIGENDIAN
+/*#ifndef VM_OPTIMIZED_MEMORY_ACCESS_2_REVERSED*/
 static inline uint32 vm_do_read_memory_2_reversed(uint16 *a)
 {
-	uint8 * b = (uint8 *)a;
-	return b[0] | (b[1] << 8);
+	return bswap_16(*a);
 }
 static inline void vm_do_write_memory_2_reversed(uint16 *a, uint32 v)
 {
-	uint8 * b = (uint8 *)a;
-	b[0] = v;
-	b[1] = v >> 8;
+	*a = bswap_16((uint16)v);
 }
-#endif
+/*#endif
 
-#ifndef VM_OPTIMIZED_MEMORY_ACCESS_4_REVERSED
+#ifndef VM_OPTIMIZED_MEMORY_ACCESS_4_REVERSED*/
 static inline uint32 vm_do_read_memory_4_reversed(uint32 *a)
 {
-	uint8 * b = (uint8 *)a;
-	return b[0] | (b[1] << 8) | (b[2] << 16) | (b[3] << 24);
+	return bswap_32(*a);
 }
 static inline void vm_do_write_memory_4_reversed(uint32 *a, uint32 v)
 {
-	uint8 * b = (uint8 *)a;
-	b[0] = v;
-	b[1] = v >> 8;
-	b[2] = v >> 16;
-	b[3] = v >> 24;
+	*a = bswap_32(v);
+}
+/*#endif*/
+static inline uint64 vm_do_read_memory_8_reversed(uint64 * a)
+{
+	return bswap_64(*a);
+}
+static inline void vm_do_write_memory_8_reversed(uint64 * a, uint64 v)
+{
+	*a = bswap_64(v);
+}
+#else
+static inline uint32 vm_do_read_memory_2_reversed(uint16 * a)
+{
+	return *a;
+}
+static inline void vm_do_write_memory_2_reversed(uint16 * a, uint32 v)
+{
+	*a = (uint16)v;
+}
+static inline uint32 vm_do_read_memory_4_reversed(uint32 * a)
+{
+	return *a;
+}
+static inline void vm_do_write_memory_4_reversed(uint32 * a, uint32 v)
+{
+	*a = v;
+}
+static inline uint64 vm_do_read_memory_8_reversed(uint64 * a)
+{
+	return *a;
+}
+static inline void vm_do_write_memory_8_reversed(uint64 * a, uint64 v)
+{
+	*a = v;
 }
 #endif
-
 ///
 ///		Actual memory accessors visible to CPU through virtual addresses
 ///
 
 typedef uintptr vm_addr_t;
 
-#if REAL_ADDRESSING
+/*#if REAL_ADDRESSING
 const uintptr VMBaseDiff = 8192;
 #elif DIRECT_ADDRESSING
 #ifdef NATMEM_OFFSET
@@ -199,7 +225,12 @@ const uintptr VMBaseDiff = NATMEM_OFFSET;
 #endif
 #else
 const uintptr VMBaseDiff = 0x100000000;
-#endif
+#endif*/
+uintptr VMBaseDiff;
+void vm_ini(uint8 * mem)
+{
+	VMBaseDiff = (uintptr)mem;
+}
 #ifndef vm_wrap_address
 #define vm_wrap_address(ADDR) (ADDR)
 #endif
@@ -208,11 +239,11 @@ const uintptr VMBaseDiff = 0x100000000;
 static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
 	uintptr a = vm_wrap_address(VMBaseDiff + addr);
-#if defined(__APPLE__) && defined(__x86_64__)
+/*#if defined(__APPLE__) && defined(__x86_64__)
 	extern uint8 gZeroPage[0x3000], gKernelData[0x2000];
 	if (a < 0x3000) return &gZeroPage[a];
 	else if ((a & ~0x1fff) == 0x68ffe000 || (a & ~0x1fff) == 0x5fffe000) return &gKernelData[a & 0x1fff];
-#endif
+#endif*/
 	return (uint8 *)a;
 }
 static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
@@ -251,6 +282,11 @@ static inline uint32 vm_read_memory_4_reversed(vm_addr_t addr)
 	uint32 * const m = (uint32 *)vm_do_get_real_address(addr);
 	return vm_do_read_memory_4_reversed(m);
 }
+static inline uint64 vm_read_memory_8_reversed(vm_addr_t addr)
+{
+	uint64 * const m = (uint64 *)vm_do_get_real_address(addr);
+	return vm_do_read_memory_8_reversed(m);
+}
 static inline void vm_write_memory_1(vm_addr_t addr, uint32 value)
 {
 	uint8 * const m = vm_do_get_real_address(addr);
@@ -281,6 +317,11 @@ static inline void vm_write_memory_4_reversed(vm_addr_t addr, uint32 value)
 {
 	uint32 * const m = (uint32 *)vm_do_get_real_address(addr);
 	vm_do_write_memory_4_reversed(m, value);
+}
+static inline void vm_write_memory_8_reversed(vm_addr_t addr, uint64 value)
+{
+	uint64 * const m = (uint64 *)vm_do_get_real_address(addr);
+	vm_do_write_memory_8_reversed(m, value);
 }
 static inline void *vm_memset(vm_addr_t addr, int c, size_t n)
 {
