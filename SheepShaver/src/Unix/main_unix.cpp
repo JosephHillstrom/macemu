@@ -1912,7 +1912,7 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 				transfer_type = TYPE_STORE; transfer_size = SIZE_HALFWORD; addr_mode = MODE_NORM; break;
 			case 45:	// sthu
 				transfer_type = TYPE_STORE; transfer_size = SIZE_HALFWORD; addr_mode = MODE_U; break;
-#if EMULATE_UNALIGNED_LOADSTORE_MULTIPLE
+/*#if EMULATE_UNALIGNED_LOADSTORE_MULTIPLE*/
 			case 46:	// lmw
 				if ((addr % 4) != 0) {
 					uint32 ea = addr;
@@ -1937,7 +1937,7 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 					goto rti;
 				}
 				break;
-#endif
+/*#endif*/
 		}
 
 		// Ignore ROM writes (including to the zero page, which is read-only)
