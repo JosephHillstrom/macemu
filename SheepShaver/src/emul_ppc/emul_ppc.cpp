@@ -1258,7 +1258,7 @@ void emul_ppc(uint32 start)
 #if FLIGHT_RECORDER
 		record_step(op);
 #endif
-		//printf("%08lx at %08lx ctr=%d\n", op, pc, ctr);
+		/*printf("%08lx at %08lx ctr=%d\n", op, pc, ctr);*/
 		uint32 primop = op >> 26;
 		pc += 4;
 		switch (primop) {

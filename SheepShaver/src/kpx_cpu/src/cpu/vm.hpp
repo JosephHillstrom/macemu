@@ -20,10 +20,9 @@
 
 #ifndef VM_H
 #define VM_H
-#define NULL_PAGE 0x60168000
-                 /*601 68000*/
+#define NULL_PAGE 0x59000000
 #define NULL_PAGE_SIZE 0x3000
-#define ZERO(addr) ((addr >= NULL_PAGE) && (addr <= (NULL_PAGE+NULL_PAGE_SIZE)));
+#define ZERO(addr) ((addr >= NULL_PAGE) && (addr <= (NULL_PAGE+NULL_PAGE_SIZE)))
 ///
 ///		Optimized memory accessors
 ///
@@ -237,24 +236,24 @@ void vm_ini(uint8 * mem);
 #define KERNEL_DATA_BASE  0x68ffe000	// Address of Kernel Data
 #define KERNEL_DATA2_BASE  0x5fffe000	// Alternate address of Kernel Data
 #define KERNEL_AREA_SIZE  0x2000		// Size of Kernel Data area
-#define KERNEL(a) (((a >= KERNEL_DATA_BASE) && ((KERNEL_DATA_BASE - a) <= KERNEL_AREA_SIZE)) || ((a >= KERNEL_DATA2_BASE) && ((KERNEL_DATA2_BASE - a) <= KERNEL_AREA_SIZE)))
-#define NO_WRITE(addr) ((KERNEL(addr))||(ZERO(addr)))
+#define KERNEL(a) (((a >= KERNEL_DATA_BASE) && (a <=(KERNEL_DATA_BASE + KERNEL_AREA_SIZE))) || ((a >= KERNEL_DATA2_BASE) && (a <= (KERNEL_DATA2_BASE + KERNEL_AREA_SIZE))))
+#define NO_WRITE(addr) (ZERO(addr))
 /*#if REAL_ADDRESSING || DIRECT_ADDRESSING*/
 static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
-	uintptr a = vm_wrap_address(VMBaseDiff + addr);
 /*#ifdef __APPLE__
 #ifdef __x86_64__*/
 
 	extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 	/*if (a < 0x3000) return &gZeroPage[a];
-	else*/ if (KERNEL(a)) {
-		return &gKernelData[a & 0x1fff];
+	else*/ if (KERNEL(addr)) {
+		return (gKernelData + (addr & 0x1fff));
 	}
 /*#elif defined i386
 #endif*/
 	/*else*/
-	return (uint8 *)a;
+	return (uint8 *)vm_wrap_address(VMBaseDiff + addr);
+
 }
 static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
 {
@@ -378,7 +377,7 @@ static inline void vm_write_memory_8_reversed(vm_addr_t addr, uint64 value)
 static inline void *vm_memset(vm_addr_t addr, int c, size_t n)
 {
 	if (NO_WRITE(addr)) {
-		return;/*just ignore invalid writes*/
+		return NULL;/*just ignore invalid writes*/
 	}
 	uint8 * const m = (uint8 *)vm_do_get_real_address(addr);
 	return memset(m, c, n);
