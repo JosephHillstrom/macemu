@@ -20,7 +20,10 @@
 
 #ifndef VM_H
 #define VM_H
-
+#define NULL_PAGE 0x60168000
+                 /*601 68000*/
+#define NULL_PAGE_SIZE 0x3000
+#define ZERO(addr) ((addr >= NULL_PAGE) && (addr <= (NULL_PAGE+NULL_PAGE_SIZE)));
 ///
 ///		Optimized memory accessors
 ///
@@ -234,16 +237,18 @@ void vm_ini(uint8 * mem);
 #define KERNEL_DATA_BASE  0x68ffe000	// Address of Kernel Data
 #define KERNEL_DATA2_BASE  0x5fffe000	// Alternate address of Kernel Data
 #define KERNEL_AREA_SIZE  0x2000		// Size of Kernel Data area
-
+#define KERNEL(a) (((a >= KERNEL_DATA_BASE) && ((KERNEL_DATA_BASE - a) <= KERNEL_AREA_SIZE)) || ((a >= KERNEL_DATA2_BASE) && ((KERNEL_DATA2_BASE - a) <= KERNEL_AREA_SIZE)))
+#define NO_WRITE(addr) ((KERNEL(addr))||(ZERO(addr)))
 /*#if REAL_ADDRESSING || DIRECT_ADDRESSING*/
 static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
 	uintptr a = vm_wrap_address(VMBaseDiff + addr);
 /*#ifdef __APPLE__
 #ifdef __x86_64__*/
+
 	extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 	/*if (a < 0x3000) return &gZeroPage[a];
-	else*/ if (((a >= KERNEL_DATA_BASE) && ((KERNEL_DATA_BASE - a) <= KERNEL_AREA_SIZE)) || ((a >= KERNEL_DATA2_BASE) && ((KERNEL_DATA2_BASE - a) <= KERNEL_AREA_SIZE))) {
+	else*/ if (KERNEL(a)) {
 		return &gKernelData[a & 0x1fff];
 	}
 /*#elif defined i386
@@ -258,94 +263,155 @@ static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
 /*#define vm_do_get_virtual_address(addr) ((vm_addr_t)addr)*/
 static inline uint32 vm_read_memory_1(vm_addr_t addr)
 {
+	if (ZERO(addr)) {
+		return 0;
+	}
 	uint8 * const m = vm_do_get_real_address(addr);
 	return vm_do_read_memory_1(m);
 }
 static inline uint32 vm_read_memory_2(vm_addr_t addr)
 {
+	if (ZERO(addr)) {
+		return 0;
+	}
 	uint16 * const m = (uint16 *)vm_do_get_real_address(addr);
 	return vm_do_read_memory_2(m);
 }
 static inline uint32 vm_read_memory_4(vm_addr_t addr)
 {
+	if (ZERO(addr)) {
+		return 0;
+	}
 	uint32 * const m = (uint32 *)vm_do_get_real_address(addr);
 	return vm_do_read_memory_4(m);
 }
 static inline uint64 vm_read_memory_8(vm_addr_t addr)
 {
+	if (ZERO(addr)) {
+		return 0;
+	}
 	uint64 * const m = (uint64 *)vm_do_get_real_address(addr);
 	return vm_do_read_memory_8(m);
 }
 #define vm_read_memory_1_reversed vm_read_memory_1
 static inline uint32 vm_read_memory_2_reversed(vm_addr_t addr)
 {
+	if (ZERO(addr)) {
+		return 0;
+	}
 	uint16 * const m = (uint16 *)vm_do_get_real_address(addr);
 	return vm_do_read_memory_2_reversed(m);
 }
 static inline uint32 vm_read_memory_4_reversed(vm_addr_t addr)
 {
+	if (ZERO(addr)) {
+		return 0;
+	}
 	uint32 * const m = (uint32 *)vm_do_get_real_address(addr);
 	return vm_do_read_memory_4_reversed(m);
 }
 static inline uint64 vm_read_memory_8_reversed(vm_addr_t addr)
 {
+	if (ZERO(addr)) {
+		return 0;
+	}
 	uint64 * const m = (uint64 *)vm_do_get_real_address(addr);
 	return vm_do_read_memory_8_reversed(m);
 }
 static inline void vm_write_memory_1(vm_addr_t addr, uint32 value)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint8 * const m = vm_do_get_real_address(addr);
 	vm_do_write_memory_1(m, value);
 }
 static inline void vm_write_memory_2(vm_addr_t addr, uint32 value)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint16 * const m = (uint16 *)vm_do_get_real_address(addr);
 	vm_do_write_memory_2(m, value);
 }
 static inline void vm_write_memory_4(vm_addr_t addr, uint32 value)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint32 * const m = (uint32 *)vm_do_get_real_address(addr);
 	vm_do_write_memory_4(m, value);
 }
 static inline void vm_write_memory_8(vm_addr_t addr, uint64 value)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint64 * const m = (uint64 *)vm_do_get_real_address(addr);
 	vm_do_write_memory_8(m, value);
 }
 #define vm_write_memory_1_reversed vm_write_memory_1
 static inline void vm_write_memory_2_reversed(vm_addr_t addr, uint32 value)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint16 * const m = (uint16 *)vm_do_get_real_address(addr);
 	vm_do_write_memory_2_reversed(m, value);
 }
 static inline void vm_write_memory_4_reversed(vm_addr_t addr, uint32 value)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint32 * const m = (uint32 *)vm_do_get_real_address(addr);
 	vm_do_write_memory_4_reversed(m, value);
 }
 static inline void vm_write_memory_8_reversed(vm_addr_t addr, uint64 value)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint64 * const m = (uint64 *)vm_do_get_real_address(addr);
 	vm_do_write_memory_8_reversed(m, value);
 }
 static inline void *vm_memset(vm_addr_t addr, int c, size_t n)
 {
+	if (NO_WRITE(addr)) {
+		return;/*just ignore invalid writes*/
+	}
 	uint8 * const m = (uint8 *)vm_do_get_real_address(addr);
 	return memset(m, c, n);
 }
 #ifdef __cplusplus
 static inline void *vm_memcpy(void *dest, vm_addr_t src, size_t n)
 {
-	return memcpy(dest, vm_do_get_real_address(src), n);
+	if (ZERO(src)) {
+		return memset(dest, 0, n);
+	}
+	else {
+		return memcpy(dest, vm_do_get_real_address(src), n);
+	}
 }
 static inline void *vm_memcpy(vm_addr_t dest, const void *src, size_t n)
 {
-	return memcpy(vm_do_get_real_address(dest), src, n);
+	if (NO_WRITE(dest)) {
+		return NULL;
+	}
+	/*else*/
+		return memcpy(vm_do_get_real_address(dest), src, n);
 }
 #endif
 static inline void *vm_memcpy(vm_addr_t dest, vm_addr_t src, size_t n)
 {
-	return memcpy(vm_do_get_real_address(dest), vm_do_get_real_address(src), n);
+	if (NO_WRITE(dest)) {
+		return NULL;
+	}
+	else if (ZERO(src)) {
+		return memset(vm_do_get_real_address(dest), 0, n);
+	}
+	/*else*/
+		return memcpy(vm_do_get_real_address(dest), vm_do_get_real_address(src), n);
 }
 /*#endif*/
 
