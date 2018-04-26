@@ -22,7 +22,26 @@
 #define VM_H
 #define NULL_PAGE 0x59000000
 #define NULL_PAGE_SIZE 0x3000
-#define ZERO(addr) ((addr >= NULL_PAGE) && (addr <= (NULL_PAGE+NULL_PAGE_SIZE)))
+#define ZERO(addr) ((addr & 0xFFFFC000) == NULL_PAGE)
+#ifdef i386
+#ifndef ___X86___
+#define ___X86___
+#endif
+#elif defined __x86_64__
+#ifndef ___X86___
+#define ___X86___
+#endif
+#endif
+#ifdef ___X86___
+#ifdef WORDS_BIGENDIAN
+#undef WORDS_BIGENDIAN
+#endif
+#ifndef ___X86___
+#warning non-x86 computers are currently unsupported in some parts of this
+#endif
+#ifndef __APPLE__
+#warning non-mac computers are currently unsupported in some parts of this
+#endif
 ///
 ///		Optimized memory accessors
 ///
@@ -236,8 +255,10 @@ void vm_ini(uint8 * mem);
 #define KERNEL_DATA_BASE  0x68ffe000	// Address of Kernel Data
 #define KERNEL_DATA2_BASE  0x5fffe000	// Alternate address of Kernel Data
 #define KERNEL_AREA_SIZE  0x2000		// Size of Kernel Data area
-#define KERNEL(a) (((a >= KERNEL_DATA_BASE) && (a <=(KERNEL_DATA_BASE + KERNEL_AREA_SIZE))) || ((a >= KERNEL_DATA2_BASE) && (a <= (KERNEL_DATA2_BASE + KERNEL_AREA_SIZE))))
-#define NO_WRITE(addr) (ZERO(addr))
+#define KERNEL_DATA(a) ((addr & 0xFFFFE000) == KERNEL_DATA_BASE)
+#define KERNEL_DATA2(a) ((addr & 0xFFFFE000) == KERNEL_DATA2_BASE)
+#define KERNEL(a) (KERNEL_DATA(a) || KERNEL_DATA2(a))
+#define NO_WRITE ZERO /*NO_WRITE is from when I incorrectly disabled writing to the Kernel Data section*/
 /*#if REAL_ADDRESSING || DIRECT_ADDRESSING*/
 static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
@@ -247,7 +268,7 @@ static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 	extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 	/*if (a < 0x3000) return &gZeroPage[a];
 	else*/ if (KERNEL(addr)) {
-		return (gKernelData + (addr & 0x1fff));
+		return vm_wrap_address((gKernelData + (addr & 0x1fff)));
 	}
 /*#elif defined i386
 #endif*/
