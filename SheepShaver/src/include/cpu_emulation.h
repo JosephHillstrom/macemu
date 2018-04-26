@@ -60,7 +60,31 @@ extern uint8 *ROMBaseHost;		// Base address of Mac ROM (host address space)
 // Mac memory access functions
 #if EMULATED_PPC
 #include "cpu/vm.hpp"
-static inline uint32 ReadMacInt8(uint32 addr) {return vm_read_memory_1((vm_addr_t)addr);}
+
+#define ReadMacInt8(addr) vm_read_memory_1((vm_addr_t)addr)
+#define WriteMacInt8(addr, v) vm_write_memory_1((vm_addr_t)addr, v)
+#define ReadMacInt16(addr) vm_read_memory_2((vm_addr_t)addr)
+#define WriteMacInt16(addr, v) vm_write_memory_2((vm_addr_t)addr, v)
+#define ReadMacInt32(addr) vm_read_memory_4((vm_addr_t)addr)
+#define WriteMacInt32(addr, v) vm_write_memory_4((vm_addr_t)addr, v)
+#define ReadMacInt64(addr) vm_read_memory_8((vm_addr_t)addr)
+#define WriteMacInt64(addr, v) vm_write_memory_8((vm_addr_t)addr, v)
+#define Host2MacAddr vm_do_get_virtual_address
+#define Mac2HostAddr(addr) vm_do_get_real_address((vm_addr_t)addr)
+#define Mac_memset(addr, c, n) vm_memset((vm_addr_t)addr, c, n)
+#define Mac2Host_memcpy(dest, src, n) vm_memcpy(dest, src, n)
+#define Host2Mac_memcpy Mac2Host_memcpy
+#define Mac2Mac_memcpy Mac2Host_memcpy
+
+#define read_bswap_int_8 ReadMacInt8
+#define write_bswap_int_8 WriteMacInt8
+#define read_bswap_int_16(addr) vm_read_memory_2_reversed((vm_addr_t)addr)
+#define write_bswap_int_16(addr, v) vm_write_memory_2_reversed((vm_addr_t)addr, v)
+#define read_bswap_int_32(addr) vm_read_memory_4_reversed((vm_addr_t)addr)
+#define write_bswap_int_32(addr, v) vm_write_memory_4_reversed((vm_addr_t)addr, v)
+#define read_bswap_int_64(addr) vm_read_memory_8_reversed((vm_addr_t)addr)
+#define write_bswap_int_64(addr, v) vm_write_memory_8_reversed((vm_addr_t)addr, v)
+/*static inline uint32 ReadMacInt8(uint32 addr) {return vm_read_memory_1((vm_addr_t)addr);}
 static inline void WriteMacInt8(uint32 addr, uint32 v) {vm_write_memory_1((vm_addr_t)addr, v);}
 static inline uint32 ReadMacInt16(uint32 addr) {return vm_read_memory_2((vm_addr_t)addr);}
 static inline void WriteMacInt16(uint32 addr, uint32 v) {vm_write_memory_2((vm_addr_t)addr, v);}
@@ -73,7 +97,7 @@ static inline uint8 *Mac2HostAddr(uint32 addr) {return vm_do_get_real_address((v
 static inline void *Mac_memset(uint32 addr, int c, size_t n) {return vm_memset((vm_addr_t)addr, c, n);}
 static inline void *Mac2Host_memcpy(void *dest, uint32 src, size_t n) {return vm_memcpy(dest, src, n);}
 static inline void *Host2Mac_memcpy(uint32 dest, const void *src, size_t n) {return vm_memcpy(dest, src, n);}
-static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return vm_memcpy(dest, src, n);}
+static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return vm_memcpy(dest, src, n);}*/
 #else
 static inline uint32 ReadMacInt8(uint32 addr) {return *(uint8 *)addr;}
 static inline void WriteMacInt8(uint32 addr, uint32 b) {*(uint8 *)addr = b;}
@@ -100,16 +124,18 @@ static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return me
 #ifdef WORDS_BIGENDIAN
 #define PW(W) W
 #else
-#define PW(X) ((((X) >> 8) & 0xff) | (((X) & 0xff) << 8))
+#define PW(X) bswap_16(X)
+/*#define PW(X) ((((X) >> 8) & 0xff) | (((X) & 0xff) << 8))*/
 #endif
 
 // PowerPC procedure helper to write a big-endian 32-bit word
 #ifdef WORDS_BIGENDIAN
 #define PL(X) X
 #else
-#define PL(X)													\
+#define PL(X) bswap_16(X)
+/*#define PL(X)													\
      ((((X) & 0xff000000) >> 24) | (((X) & 0x00ff0000) >>  8) |	\
-      (((X) & 0x0000ff00) <<  8) | (((X) & 0x000000ff) << 24))
+      (((X) & 0x0000ff00) <<  8) | (((X) & 0x000000ff) << 24))*/
 #endif
 
 struct M68kRegisters;
