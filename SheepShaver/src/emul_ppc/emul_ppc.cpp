@@ -1246,14 +1246,22 @@ void exit_emul_ppc()
 }
 void emul_ppc(uint32 start)
 {
+	int ic = 0;
+	int mic = 0;
 	pc = start;
 //uint32 old_val = 0;
-	for (;;) {
+	while (1) {
 //uint32 val = ReadMacInt32(0x68fff778);
 //if (val != old_val) {
 //	printf("insn at %08lx changed %08lx->%08lx\n", pc-4, old_val, val);
 //	old_val = val;
 //}
+		ic ++;
+		if (ic == 1000000) {
+			ic = 0;
+			mic ++;
+			printf("Congradulations: %d000000 instructions executed.\n", mic);
+		}
 		uint32 op = ReadMacInt32(pc);
 #if FLIGHT_RECORDER
 		record_step(op);
