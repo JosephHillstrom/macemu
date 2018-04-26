@@ -109,7 +109,7 @@ static inline void vm_do_write_memory_4(uint32 *a, uint32 v) { *a = bswap_32(v);
 static inline uint64 vm_do_read_memory_8(uint64 *a) { return bswap_64(*a); }
 static inline void vm_do_write_memory_8(uint64 *a, uint64 v) { *a = bswap_64(v); }*/
 
-#define vm_do_read_memory_8 bswap_64(*(uint64 *)a)
+#define vm_do_read_memory_8(a) bswap_64(*(uint64 *)a)
 #define vm_do_write_memory_8(a, v) *(uint64 *)a = bswap_64((uint64)v)
 
 /*#endif
@@ -290,12 +290,12 @@ void vm_ini(uint8 * mem);
 #define KERNEL(a) (KERNEL_DATA(a) || KERNEL_DATA2(a))
 #define NO_WRITE ZERO /*NO_WRITE is from when I incorrectly disabled writing to the Kernel Data section*/
 /*#if REAL_ADDRESSING || DIRECT_ADDRESSING*/
+extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 {
 /*#ifdef __APPLE__
 #ifdef __x86_64__*/
 
-	extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 	/*if (a < 0x3000) return &gZeroPage[a];
 	else*/ if (KERNEL(addr)) {
 		return vm_wrap_address((gKernelData + (addr & 0x1fff)));

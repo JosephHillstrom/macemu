@@ -132,7 +132,7 @@ static inline void *Mac2Mac_memcpy(uint32 dest, uint32 src, size_t n) {return me
 #ifdef WORDS_BIGENDIAN
 #define PL(X) X
 #else
-#define PL(X) bswap_16(X)
+#define PL(X) bswap_32(X)
 /*#define PL(X)													\
      ((((X) & 0xff000000) >> 24) | (((X) & 0x00ff0000) >>  8) |	\
       (((X) & 0x0000ff00) <<  8) | (((X) & 0x000000ff) << 24))*/
