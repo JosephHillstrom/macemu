@@ -22,6 +22,7 @@
 #define THUNKS_H
 
 #include "cpu_emulation.h"
+#include <assert.h>
 
 /*
  *  Native function invocation

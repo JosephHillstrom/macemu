@@ -40,7 +40,36 @@
 #include <signal.h>
 #include <string.h>
 #include "sigsegv.h"
-
+static inline uint16_t bswap_16(uint16_t toSwap)
+{
+#if defined i386 || defined __x86_64__
+	__asm__("roll $8, %w0":"=r"(toSwap):"0"(toSwap));
+#else
+	toSwap = ((toSwap << 8)|(toSwap >> 8));
+#endif
+	return toSwap;
+}
+static inline uint32_t bswap_32(uint32_t toSwap)
+{
+#if defined i386 || defined __x86_64__
+	__asm__("bswap %k0":"=r"(toSwap):"0"(toSwap));
+#else
+	toSwap = ((bswap_16(toSwap>>16))|(((uint32_t)bswap_16(toSwap))<<16));
+#endif
+	return toSwap;
+}
+static inline uint64_t bswap_64(uint64_t toSwap)
+{
+	return (((bswap_32(toSwap>>32)))|(((uint64_t)bswap_32((uint32_t)toSwap))<<32));
+}
+typedef uint32_t uint32;
+typedef uintptr_t uintptr;
+typedef uint8_t uint8;
+typedef uint16_t uint16;
+typedef uint64_t uint64;
+typedef int8_t int8;
+typedef int16_t int16;
+#include "macos_util.h"
 #ifndef NO_STD_NAMESPACE
 using std::list;
 #endif
@@ -986,9 +1015,20 @@ static inline int ix86_step_over_modrm(unsigned char * p)
 static bool ix86_skip_instruction(SIGSEGV_REGISTER_TYPE * regs)
 {
 	unsigned char * eip = (unsigned char *)regs[X86_REG_EIP];
-
-	if (eip == 0)
+	/* Check for Zero Page, not null*/
+#ifdef i386
+	if (eip <= (unsigned char *)4096) {
 		return false;
+	}
+#elif defined __x86_64__
+	if (eip <= (unsigned char *)0x0000000100000000) {
+		return false;
+	}
+#else
+	if (eip == 0) {
+		return false;
+	}
+#endif
 #ifdef _WIN32
 	if (IsBadCodePtr((FARPROC)eip))
 		return false;
@@ -1006,10 +1046,10 @@ static bool ix86_skip_instruction(SIGSEGV_REGISTER_TYPE * regs)
 	int reg = -1;
 	int len = 0;
 
-#if DEBUG
+/*#if DEBUG
 	printf("IP: %p [%02x %02x %02x %02x...]\n",
 		   eip, eip[0], eip[1], eip[2], eip[3]);
-#endif
+#endif*/
 
 	// Operand size prefix
 	if (*eip == 0x66) {

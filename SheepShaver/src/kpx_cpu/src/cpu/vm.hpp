@@ -23,20 +23,25 @@
 #define NULL_PAGE 0x59000000
 #define NULL_PAGE_SIZE 0x3000
 #define ZERO(addr) ((addr & 0xFFFFC000) == NULL_PAGE)
+
 #ifdef i386
+
 #ifndef ___X86___
 #define ___X86___
 #endif
+
 #elif defined __x86_64__
+
 #ifndef ___X86___
 #define ___X86___
 #endif
+
 #endif
+
 #ifdef ___X86___
 #ifdef WORDS_BIGENDIAN
 #undef WORDS_BIGENDIAN
 #endif
-#ifndef ___X86___
 #warning non-x86 computers are currently unsupported in some parts of this
 #endif
 #ifndef __APPLE__

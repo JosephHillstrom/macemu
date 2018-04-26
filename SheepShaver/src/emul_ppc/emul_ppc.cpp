@@ -108,7 +108,7 @@ creqv
 #include "xlowmem.h"
 #include "emul_op.h"
 
-#if ENABLE_MON
+/*#if ENABLE_MON
 #include "mon.h"
 #include "mon_disass.h"
 #endif
@@ -116,7 +116,7 @@ creqv
 #define DEBUG 1
 #include "debug.h"
 
-#define FLIGHT_RECORDER 1
+#define FLIGHT_RECORDER 1*/
 
 
 /*function-like macros for new code*/
@@ -193,7 +193,7 @@ uint32 use_mask(uint32 mask, uint32 value, uint32 start)
  *  Flight recorder
  */
 
-#if FLIGHT_RECORDER
+/*#if FLIGHT_RECORDER
 struct rec_step {
 	uint32 r[32];
 	double fr[32];
@@ -202,19 +202,19 @@ struct rec_step {
 	uint32 fpscr;
 	uint32 pc;
 	uint32 opcode;
-};
+};*/
 void TriggerInterrupt(void)
 {
 	/*dummy function*/
 	return;
 }
 const int LOG_SIZE = 8192;
-static rec_step log[LOG_SIZE];
+/*static rec_step log[LOG_SIZE];*/
 static int log_ptr = 0;
 
-static void record_step(uint32 opcode)
+/*static void record_step(uint32 opcode)
 {
-    /*turn recording off for speed
+    turn recording off for speed
 	for (int i=0; i<32; i++) {
 		log[log_ptr].r[i] = r[i];
 		log[log_ptr].fr[i] = fr[i];
@@ -228,7 +228,7 @@ static void record_step(uint32 opcode)
 	log[log_ptr].opcode = opcode;
 	log_ptr++;
 	if (log_ptr == LOG_SIZE)
-		log_ptr = 0;*/
+		log_ptr = 0;
 }
 
 static void dump_log(void)
@@ -256,9 +256,9 @@ static void dump_log(void)
 #endif
 
 
-/*
+ *
  *  Dump PPC registers
- */
+ *
 
 static void dump(void)
 {
@@ -280,7 +280,7 @@ static void dump(void)
 	mon(3, arg);
 #endif
 	QuitEmulator();
-}
+}*/
 
 
 /*
@@ -469,7 +469,7 @@ bctr_nobranch:
 
 		default:
 			printf("Illegal 19 opcode %08x (exop %d) at %08x\n", op, exop, pc-4);
-			dump();
+			/*dump();*/
 			break;
 	}
 }
@@ -833,7 +833,7 @@ cntlzw_done:if (op & 1)
 				case 9: r[rd] = ctr; break;
 				default:
 					printf("Illegal mfspr opcode %08x at %08x\n", op, pc-4);
-					dump();
+					/*dump();*/
 			}
 			break;
 		}
@@ -888,7 +888,7 @@ cntlzw_done:if (op & 1)
 				case 9: ctr = r[rd]; break;
 				default:
 					printf("Illegal mtspr opcode %08x at %08x\n", op, pc-4);
-					dump();
+					/*dump();*/
 			}
 			break;
 		}
@@ -1182,7 +1182,7 @@ cntlzw_done:if (op & 1)
 
 		default:
 			printf("Illegal 31 opcode %08x (exop %d) at %08x\n", op, exop, pc-4);
-			dump();
+			/*dump();*/
 			break;
 	}
 }
@@ -1198,7 +1198,7 @@ static void emul59(uint32 op)
 	switch (exop) {
 		default:
 			printf("Illegal 59 opcode %08x (exop %d) at %08x\n", op, exop, pc-4);
-			dump();
+			/*dump();*/
 			break;
 	}
 }
@@ -1230,7 +1230,7 @@ static void emul63(uint32 op)
 
 		default:
 			printf("Illegal 63 opcode %08x (exop %d) at %08x\n", op, exop, pc-4);
-			dump();
+			/*dump();*/
 			break;
 	}
 }
@@ -1246,8 +1246,8 @@ void exit_emul_ppc()
 }
 void emul_ppc(uint32 start)
 {
-	int ic = 0;
-	int mic = 0;
+	/*long long ic = 0;
+	int mic = 0;*/
 	pc = start;
 //uint32 old_val = 0;
 	while (1) {
@@ -1256,16 +1256,16 @@ void emul_ppc(uint32 start)
 //	printf("insn at %08lx changed %08lx->%08lx\n", pc-4, old_val, val);
 //	old_val = val;
 //}
-		ic ++;
-		if (ic == 1000000) {
+		/*ic ++;
+		if (ic == 100000000) {
 			ic = 0;
 			mic ++;
-			printf("Congradulations: %d000000 instructions executed.\n", mic);
-		}
+			printf("Congradulations: %d00000000 instructions executed.\n", mic);
+		}*/
 		uint32 op = ReadMacInt32(pc);
-#if FLIGHT_RECORDER
+/*#if FLIGHT_RECORDER
 		record_step(op);
-#endif
+#endif*/
 		/*printf("%08lx at %08lx ctr=%d\n", op, pc, ctr);*/
 		uint32 primop = op >> 26;
 		pc += 4;
@@ -1280,7 +1280,7 @@ void emul_ppc(uint32 start)
 
 					case 1:		// EXEC_RETURN
 						//!!
-						dump();
+						/*dump();*/
 						break;
 
 					default: {	// EMUL_OP
@@ -1704,7 +1704,7 @@ bc_nobranch:
 
 			default:
 				printf("Illegal opcode %08x at %08x\n", op, pc-4);
-				dump();
+				/*dump();*/
 				break;
 		}
 	}
@@ -1716,7 +1716,7 @@ static struct sigaction sigsegv_action;
 static void sigsegv_handler(int sig)
 {
 	printf("SIGSEGV\n");
-	dump();
+	/*dump();*/
 }
 
 void init_emul_ppc(void)
@@ -1753,10 +1753,10 @@ void init_emul_ppc(void)
 	/*sigsegv_action.sa_restorer = NULL;*/
 	sigaction(SIGSEGV, &sigsegv_action, NULL);
 
-#if FLIGHT_RECORDER && ENABLE_MON
+/*#if FLIGHT_RECORDER && ENABLE_MON
 	// Install "log" command in mon
 	mon_add_command("log", dump_log, "log                      Dump PowerPC emulation log\n");
-#endif
+#endif*/
 }
 
 
