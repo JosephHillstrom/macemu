@@ -121,8 +121,9 @@ static int translate_map_flags(int vm_flags)
 		flags |= MAP_PRIVATE;
 	if (vm_flags & VM_MAP_FIXED)
 		flags |= MAP_FIXED;
-	if (vm_flags & VM_MAP_32BIT)
+	/*if (vm_flags & VM_MAP_32BIT)
 		flags |= FORCE_MAP_32BIT;
+		unneccessary(at least it should be)*/
 	return flags;
 }
 #endif
@@ -233,7 +234,7 @@ void * vm_acquire(size_t size, int options)
 	errno = 0;
 
 	// VM_MAP_FIXED are to be used with vm_acquire_fixed() only
-	if (options & VM_MAP_FIXED)
+	/*if (options & VM_MAP_FIXED)
 		return VM_MAP_FAILED;
 
 #ifndef HAVE_VM_WRITE_WATCH
@@ -267,20 +268,21 @@ void * vm_acquire(size_t size, int options)
 
 	if ((addr = VirtualAlloc(NULL, size, alloc_type, PAGE_EXECUTE_READWRITE)) == NULL)
 		return VM_MAP_FAILED;
-#else
-	if ((addr = calloc(size, 1)) == 0)
+#else*/
+	if ((addr = calloc(size, 1)) == NULL) {
 		return VM_MAP_FAILED;
+	}
 
 	// Omit changes for protections because they are not supported in this mode
 	return addr;
-#endif
+/*#endif
 
 	// Explicitely protect the newly mapped region here because on some systems,
 	// say MacOS X, mmap() doesn't honour the requested protection flags.
 	if (vm_protect(addr, size, VM_PAGE_DEFAULT) != 0)
 		return VM_MAP_FAILED;
 
-	return addr;
+	return addr;*/
 }
 
 /* Allocate zero-filled memory at exactly ADDR (which must be page-aligned).

@@ -29,23 +29,25 @@
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif
+
+/*just use calloc*/
 #ifdef HAVE_MACH_VM
-extern "C" {
-#include <mach/mach.h>
-#include <mach/task.h>
-}
+#undef HAVE_MACH_VM
+#endif
+#ifdef HAVE_MMAP_VM
+#undef HAVE_MMAP_VM
 #endif
 
 /* Return value of `vm_acquire' in case of an error.  */
-#ifdef HAVE_MACH_VM
+/*#ifdef HAVE_MACH_VM
 #define VM_MAP_FAILED			((void *)-1)
-#else
-#ifdef HAVE_MMAP_VM
+#elif defined HAVE_MMAP_VM
 #define VM_MAP_FAILED			((void *)-1)
 #else
 #define VM_MAP_FAILED			0
-#endif
-#endif
+#endif*/
+/*use null as the error return, for we don't never return null because we don't use lowmem no more*/
+#define VM_MAP_FAILED NULL
 
 /* Option to vm_get_write_watch() to reset the write-tracking state
    once it was retrieved. Otherwise, you have to manually call
@@ -82,7 +84,7 @@ extern "C" {
 #endif
 #endif
 
-/* Default protection bits.  */
+/* Default protection bits.  Obviously we don't execute the code on non-powerpc systems.*/
 #define VM_PAGE_DEFAULT			(VM_PAGE_READ | VM_PAGE_WRITE)
 
 /* Initialize the VM system. Returns 0 if successful, -1 for errors.  */
