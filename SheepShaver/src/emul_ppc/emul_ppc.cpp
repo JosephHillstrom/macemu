@@ -1275,40 +1275,6 @@ void emul_ppc(uint32 start)
 		primop = op >> 26;
 		pc += 4;
 		switch (primop) {
-
-			case 6:		// SheepShaver extensions
-				printf("Extended opcode %08x at %08x (68k pc %08x)\n", op, pc-4, r[24]);
-				switch (op & 0x3f) {
-					case 0:		// EMUL_RETURN
-						QuitEmulator();
-						break;
-
-					case 1:		// EXEC_RETURN
-						//!!
-						/*dump();*/
-						break;
-
-					default: {	// EMUL_OP
-						M68kRegisters r68;
-						WriteMacInt32(XLM_68K_R25, r[25]);
-						WriteMacInt32(XLM_RUN_MODE, MODE_EMUL_OP);
-						for (int i=0; i<8; i++)
-							r68.d[i] = r[8 + i];
-						for (int i=0; i<7; i++)
-							r68.a[i] = r[16 + i];
-						r68.a[7] = r[1];
-						EmulOp(&r68, r[24], (op & 0x3f) - 2);
-						for (int i=0; i<8; i++)
-							r[8 + i] = r68.d[i];
-						for (int i=0; i<7; i++)
-							r[16 + i] = r68.a[i];
-						r[1] = r68.a[7];
-						WriteMacInt32(XLM_RUN_MODE, MODE_68K);
-						break;
-					}
-				}
-				break;
-
 			case 7: {	// mulli
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
@@ -1456,11 +1422,6 @@ bc_nobranch:
 					pc += target - 4;
 				break;
 			}
-
-			case 19:
-				emul19(op);
-				break;
-
 			case 20: {	// rlwimi
 				uint32 rs = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
@@ -1514,7 +1475,7 @@ bc_nobranch:
 				break;
 			}
 
-			case 25: {	// oris
+			/*case 25: {	// oris
 				uint32 rs = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
 				r[ra] = r[rs] | (op << 16);
@@ -1526,195 +1487,235 @@ bc_nobranch:
 				uint32 ra = (op >> 16) & 0x1f;
 				r[ra] = r[rs] ^ (op & 0xffff);
 				break;
-			}
-
-			case 27: {	// xoris
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] = r[rs] ^ (op << 16);
-				break;
-			}
-
-			case 28: {	// andi.
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] = r[rs] & (op & 0xffff);
-				record(r[ra]);
-				break;
-			}
-
-			case 29: {	// andis.
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] = r[rs] & (op << 16);
-				record(r[ra]);
-				break;
-			}
-
-			case 31:
-				emul31(op);
-				break;
-
-			case 32: {	// lwz
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[rd] = ReadMacInt32((op & 0xffff) + (ra ? r[ra] : 0));
-				break;
-			}
-
-			case 33: {	// lwzu
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += (op & 0xffff);
-				r[rd] = ReadMacInt32(r[ra]);
-				break;
-			}
-
-			case 34: {	// lbz
-				uint32 rd = MAKE_RD;
-				uint32 ra = MAKE_RA;
-				r[rd] = ReadMacInt8((op & 0xffff) + (ra ? r[ra] : 0));
-				break;
-			}
-
-			case 35: {	// lbzu
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += (op & 0xffff);
-				r[rd] = ReadMacInt8(r[ra]);
-				break;
-			}
-
-			case 36: {	// stw
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt32((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
-				break;
-			}
-
-			case 37: {	// stwu
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += (op & 0xffff);
-				WriteMacInt32(r[ra], r[rd]);
-				break;
-			}
-
-			case 38: {	// stb
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt8((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
-				break;
-			}
-
-			case 39: {	// stbu
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += (op & 0xffff);
-				WriteMacInt8(r[ra], r[rd]);
-				break;
-			}
-
-			case 40: {	// lhz
-				int rd = MAKE_RD;
-				int ra = MAKE_RA;
-				uint32 imm = MAKE_IMMEDIATE;
-				r[rd] = ReadMacInt16((imm+(ra?r[ra]:0)));
-				break;
-			}
-
-			case 41: {	// lhzu
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += (op & 0xffff);
-				r[rd] = ReadMacInt16(r[ra]);
-				break;
-			}
-
-			case 42: {	// lha
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[rd] = (int32)(int16)ReadMacInt16((op & 0xffff) + (ra ? r[ra] : 0));
-				break;
-			}
-
-			case 43: {	// lhau
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += (op & 0xffff);
-				r[rd] = (int32)(int16)ReadMacInt16(r[ra]);
-				break;
-			}
-
-			case 44: {	// sth
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt16((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
-				break;
-			}
-
-			case 45: {	// sthu
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] += (op & 0xffff);
-				WriteMacInt16(r[ra], r[rd]);
-				break;
-			}
-
-			case 46: {	// lmw
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				uint32 addr = (op & 0xffff) + (ra ? r[ra] : 0);
-				while (rd <= 31) {
-					r[rd] = ReadMacInt32(addr);
-					rd++;
-					addr += 4;
-				}
-				break;
-			}
-
-			case 47: {	// stmw
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				uint32 addr = (op & 0xffff) + (ra ? r[ra] : 0);
-				while (rd <= 31) {
-					WriteMacInt32(addr, r[rd]);
-					rd++;
-					addr += 4;
-				}
-				break;
-			}
-
-			case 50: {	// lfd
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				fr[rd] = (double)ReadMacInt64((op & 0xffff) + (ra ? r[ra] : 0));
-				break;
-			}
-
-			case 54: {	// stfd
-				uint32 rd = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				WriteMacInt64((op & 0xffff) + (ra ? r[ra] : 0), (uint64)fr[rd]);
-				break;
-			}
-
-			case 59:
-				emul59(op);
-				break;
-
-			case 63:
-				emul63(op);
-				break;
-
+			}*/
 			default:
-				printf("Illegal opcode %08x at %08x\n", op, pc-4);
-				/*dump();*/
+                prim[primop](op);
 				break;
 		}
 	}
 }
 
+void oris(uint32 op)
+{
+    uint32 rs = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] = r[rs] | (op << 16);
+}
+
+void xori(uint32 op)
+{
+    uint32 rs = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] = r[rs] ^ (op & 0xffff);
+}
+
+void xoris(uint32 op)
+{
+    uint32 rs = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] = r[rs] ^ (op << 16);
+}
+
+   /*andi.*/
+void andidot(uint32 op)
+{
+    uint32 rs = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] = r[rs] & (op & 0xffff);
+    record(r[ra]);
+}
+
+   /*andis.*/
+void andisdot(uint32 op)
+{
+    uint32 rs = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] = r[rs] & (op << 16);
+    record(r[ra]);
+}
+
+void lwz(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[rd] = ReadMacInt32((op & 0xffff) + (ra ? r[ra] : 0));
+}
+
+void lwzu(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] += (op & 0xffff);
+    r[rd] = ReadMacInt32(r[ra]);
+}
+
+void lbz(uint32 op)
+{
+    uint32 rd = MAKE_RD;
+    uint32 ra = MAKE_RA;
+    r[rd] = ReadMacInt8((op & 0xffff) + (ra ? r[ra] : 0));
+}
+
+void lbzu(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] += (op & 0xffff);
+    r[rd] = ReadMacInt8(r[ra]);
+}
+
+void stw(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    WriteMacInt32((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
+}
+
+void stwu(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] += (op & 0xffff);
+    WriteMacInt32(r[ra], r[rd]);
+}
+
+void stb(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    WriteMacInt8((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
+}
+
+void stbu(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] += (op & 0xffff);
+    WriteMacInt8(r[ra], r[rd]);
+}
+
+void lhz(uint32 op)
+{
+    int rd = MAKE_RD;
+    int ra = MAKE_RA;
+    uint32 imm = MAKE_IMMEDIATE;
+    r[rd] = ReadMacInt16((imm+(ra?r[ra]:0)));
+}
+
+void lhzu(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] += (op & 0xffff);
+    r[rd] = ReadMacInt16(r[ra]);
+}
+
+void lha(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[rd] = (int32)(int16)ReadMacInt16((op & 0xffff) + (ra ? r[ra] : 0));
+}
+
+void lhau(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] += (op & 0xffff);
+    r[rd] = (int32)(int16)ReadMacInt16(r[ra]);
+}
+
+void sth(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    WriteMacInt16((op & 0xffff) + (ra ? r[ra] : 0), r[rd]);
+}
+
+void sthu(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[ra] += (op & 0xffff);
+    WriteMacInt16(r[ra], r[rd]);
+}
+
+void lmw(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    uint32 addr = (op & 0xffff) + (ra ? r[ra] : 0);
+    while (rd <= 31) {
+        r[rd] = ReadMacInt32(addr);
+        rd++;
+        addr += 4;
+    }
+}
+
+void stmw(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    uint32 addr = (op & 0xffff) + (ra ? r[ra] : 0);
+    while (rd <= 31) {
+        WriteMacInt32(addr, r[rd]);
+        rd++;
+        addr += 4;
+    }
+}
+
+void lfd(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    fr[rd] = (double)ReadMacInt64((op & 0xffff) + (ra ? r[ra] : 0));
+}
+
+void stfd(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    WriteMacInt64((op & 0xffff) + (ra ? r[ra] : 0), (uint64)fr[rd]);
+}
+
+void op_68000(uint32 op)
+{
+    printf("Extended opcode %08x at %08x (68k pc %08x)\n", op, pc-4, r[24]);
+    switch (op & 0x3f) {
+        case 0:        // EMUL_RETURN
+            QuitEmulator();
+            break;
+            
+        case 1:        // EXEC_RETURN
+            //!!
+            /*dump();*/
+            break;
+            
+        default: {    // EMUL_OP
+            M68kRegisters r68;
+            WriteMacInt32(XLM_68K_R25, r[25]);
+            WriteMacInt32(XLM_RUN_MODE, MODE_EMUL_OP);
+            for (int i=0; i<8; i++)
+                r68.d[i] = r[8 + i];
+            for (int i=0; i<7; i++)
+                r68.a[i] = r[16 + i];
+            r68.a[7] = r[1];
+            EmulOp(&r68, r[24], (op & 0x3f) - 2);
+            for (int i=0; i<8; i++)
+                r[8 + i] = r68.d[i];
+            for (int i=0; i<7; i++)
+                r[16 + i] = r68.a[i];
+            r[1] = r68.a[7];
+            WriteMacInt32(XLM_RUN_MODE, MODE_68K);
+            break;
+        }
+    }
+}
+
+void badop(uint32 op)
+{
+    printf("Illegal opcode: %08x at %08x\n", op, pc-4);
+}
 
 static struct sigaction sigsegv_action;
 
@@ -1757,7 +1758,37 @@ void init_emul_ppc(void)
 	sigsegv_action.sa_flags = 0;
 	/*sigsegv_action.sa_restorer = NULL;*/
 	sigaction(SIGSEGV, &sigsegv_action, NULL);
-
+    for (int i = 0; i < 64; i ++) {
+        prim[i] = badop;
+    }
+    prim[6] = op_68000;
+    prim[19] = emul19;
+    prim[25] = oris;
+    prim[26] = xori;
+    prim[27] = xoris;
+    prim[28] = andidot;
+    prim[29] = andisdot;
+    prim[31] = emul31;
+    prim[32] = lwz;
+    prim[33] = lwzu;
+    prim[34] = lbz;
+    prim[35] = lbzu;
+    prim[36] = stw;
+    prim[37] = stwu;
+    prim[38] = stb;
+    prim[39] = stbu;
+    prim[40] = lhz;
+    prim[41] = lhzu;
+    prim[42] = lha;
+    prim[43] = lhau;
+    prim[44] = sth;
+    prim[45] = sthu;
+    prim[46] = lmw;
+    prim[47] = stmw;
+    prim[50] = lfd;
+    prim[54] = stfd;
+    prim[59] = emul59;
+    prim[63] = emul63;
 /*#if FLIGHT_RECORDER && ENABLE_MON
 	// Install "log" command in mon
 	mon_add_command("log", dump_log, "log                      Dump PowerPC emulation log\n");

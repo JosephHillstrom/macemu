@@ -21,6 +21,10 @@
 #ifndef SYSDEPS_H
 #define SYSDEPS_H
 
+#define uint64 uint64_t
+#define uint32 uint32_t
+#define uint16 uint16_t
+
 #ifndef __STDC__
 #error "Your compiler is not ANSI. Get a real one."
 #endif
@@ -28,9 +32,9 @@
 #include "config.h"
 #include "../Unix/user_strings_unix.h"
 
-#ifndef STDC_HEADERS
+/*#ifndef STDC_HEADERS
 #error "You don't have ANSI C header files."
-#endif
+#endif*/
 
 #ifdef HAVE_UNISTD_H
 # include <sys/types.h>
@@ -137,7 +141,9 @@ typedef short int16;
 typedef unsigned int uint16;
 typedef int int16;
 #else
-#error "No 2 byte type, you lose."
+/*#error "No 2 byte type, you lose."*/
+typedef uint16_t uint16;
+typedef int16_t int16;
 #endif
 #if SIZEOF_INT == 4
 typedef unsigned int uint32;
@@ -146,7 +152,9 @@ typedef int int32;
 typedef unsigned long uint32;
 typedef long int32;
 #else
-#error "No 4 byte type, you lose."
+/*#error "No 4 byte type, you lose."*/
+typedef uint32_t uint32;
+typedef int32_t int32;
 #endif
 #if SIZEOF_LONG == 8
 typedef uint64_t uint64;
@@ -159,7 +167,9 @@ typedef long long int64;
 #define VAL64(a) (a ## LL)
 #define UVAL64(a) (a ## uLL)
 #else
-#error "No 8 byte type, you lose."
+/*#error "No 8 byte type, you lose."*/
+typedef uint64_t uint64;
+typedef int64_t int64;
 #endif
 #ifdef i386
 typedef uint32 uintptr;

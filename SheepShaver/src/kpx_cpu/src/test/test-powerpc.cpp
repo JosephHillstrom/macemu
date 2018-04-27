@@ -38,8 +38,8 @@
 #if EMU_KHEPERIX
 #include "sysdeps.h"
 #include "vm_alloc.h"
-#include "cpu/ppc/ppc-cpu.hpp"
-#include "cpu/ppc/ppc-instructions.hpp"
+/*#include "cpu/ppc/ppc-cpu.hpp"
+#include "cpu/ppc/ppc-instructions.hpp"*/
 #endif
 
 #if EMU_MICROLIB
@@ -64,14 +64,14 @@ typedef char CHAR;
 typedef int BOOL;
 #endif
 
-#if EMU_QEMU
+/*#if EMU_QEMU
 extern "C" {
 #include "target-ppc/cpu.h"
 extern void tb_flush();
-}
+}*/
 typedef uint32_t uint32;
 typedef uintptr_t uintptr;
-#endif
+/*#endif*/
 
 // Disassemblers needed for debugging purposes
 #if ENABLE_MON
