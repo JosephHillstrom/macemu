@@ -29,17 +29,13 @@
 #ifdef HAVE_SYS_MMAN_H
 #include <sys/mman.h>
 #endif
+
+/*just use calloc*/
 #ifdef HAVE_MACH_VM
-#ifdef __APPLE__
-/*use MMAP on mac beceuse mach allocation is jank*/
 #undef HAVE_MACH_VM
-#define HAVE_MMAP_VM
-#else
-extern "C" {
-#include <mach/mach.h>
-#include <mach/task.h>
-}
 #endif
+#ifdef HAVE_MMAP_VM
+#undef HAVE_MMAP_VM
 #endif
 
 /* Return value of `vm_acquire' in case of an error.  */
