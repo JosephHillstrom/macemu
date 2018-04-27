@@ -147,6 +147,9 @@ static inline uint32 ppc_bswap_word(uint32 word)
 #define rol(v, r) v = ((v << r) | (v >> (32 - r)))
 #define ror(v, r) v = ((v >> r) | (v << (32 - r)))
 
+typedef void (*emul_func)(uint32);
+emul_func prim[64];
+
 // PowerPC user mode registers
 uint32 r[32];
 double fr[32];
@@ -208,9 +211,9 @@ void TriggerInterrupt(void)
 	/*dummy function*/
 	return;
 }
-const int LOG_SIZE = 8192;
-/*static rec_step log[LOG_SIZE];*/
-static int log_ptr = 0;
+/*const int LOG_SIZE = 8192;
+static rec_step log[LOG_SIZE];
+static int log_ptr = 0;*/
 
 /*static void record_step(uint32 opcode)
 {
@@ -1249,6 +1252,8 @@ void emul_ppc(uint32 start)
 	/*long long ic = 0;
 	int mic = 0;*/
 	pc = start;
+    uint32 op;
+    uint32 primop;
 //uint32 old_val = 0;
 	while (1) {
 //uint32 val = ReadMacInt32(0x68fff778);
@@ -1262,12 +1267,12 @@ void emul_ppc(uint32 start)
 			mic ++;
 			printf("Congradulations: %d00000000 instructions executed.\n", mic);
 		}*/
-		uint32 op = ReadMacInt32(pc);
+		op = ReadMacInt32(pc);
 /*#if FLIGHT_RECORDER
 		record_step(op);
 #endif*/
 		/*printf("%08lx at %08lx ctr=%d\n", op, pc, ctr);*/
-		uint32 primop = op >> 26;
+		primop = op >> 26;
 		pc += 4;
 		switch (primop) {
 

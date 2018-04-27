@@ -194,7 +194,7 @@ int vm_init(void)
 
 // On 10.4 and earlier, reset CrashReporter's task signal handler to
 // avoid having it show up for signals that get handled.
-#if defined(__APPLE__) && defined(__MACH__)
+/*#if defined(__APPLE__) && defined(__MACH__)
 	struct utsname info;
 
 	if (!uname(&info) && atoi(info.release) <= 8) {
@@ -204,7 +204,7 @@ int vm_init(void)
 			EXCEPTION_STATE_IDENTITY,
 			MACHINE_THREAD_STATE);
 	}
-#endif
+#endif*/
 
 	return 0;
 }

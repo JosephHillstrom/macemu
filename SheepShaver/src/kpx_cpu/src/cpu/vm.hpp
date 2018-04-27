@@ -42,6 +42,7 @@
 #ifdef WORDS_BIGENDIAN
 #undef WORDS_BIGENDIAN
 #endif
+#else
 #warning non-x86 computers are currently unsupported in some parts of this
 #endif
 #ifndef __APPLE__
