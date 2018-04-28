@@ -193,8 +193,8 @@ static void inline ppc_flush_icache_range(uint32 *start_p, uint32 length)
 }
 #endif
 
-#if EMU_KHEPERIX
-// Wrappers when building from SheepShaver tree
+/*#if EMU_KHEPERIX
+// Wrappers when building from SheepShaver tree*/
 #ifdef SHEEPSHAVER
 uint32 ROMBase = 0x40800000;
 int64 TimebaseSpeed = 25000000;	// Default:  25 MHz
@@ -214,11 +214,11 @@ void HandleInterrupt(powerpc_registers *)
 {
 }
 
-#if PPC_ENABLE_JIT && PPC_REENTRANT_JIT
+/*#if PPC_ENABLE_JIT && PPC_REENTRANT_JIT
 void init_emul_op_trampolines(basic_dyngen & dg)
 {
 }
-#endif
+#endif*/
 #endif
 
 struct powerpc_cpu_base
