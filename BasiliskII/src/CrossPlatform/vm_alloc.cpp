@@ -269,7 +269,8 @@ void * vm_acquire(size_t size, int options)
 	if ((addr = VirtualAlloc(NULL, size, alloc_type, PAGE_EXECUTE_READWRITE)) == NULL)
 		return VM_MAP_FAILED;
 #else*/
-	if ((addr = calloc(size, 1)) == NULL) {
+	addr = calloc(size, (size_t)1);
+	if (addr == NULL) {
 		return VM_MAP_FAILED;
 	}
 

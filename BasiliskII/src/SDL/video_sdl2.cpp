@@ -577,10 +577,10 @@ static void migrate_screen_prefs(void)
 			}
 		}
 	} else {
-		if (window_modes & 1)
-			width = 640, height = 480;
-		if (window_modes & 2)
-			width = 800, height = 600;
+		if (window_modes & 1){
+			width = 640; height = 480;}
+		if (window_modes & 2){
+			width = 800; height = 600;}
 	}
 	if (width && height) {
 		char str[32];

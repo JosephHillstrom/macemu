@@ -144,8 +144,8 @@ static inline uint32 ppc_bswap_word(uint32 word)
 #endif
 #define ppc_bswap_dword(data) (((uint64)ppc_bswap_word((uint32)data)) << 32) | (uint64)ppc_bswap_word((uint32)(data >> 32))
 #define ppc_bswap_half(data) (data<<8)|(data>>8)
-#define rol(v, r) v = ((v << r) | (v >> (32 - r)))
-#define ror(v, r) v = ((v >> r) | (v << (32 - r)))
+#define rol(v, r) v = (r?((v << r) | (v >> (32 - r))):(v))
+#define ror(v, r) v = (r?((v >> r) | (v << (32 - r))):(v))
 
 typedef void (*emul_func)(uint32);
 emul_func prim[64];
@@ -1249,7 +1249,7 @@ void exit_emul_ppc()
 }
 void emul_ppc(uint32 start)
 {
-	/*long long ic = 0;
+	/*int ic = 0;
 	int mic = 0;*/
 	pc = start;
     uint32 op;
@@ -1262,10 +1262,10 @@ void emul_ppc(uint32 start)
 //	old_val = val;
 //}
 		/*ic ++;
-		if (ic == 100000000) {
+		if (ic == 1000000) {
 			ic = 0;
 			mic ++;
-			printf("Congradulations: %d00000000 instructions executed.\n", mic);
+			printf("Congradulations: %d000000 instructions executed.\n", mic);
 		}*/
 		op = ReadMacInt32(pc);
 /*#if FLIGHT_RECORDER
@@ -1427,7 +1427,12 @@ bc_nobranch:
 				uint32 ra = (op >> 16) & 0x1f;
 				uint32 sh = (op >> 11) & 0x1f;
 				uint32 mask = mbme2mask(op);
-				r[ra] = (((r[rs] << sh) | (r[rs] >> (32-sh))) & mask) | (r[ra] & ~mask);
+                if(sh) {
+                    r[ra] = (((r[rs] << sh) | (r[rs] >> (32-sh))) & mask) | (r[ra] & ~mask);
+                }
+                else {
+                    r[ra] = (r[rs] & mask) | (r[ra] & ~mask);
+                }
 				if (op & 1)
 					record(r[ra]);
 				break;
@@ -1437,8 +1442,13 @@ bc_nobranch:
 				uint32 rs = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
 				uint32 sh = (op >> 11) & 0x1f;
-				r[ra] = ((r[rs] << sh) | (r[rs] >> (32-sh))) & mbme2mask(op);
-				if (op & 1)
+                if(sh){
+                    r[ra] = ((r[rs] << sh) | (r[rs] >> (32-sh))) & mbme2mask(op);
+                }
+                else {
+                    r[ra] = r[rs] & mbme2mask(op);
+                }
+                if (op & 1)
 					record(r[ra]);
 				break;
 			}
@@ -1474,20 +1484,6 @@ bc_nobranch:
 				r[ra] = r[rs] | (op & 0xffff);
 				break;
 			}
-
-			/*case 25: {	// oris
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] = r[rs] | (op << 16);
-				break;
-			}
-
-			case 26: {	// xori
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] = r[rs] ^ (op & 0xffff);
-				break;
-			}*/
 			default:
                 prim[primop](op);
 				break;

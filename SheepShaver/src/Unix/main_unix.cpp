@@ -611,7 +611,7 @@ static bool load_mac_rom(void)
 			return false;
 		}
 	}
-	delete[] rom_tmp;
+	/*delete[] rom_tmp;*/
 	return true;
 }
 
@@ -958,10 +958,11 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
-		ROMBase = (RAMBase + RAMSize + ROM_ALIGNMENT -1) & -ROM_ALIGNMENT;
-		ROMBaseHost = RAMBaseHost + ROMBase - RAMBase;
-		ROMEnd = RAMBase + RAMSize + ROM_AREA_SIZE + ROM_ALIGNMENT;
-
+		ROMBase = (RAMBase + RAMSize + ROM_ALIGNMENT -1) & ~(ROM_ALIGNMENT-1);
+		ROMBaseHost = Mac2HostAddr(ROMBase);
+		ROMEnd = RAMSize + ROM_AREA_SIZE + ROM_ALIGNMENT + SIG_STACK_SIZE;
+		setSize(ROMEnd);
+		
 		ram_rom_areas_contiguous = true;
 /*#else
 		if (vm_mac_acquire_fixed(RAM_BASE, RAMSize) < 0) {

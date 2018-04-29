@@ -63,8 +63,8 @@ struct VideoInfo VModes[64];
 /*
  *  Driver local variables
  */
-
-VidLocals *private_data = NULL;	// Pointer to driver local variables (there is only one display, so this is ok)
+VidLocals vre_data;
+VidLocals *private_data = &vre_data;	// Pointer to driver local variables (there is only one display, so this is ok)
 
 static long save_conf_id = APPLE_W_640x480;
 static long save_conf_mode = APPLE_8_BIT;

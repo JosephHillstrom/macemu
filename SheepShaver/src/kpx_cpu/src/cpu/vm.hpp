@@ -20,9 +20,7 @@
 
 #ifndef VM_H
 #define VM_H
-#define NULL_PAGE 0x59000000
-#define NULL_PAGE_SIZE 0x3000
-#define ZERO(addr) ((addr & 0xFFFFC000) == NULL_PAGE)
+
 
 #ifdef i386
 
@@ -279,17 +277,25 @@ const uintptr VMBaseDiff = NATMEM_OFFSET;
 const uintptr VMBaseDiff = 0x100000000;
 #endif*/
 extern uintptr VMBaseDiff;
+extern uint32 address_size;
 void vm_ini(uint8 * mem);
+void setSize(uint32 size);
 #ifndef vm_wrap_address
 #define vm_wrap_address(ADDR) (ADDR)
 #endif
+#define NULL_PAGE 0x59000000
+#define NULL_PAGE_SIZE 0x3000
 #define KERNEL_DATA_BASE  0x68ffe000	// Address of Kernel Data
 #define KERNEL_DATA2_BASE  0x5fffe000	// Alternate address of Kernel Data
 #define KERNEL_AREA_SIZE  0x2000		// Size of Kernel Data area
-#define KERNEL_DATA(a) ((addr & 0xFFFFE000) == KERNEL_DATA_BASE)
-#define KERNEL_DATA2(a) ((addr & 0xFFFFE000) == KERNEL_DATA2_BASE)
+#define KERNEL_DATA(a) ((a & 0xFFFFE000) == KERNEL_DATA_BASE)
+#define KERNEL_DATA2(a) ((a & 0xFFFFE000) == KERNEL_DATA2_BASE)
 #define KERNEL(a) (KERNEL_DATA(a) || KERNEL_DATA2(a))
-#define NO_WRITE ZERO /*NO_WRITE is from when I incorrectly disabled writing to the Kernel Data section*/
+#define too_big(addr) ((addr >= address_size)&&(!(KERNEL(addr))))
+#define ZERO(addr) (((addr & 0xFFFFC000) == NULL_PAGE)||(too_big(addr)))
+/*too_big(addr) is so we don't crash on too big addresses*/
+#define NO_WRITE ZERO
+/*NO_WRITE is from when I incorrectly disabled writing to the Kernel Data section*/
 /*#if REAL_ADDRESSING || DIRECT_ADDRESSING*/
 extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
@@ -301,6 +307,9 @@ static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 	else*/ if (KERNEL(addr)) {
 		return (uint8 *)vm_wrap_address((gKernelData + (addr & 0x1fff)));
 	}
+	/*else if (too_big((uint32)addr)) {
+		printf("address too big: 0x%08x\n", addr);
+	}*/
 /*#elif defined i386
 #endif*/
 	/*else*/

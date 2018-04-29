@@ -394,7 +394,7 @@ bool DarwinCDReadTOC(char *name, uint8 *toc)
 		return false;
 
 	for ( c = devname; *c; ++c ) ;	// Go to the end of the name,
-	--c, --c;						// point to the 's1' on the end,
+	c -= 2;						// point to the 's1' on the end,
 	*c = '\0';						// and truncate the string
 
 	fd = open(devname, O_RDONLY);
