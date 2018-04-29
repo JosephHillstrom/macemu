@@ -781,8 +781,8 @@ static SDL_Surface * init_sdl_video(int width, int height, int bpp, Uint32 flags
     }
     sdl_update_video_rect.x = 0;
     sdl_update_video_rect.y = 0;
-    sdl_update_video_rect.w = 0;
-    sdl_update_video_rect.h = 0;
+    sdl_update_video_rect.w = width;
+    sdl_update_video_rect.h = height;
 
 	SDL_assert(guest_surface == NULL);
 	SDL_assert(host_surface == NULL);
