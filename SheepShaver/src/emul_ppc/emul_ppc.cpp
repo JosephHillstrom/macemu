@@ -98,6 +98,7 @@ crxor
 creqv
  */
 /*FOR SOME NEW CODE:*/
+/*but and that's in the wrong place*/
 
 #include <stdio.h>
 #include <signal.h>
@@ -119,7 +120,9 @@ creqv
 #define FLIGHT_RECORDER 1*/
 
 
-/*function-like macros for new code*/
+/*function-like macros for new code*
+ *also functions too               *
+ *& data types, & function pointers*/
 #define MAKE_RD ((op & 0x03E00000) >> 21)
 #define MAKE_RA ((op & 0x001F0000) >> 16)
 #define MAKE_RB ((op & 0x0000FC00) >> 10)
@@ -151,6 +154,7 @@ typedef void (*emul_func)(uint32);
 emul_func prim[64];
 
 // PowerPC user mode registers
+/*we need a few more, though*/
 uint32 r[32];
 double fr[32];
 uint32 lr, ctr;
@@ -773,6 +777,7 @@ cntlzw_done:if (op & 1)
 			int rB = MAKE_RB;
 			if (rB != 0) {
 				/*AAAAAAAAAAAAAAA! Those bits are reserved, and should be zero!  Maybe error here?*/
+				/*actually I think it's maybe valid on G1*/
 				rB = 0;
 			}
 			uint32 a = r[rA];
@@ -975,9 +980,9 @@ cntlzw_done:if (op & 1)
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
 			int rD = MAKE_RD;
-			uint32 tmp = ReadMacInt32((rA?r[rA]:0)+r[rB]);
-            r[rD] = ppc_bswap_word(tmp);}
+			r[rD] = read_bswap_int_32((rA?r[rA]:0)+r[rB]);
 			break;
+	 }
 		case 567: /*lfsux is lfsx, but it adds rA + rB if rA!=0*/
         case 535: {/*lfsx based on code in PearPC ppc_mmu.cc GPL2 (C) 2003, 2004 Sebastian Biallas, portions (C) 2004 Daniel Foesch, portions (C) 2004 Apple Computer*/
 			int rA = MAKE_RA;
@@ -1086,7 +1091,7 @@ cntlzw_done:if (op & 1)
 			break;
 		}
 		case 662: /*stwbrx*/
-			WriteMacInt32(r[rb] + (ra ? r[ra] : 0), ppc_bswap_word(r[rd]));
+			write_bswap_int_32(r[rb] + (ra ? r[ra] : 0), r[rd]);
 			break;
 		case 663: /*stfsx*/
 		case 695: /*stfsux is to stfsx as the other ux's are to the other x's*/
@@ -1452,7 +1457,7 @@ bc_nobranch:
 					record(r[ra]);
 				break;
 			}
-			case 22: {/* g1 instruction rlmi */
+			/*case 22: { / * g1 instruction rlmi * /
 				uint32 rB = MAKE_RB;
 				int32 rA = MAKE_RA;
 				uint32 rS = MAKE_RD;
@@ -1483,12 +1488,47 @@ bc_nobranch:
 				uint32 ra = (op >> 16) & 0x1f;
 				r[ra] = r[rs] | (op & 0xffff);
 				break;
-			}
+			}*/
 			default:
                 prim[primop](op);
 				break;
 		}
 	}
+}
+
+void rlmi(uint32 op)
+{
+	uint32 rB = MAKE_RB;
+	int32 rA = MAKE_RA;
+	uint32 rS = MAKE_RD;
+	uint32 mask_begin = ((op & 0x000007C0) >> 6);
+	uint32 mask_end =   ((op & 0x0000003E) >> 1);
+	uint32 tmp = r[rS];
+	uint32 toRotate = (r[rB] & 0x0000001F);
+	uint32 mask = make_mask(mask_begin, mask_end);
+	rol(tmp, toRotate);
+	r[rA] = use_mask(mask, tmp, r[rA]);
+	if (OPC_UPDATE_CRO(op)) {
+		UPDATE_CRO(r[rA]);
+	}
+}
+
+void rlwnm(uint32 op)
+{
+	uint32 rs = (op >> 21) & 0x1f;
+	uint32 ra = (op >> 16) & 0x1f;
+	uint32 sh = r[(op >> 11) & 0x1f] & 0x1f;
+	r[ra] = (sh?((r[rs] << sh) | (r[rs] >> (32-sh))):(r[rs])) & mbme2mask(op);
+	if (op & 1) {
+		record(r[ra]);
+	}
+}
+
+void ori(uint32 op)
+{
+	uint32 rs = (op >> 21) & 0x1f;
+	uint32 ra = (op >> 16) & 0x1f;
+	r[ra] = r[rs] | (op & 0xffff);
 }
 
 void oris(uint32 op)
@@ -1759,6 +1799,9 @@ void init_emul_ppc(void)
     }
     prim[6] = op_68000;
     prim[19] = emul19;
+    prim[22] = rlmi;
+    prim[23] = rlwnm;
+    prim[24] = ori;
     prim[25] = oris;
     prim[26] = xori;
     prim[27] = xoris;
