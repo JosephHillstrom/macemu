@@ -98,6 +98,7 @@ crxor
 creqv
  */
 /*FOR SOME NEW CODE:*/
+/*but and that's in the wrong place*/
 
 #include <stdio.h>
 #include <signal.h>
@@ -119,7 +120,9 @@ creqv
 #define FLIGHT_RECORDER 1*/
 
 
-/*function-like macros for new code*/
+/*function-like macros for new code*
+ *also functions too               *
+ *& data types, & function pointers*/
 #define MAKE_RD ((op & 0x03E00000) >> 21)
 #define MAKE_RA ((op & 0x001F0000) >> 16)
 #define MAKE_RB ((op & 0x0000FC00) >> 10)
@@ -151,6 +154,7 @@ typedef void (*emul_func)(uint32);
 emul_func prim[64];
 
 // PowerPC user mode registers
+/*we need a few more, though*/
 uint32 r[32];
 double fr[32];
 uint32 lr, ctr;
@@ -976,9 +980,9 @@ cntlzw_done:if (op & 1)
 			int rA = MAKE_RA;
 			int rB = MAKE_RB;
 			int rD = MAKE_RD;
-			uint32 tmp = ReadMacInt32((rA?r[rA]:0)+r[rB]);
-            r[rD] = ppc_bswap_word(tmp);}
+			r[rD] = read_bswap_int_32((rA?r[rA]:0)+r[rB]);
 			break;
+	 }
 		case 567: /*lfsux is lfsx, but it adds rA + rB if rA!=0*/
         case 535: {/*lfsx based on code in PearPC ppc_mmu.cc GPL2 (C) 2003, 2004 Sebastian Biallas, portions (C) 2004 Daniel Foesch, portions (C) 2004 Apple Computer*/
 			int rA = MAKE_RA;
@@ -1087,7 +1091,7 @@ cntlzw_done:if (op & 1)
 			break;
 		}
 		case 662: /*stwbrx*/
-			WriteMacInt32(r[rb] + (ra ? r[ra] : 0), ppc_bswap_word(r[rd]));
+			write_bswap_int_32(r[rb] + (ra ? r[ra] : 0), r[rd]);
 			break;
 		case 663: /*stfsx*/
 		case 695: /*stfsux is to stfsx as the other ux's are to the other x's*/
