@@ -67,6 +67,10 @@
 #define DEBUG 0
 #include "debug.h"
 
+#ifndef DEBUG_SDL
+#define DEBUG_SDL
+#endif
+
 // Supported video modes
 using std::vector;
 static vector<VIDEO_MODE> VideoModes;
@@ -682,13 +686,17 @@ static void shutdown_sdl_video()
 	delete_sdl_video_surfaces();
 	delete_sdl_video_window();
 }
-
+#ifdef DEBUG_SDL
+#include <SDL_log.h>
+#endif
 static SDL_Surface * init_sdl_video(int width, int height, int bpp, Uint32 flags)
 {
     if (guest_surface) {
         delete_sdl_video_surfaces();
     }
-    
+#ifdef DEBUG_SDL
+    	SDL_LogSetAllPriority(SDL_LOG_PRIORITY_VERBOSE); 
+#endif
 	int window_width = width;
 	int window_height = height;
     Uint32 window_flags = 0;
