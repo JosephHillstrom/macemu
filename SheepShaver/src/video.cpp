@@ -1045,7 +1045,7 @@ int16 VideoDoDriverIO(uint32 spaceID, uint32 commandID, uint32 commandContents, 
 				err = -1;
 				break;
 			}
-			Mac2Mac_memcpy(private_data->regEntryID, commandContents + 2, 16);	// DriverInitInfo.deviceEntry
+			Host2Mac_memcpy(private_data->regEntryID, commandContents + 2, 16);	// DriverInitInfo.deviceEntry
 			private_data->interruptsEnabled = false;	// Disable interrupts
 			break;
 
