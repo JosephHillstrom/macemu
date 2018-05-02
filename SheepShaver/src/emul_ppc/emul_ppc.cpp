@@ -1254,7 +1254,7 @@ void exit_emul_ppc()
 }
 void emul_ppc(uint32 start)
 {
-	/*int ic = 0;
+	/*long long ic = 0;
 	int mic = 0;*/
 	pc = start;
     uint32 op;
@@ -1267,10 +1267,10 @@ void emul_ppc(uint32 start)
 //	old_val = val;
 //}
 		/*ic ++;
-		if (ic == 1000000) {
+		if (ic == 100000000) {
 			ic = 0;
 			mic ++;
-			printf("Congradulations: %d000000 instructions executed.\n", mic);
+			printf("Congradulations: %d00000000 instructions executed.\n", mic);
 		}*/
 		op = ReadMacInt32(pc);
 /*#if FLIGHT_RECORDER
@@ -1383,7 +1383,7 @@ void emul_ppc(uint32 start)
 				break;
 			}
 
-			case 16: {	// bc
+			/*case 16: {	// bc
 				uint32 bo = (op >> 21) & 0x1f;
 				uint32 bi = (op >> 16) & 0x1f;
 				if (op & 1)
@@ -1413,87 +1413,98 @@ void emul_ppc(uint32 start)
 					pc += (int32)(int16)(op & 0xfffc) - 4;
 bc_nobranch:
 				break;
-			}
-
-			case 18: {	// b
-				int32 target = op & 0x03fffffc;
-				if (target & 0x02000000)
-					target |= 0xfc000000;
-				if (op & 1)
-					lr = pc;
-				if (op & 2)
-					pc = target;
-				else
-					pc += target - 4;
-				break;
-			}
-			case 20: {	// rlwimi
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				uint32 sh = (op >> 11) & 0x1f;
-				uint32 mask = mbme2mask(op);
-                if(sh) {
-                    r[ra] = (((r[rs] << sh) | (r[rs] >> (32-sh))) & mask) | (r[ra] & ~mask);
-                }
-                else {
-                    r[ra] = (r[rs] & mask) | (r[ra] & ~mask);
-                }
-				if (op & 1)
-					record(r[ra]);
-				break;
-			}
-
-			case 21: {	// rlwinm
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				uint32 sh = (op >> 11) & 0x1f;
-                if(sh){
-                    r[ra] = ((r[rs] << sh) | (r[rs] >> (32-sh))) & mbme2mask(op);
-                }
-                else {
-                    r[ra] = r[rs] & mbme2mask(op);
-                }
-                if (op & 1)
-					record(r[ra]);
-				break;
-			}
-			/*case 22: { / * g1 instruction rlmi * /
-				uint32 rB = MAKE_RB;
-				int32 rA = MAKE_RA;
-				uint32 rS = MAKE_RD;
-				uint32 mask_begin = ((op & 0x000007C0) >> 6);
-				uint32 mask_end =   ((op & 0x0000003E) >> 1);
-				uint32 tmp = r[rS];
-				uint32 toRotate = (r[rB] & 0x0000001F);
-				uint32 mask = make_mask(mask_begin, mask_end);
-				rol(tmp, toRotate);
-				r[rA] = use_mask(mask, tmp, r[rA]);
-				if (OPC_UPDATE_CRO(op)) {
-					UPDATE_CRO(r[rA]);
-				}
-				break;
-			}
-			case 23: {	// rlwnm
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				uint32 sh = r[(op >> 11) & 0x1f] & 0x1f;
-				r[ra] = ((r[rs] << sh) | (r[rs] >> (32-sh))) & mbme2mask(op);
-				if (op & 1)
-					record(r[ra]);
-				break;
-			}
-
-			case 24: {	// ori
-				uint32 rs = (op >> 21) & 0x1f;
-				uint32 ra = (op >> 16) & 0x1f;
-				r[ra] = r[rs] | (op & 0xffff);
-				break;
 			}*/
 			default:
                 prim[primop](op);
 				break;
 		}
 	}
+}
+
+void bc(uint32 op)
+{
+    uint32 bo = (op >> 21) & 0x1f;
+    uint32 bi = (op >> 16) & 0x1f;
+    if (op & 1) {
+        lr = pc;
+    }
+    if (!(bo & 4)) {
+        ctr--;
+        if (bo & 2) {
+            if (ctr) {
+                return;
+            }
+        }
+        else if (!ctr) {
+                return;
+        }
+    }
+    if (!(bo & 0x10)) {
+        if (bo & 8) {
+            if (!(cr & (0x80000000 >> bi))) {
+                return;
+            }
+        }
+        else if (cr & (0x80000000 >> bi)) {
+                return;
+        }
+    }
+    if (op & 2) {
+        pc = (int32)(int16)(op & 0xfffc);
+    }
+    else {
+        pc += (int32)(int16)(op & 0xfffc) - 4;
+    }
+}
+
+void b(uint32 op)
+{
+    uint32 target = op & 0x03fffffc;
+    if (target & 0x02000000) {
+        target |= 0xfc000000;
+    }
+    if (op & 1) {
+        lr = pc;
+    }
+    if (op & 2) {
+        pc = target;
+    }
+    else {
+        pc += target - 4;
+    }
+}
+
+void rlwimi(uint32 op)
+{
+    uint32 rs = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    uint32 sh = (op >> 11) & 0x1f;
+    uint32 mask = mbme2mask(op);
+    if(sh) {
+        r[ra] = ((((r[rs] << sh) | (r[rs] >> (32-sh))) & mask) | (r[ra] & ~mask));
+    }
+    else {
+        r[ra] = (r[rs] & mask) | (r[ra] & ~mask);
+    }
+    if (op & 1) {
+        record(r[ra]);
+    }
+}
+
+void rlwinm(uint32 op)
+{
+    uint32 rs = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    uint32 sh = (op >> 11) & 0x1f;
+    if(sh){
+        r[ra] = ((r[rs] << sh) | (r[rs] >> (32-sh))) & mbme2mask(op);
+    }
+    else {
+        r[ra] = r[rs] & mbme2mask(op);
+    }
+    if (op & 1) {
+        record(r[ra]);
+    }
 }
 
 void rlmi(uint32 op)
@@ -1798,7 +1809,11 @@ void init_emul_ppc(void)
         prim[i] = badop;
     }
     prim[6] = op_68000;
+    prim[16] = bc;
+    prim[18] = b;
     prim[19] = emul19;
+    prim[20] = rlwimi;
+    prim[21] = rlwinm;
     prim[22] = rlmi;
     prim[23] = rlwnm;
     prim[24] = ori;

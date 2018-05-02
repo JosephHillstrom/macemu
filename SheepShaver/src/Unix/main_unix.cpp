@@ -242,7 +242,7 @@ static const char *crash_reason = NULL;		// Reason of the crash (SIGSEGV, SIGBUS
 static rpc_connection_t *gui_connection = NULL;	// RPC connection to the GUI
 static const char *gui_connection_path = NULL;	// GUI connection identifier
 
-uint32  SheepMem::page_size;				// Size of a native page
+/*uint32  SheepMem::page_size;	*/			// Size of a native page
 uintptr SheepMem::base = 0x60000000;		// Address of SheepShaver data
 uintptr SheepMem::proc;						// Bottom address of SheepShave procedures
 uintptr SheepMem::data;						// Top of SheepShaver data (stack like storage)
@@ -2199,7 +2199,7 @@ rti:;
 bool SheepMem::Init(void)
 {
 	// Size of a native page
-	page_size = getpagesize();
+	/*page_size = getpagesize();*/
 
 	// Allocate SheepShaver globals
 	uint8 *adr = vm_mac_acquire(size);

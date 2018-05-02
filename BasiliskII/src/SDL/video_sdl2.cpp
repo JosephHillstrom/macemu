@@ -789,8 +789,8 @@ static SDL_Surface * init_sdl_video(int width, int height, int bpp, Uint32 flags
     }
     sdl_update_video_rect.x = 0;
     sdl_update_video_rect.y = 0;
-    sdl_update_video_rect.w = width;
-    sdl_update_video_rect.h = height;
+    sdl_update_video_rect.w = 0;
+    sdl_update_video_rect.h = 0;
 
 	SDL_assert(guest_surface == NULL);
 	SDL_assert(host_surface == NULL);
@@ -2581,26 +2581,32 @@ void VideoRefresh(void)
 }
 
 const int VIDEO_REFRESH_HZ = 60;
-const int VIDEO_REFRESH_DELAY = 1000000 / VIDEO_REFRESH_HZ;
+/*const int VIDEO_REFRESH_DELAY = 1000000 / VIDEO_REFRESH_HZ;*/
+
+#include <time.h>
 
 #ifndef USE_CPU_EMUL_SERVICES
 static int redraw_func(void *arg)
 {
 	uint64 start = GetTicks_usec();
-	int64 ticks = 0;
-	uint64 next = GetTicks_usec() + VIDEO_REFRESH_DELAY;
-
+	/*int64 ticks = 0;
+	uint64 next = GetTicks_usec() + VIDEO_REFRESH_DELAY;*/
+	struct timespec waiter;
+	waiter.tv_sec = 0;
+	waiter.tv_nsec = 16666666;
+	/*if we have a frameskip:
+	 waiter.tv_nsec /= frameskip;*/
 	while (!redraw_thread_cancel) {
-
+	
 		// Wait
-		next += VIDEO_REFRESH_DELAY;
+		/*next += VIDEO_REFRESH_DELAY;
 		uint64 delay = int32(next - GetTicks_usec());
 		if (delay > 0)
 			Delay_usec(delay);
 		else if (delay < -VIDEO_REFRESH_DELAY)
 			next = GetTicks_usec();
-		ticks++;
-
+		ticks++;*/
+		nanosleep(&waiter, NULL);
 		// Pause if requested (during video mode switches)
 		if (thread_stop_req) {
 			thread_stop_ack = true;

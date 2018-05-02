@@ -115,7 +115,7 @@ extern uint32 NativeRoutineDescriptor(int selector);
 class SheepMem {
 	static uint32 align(uint32 size);
 protected:
-	static uint32  page_size;
+	/*static uint32  page_size;*/
 	static uintptr zero_page;
 	static uintptr base;
 	static uintptr data;

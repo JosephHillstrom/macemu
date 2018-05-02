@@ -30,7 +30,9 @@
 /* #undef ENABLE_TUNTAP */
 
 /* Define if using video enabled on SEGV signals. */
-/* #undef ENABLE_VOSF */
+#ifdef ENABLE_VOSF
+#undef ENABLE_VOSF
+#endif
 
 /* Define if using XFree86 DGA extension. */
 /* #undef ENABLE_XF86_DGA */
