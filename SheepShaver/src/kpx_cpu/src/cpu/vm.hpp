@@ -278,11 +278,15 @@ const uintptr VMBaseDiff = 0x100000000;
 #endif*/
 extern uintptr VMBaseDiff;
 extern uint32 address_size;
+extern uint8 * sheep_mem;
 void vm_ini(uint8 * mem);
 void setSize(uint32 size);
+void init_sheep_mem(uint8 * mem);
 #ifndef vm_wrap_address
 #define vm_wrap_address(ADDR) (ADDR)
 #endif
+#define sheep_base 0x60000000
+#define page_size 4096
 #define NULL_PAGE 0x59000000
 #define NULL_PAGE_SIZE 0x3000
 #define KERNEL_DATA_BASE  0x68ffe000	// Address of Kernel Data
@@ -291,8 +295,10 @@ void setSize(uint32 size);
 #define KERNEL_DATA(a) ((a & 0xFFFFE000) == KERNEL_DATA_BASE)
 #define KERNEL_DATA2(a) ((a & 0xFFFFE000) == KERNEL_DATA2_BASE)
 #define KERNEL(a) (KERNEL_DATA(a) || KERNEL_DATA2(a))
-#define too_big(addr) ((addr >= address_size)&&(!(KERNEL(addr))))
-#define ZERO(addr) (((addr & 0xFFFFC000) == NULL_PAGE)||(too_big(addr)))
+#define in_sheep_mem(addr) ((addr >= sheep_base) && (addr <= (sheep_base + page_size)))
+#define HIMEM(a) ((in_sheep_mem(a))||(KERNEL(a)))
+#define too_big(addr) ((addr >= address_size)&&(!(HIMEM(addr))))
+#define ZERO too_big
 /*too_big(addr) is so we don't crash on too big addresses*/
 #define NO_WRITE ZERO
 /*NO_WRITE is from when I incorrectly disabled writing to the Kernel Data section*/
@@ -306,6 +312,9 @@ static inline uint8 * vm_do_get_real_address(vm_addr_t addr)
 	/*if (a < 0x3000) return &gZeroPage[a];
 	else*/ if (KERNEL(addr)) {
 		return (uint8 *)vm_wrap_address((gKernelData + (addr & 0x1fff)));
+	}
+	else if (in_sheep_mem(addr)) {
+		return (uint8 *)vm_wrap_address((sheep_mem + (addr - sheep_base)));
 	}
 	/*else if (too_big((uint32)addr)) {
 		printf("address too big: 0x%08x\n", addr);
