@@ -1945,6 +1945,7 @@ static void sigsegv_handler(int sig, siginfo_t *sip, void *scp)
 		if (transfer_type == TYPE_STORE &&
 			((addr >= ROMBase && addr < ROMBase + ROM_SIZE) ||
 			 (addr >= SheepMem::ZeroPage() && addr < SheepMem::ZeroPage() + SheepMem::PageSize()))) {
+			/*blech: we already do this*/
 //			D(bug("WARNING: %s write access to ROM at %08lx, pc %08lx\n", transfer_size == SIZE_BYTE ? "Byte" : transfer_size == SIZE_HALFWORD ? "Halfword" : "Word", addr, r->pc()));
 			if (addr_mode == MODE_U || addr_mode == MODE_UX)
 				r->gpr(ra) = addr;
@@ -2202,6 +2203,7 @@ bool SheepMem::Init(void)
 
 	// Allocate SheepShaver globals
 	uint8 *adr = vm_mac_acquire(size);
+	init_sheep_mem(adr);
 	if (adr == VM_MAP_FAILED)
 		return false;
 	proc = base = Host2MacAddr(adr);
