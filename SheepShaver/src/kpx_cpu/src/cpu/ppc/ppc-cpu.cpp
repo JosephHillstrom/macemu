@@ -231,7 +231,7 @@ void powerpc_cpu::dump_log(const char *filename)
 }
 #endif
 
-#if ENABLE_MON
+/*#if ENABLE_MON
 static uint32 mon_read_byte_ppc(uintptr addr)
 {
 	return *((uint8 *)addr);
@@ -242,7 +242,7 @@ static void mon_write_byte_ppc(uintptr addr, uint32 b)
 	uint8 *m = (uint8 *)addr;
 	*m = b;
 }
-#endif
+#endif*/
 
 void powerpc_cpu::initialize()
 {

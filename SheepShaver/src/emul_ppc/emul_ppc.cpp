@@ -1279,7 +1279,7 @@ void emul_ppc(uint32 start)
 		/*printf("%08lx at %08lx ctr=%d\n", op, pc, ctr);*/
 		primop = op >> 26;
 		pc += 4;
-		switch (primop) {
+		/*switch (primop) {
 			case 7: {	// mulli
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
@@ -1298,7 +1298,7 @@ void emul_ppc(uint32 start)
 					xer |= 0x20000000;
 				break;
 			}
-			case 9: {/* G1 instruction dozi*/
+			case 9: {// G1 instruction dozi
 				int rD = MAKE_RD;
 				int rA = MAKE_RA;
 				uint32 immediate = MAKE_IMMEDIATE;
@@ -1369,7 +1369,7 @@ void emul_ppc(uint32 start)
 				break;
 			}
 
-			/*case 14: {	// addi
+			case 14: {	// addi
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
 				r[rd] = (ra ? r[ra] : 0) + (int32)(int16)(op & 0xffff);
@@ -1413,12 +1413,112 @@ void emul_ppc(uint32 start)
 					pc += (int32)(int16)(op & 0xfffc) - 4;
 bc_nobranch:
 				break;
-			}*/
-			default:
+			}
+			default:*/
                 prim[primop](op);
-				break;
-		}
+				/*break;
+		}*/
 	}
+}
+void mulli(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    r[rd] = (int32)r[ra] * (int32)(int16)(op & 0xffff);
+}
+void subfic(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    uint64 tmp = (uint32)(int32)(int16)(op & 0xffff) - (uint64)r[ra];
+    r[rd] = tmp;
+    if (tmp & 0x100000000LL) {
+        xer &= ~0x20000000;
+    }
+    else {
+        xer |= 0x20000000;
+    }
+}
+void /*G1 instruction*/ dozi(uint32 op)
+{
+    int rD = MAKE_RD;
+    int rA = MAKE_RA;
+    int32 tmp = (int32)r[rA];
+    int32 immediate = MAKE_IMMEDIATE;
+    if (tmp >= immediate) {
+        r[rD] = 0;
+    }
+    else {
+        r[rD] = (uint32)(((-(tmp)) + immediate));
+    }
+}
+void cmpli(uint32 op)
+{
+    uint32 crfd = 0x1c - ((op >> 21) & 0x1c);
+    uint32 ra = (op >> 16) & 0x1f;
+    uint32 val = (op & 0xffff);
+    uint8 crf = 0;
+    if (r[ra] == val) {
+        crf |= 2;
+    }
+    else if (r[ra] < val) {
+        crf |= 8;
+    }
+    else {
+        crf |= 4;
+    }
+    if (xer & 0x80000000) {
+        crf |= 1;
+    }
+    cr = (cr & ~(0xf << crfd)) | (crf << crfd);
+}
+void cmpi(uint32 op)
+{
+    uint32 crfd = 0x1c - ((op >> 21) & 0x1c);
+    uint32 ra = (op >> 16) & 0x1f;
+    int32 val = (int32)(int16)(op & 0xffff);
+    uint8 crf = 0;
+    if ((int32)r[ra] == val) {
+        crf |= 2;
+    }
+    else if ((int32)r[ra] < val) {
+        crf |= 8;
+    }
+    else {
+        crf |= 4;
+    }
+    if (xer & 0x80000000) {
+        crf |= 1;
+    }
+    cr = (cr & ~(0xf << crfd)) | (crf << crfd);
+}
+void addic(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    uint64 tmp = (uint64)r[ra] + (uint32)(int32)(int16)(op & 0xffff);
+    r[rd] = tmp;
+    if (tmp & 0x100000000LL) {
+        xer |= 0x20000000;
+    }
+    else {
+        xer &= ~0x20000000;
+    }
+}
+/*addic.*/
+void addicdot(uint32 op)
+{
+    uint32 rd = (op >> 21) & 0x1f;
+    uint32 ra = (op >> 16) & 0x1f;
+    uint64 tmp = (uint64)r[ra] + (uint32)(int32)(int16)(op & 0xffff);
+    r[rd] = tmp;
+    if (tmp & 0x100000000LL) {
+        xer |= 0x20000000;
+    }
+    else {
+        xer &= ~0x20000000;
+    }
+    record(r[rd]);
 }
 void addis(uint32 op)
 {
@@ -1824,6 +1924,13 @@ void init_emul_ppc(void)
         prim[i] = badop;
     }
     prim[6] = op_68000;
+    prim[7] = mulli;
+    prim[8] = subfic;
+    prim[9] = dozi;
+    prim[10] = cmpli;
+    prim[11] = cmpi;
+    prim[12] = addic;
+    prim[13] = addicdot;
     prim[14] = addi;
     prim[15] = addis;
     prim[16] = bc;

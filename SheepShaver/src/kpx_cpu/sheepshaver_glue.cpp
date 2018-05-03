@@ -580,7 +580,8 @@ void sheepshaver_cpu::execute_68k(uint32 entry, M68kRegisters *r)
 
 	// Execute 68k opcode
 	uint32 opcode = ReadMacInt16(gpr(24));
-	gpr(27) = (int32)(int16)ReadMacInt16(gpr(24) += 2);
+	gpr(27) = (int32)(int16)ReadMacInt16(gpr(24) + 2);
+	gpr(24) += 2;
 	gpr(29) += opcode * 8;
 	execute(gpr(29));
 
@@ -802,8 +803,8 @@ sigsegv_return_t sigsegv_handler(sigsegv_info_t *sip)
 			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
 
 		// Ignore writes to the zero page
-		else if ((uint32)(addr - SheepMem::ZeroPage()) < (uint32)SheepMem::PageSize())
-			return SIGSEGV_RETURN_SKIP_INSTRUCTION;
+		/*else if ((uint32)(addr - SheepMem::ZeroPage()) < (uint32)SheepMem::PageSize())
+			return SIGSEGV_RETURN_SKIP_INSTRUCTION;*/
 
 		// Ignore all other faults, if requested
 		if (PrefsFindBool("ignoresegv"))

@@ -12,7 +12,10 @@
 #define EMULATED_PPC 1
 
 /* Define to enable dyngen engine */
-#define ENABLE_DYNGEN 1
+/*#define ENABLE_DYNGEN*/
+#ifdef ENABLE_DYNGEN
+#undef ENABLE_DYNGEN
+#endif
 
 /* Define is using ESD. */
 /* #undef ENABLE_ESD */

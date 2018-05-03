@@ -83,7 +83,15 @@
 		08E877521E0640E800A90A2C /* clip_macosx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CE2C14A99EF0000B1711 /* clip_macosx.cpp */; };
 		75CBCF7E1F5DB94C00830063 /* video_sdl2.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 75CBCF7D1F5DB94C00830063 /* video_sdl2.cpp */; };
 		A7B1921418C35D4700791D8D /* DiskType.m in Sources */ = {isa = PBXBuildFile; fileRef = A7B1921318C35D4700791D8D /* DiskType.m */; };
-		D042EC4B2083ED4E0026CE59 /* emul_ppc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D042EC4A2083ED4E0026CE59 /* emul_ppc.cpp */; };
+		D0201057209BA204005E02D2 /* ppc-dis.c in Sources */ = {isa = PBXBuildFile; fileRef = 08163338158C121000C449F9 /* ppc-dis.c */; };
+		D032385B209B9C7D00A8BF9C /* ieeefp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDF714A99EEF000B1711 /* ieeefp.cpp */; };
+		D032385C209B9C8B00A8BF9C /* mathlib.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDFD14A99EEF000B1711 /* mathlib.cpp */; };
+		D032385D209B9CA700A8BF9C /* utils-cpuinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CE0214A99EEF000B1711 /* utils-cpuinfo.cpp */; };
+		D032385F209B9CD500A8BF9C /* ppc-decode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDE414A99EEF000B1711 /* ppc-decode.cpp */; };
+		D0323860209B9CE800A8BF9C /* ppc-execute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDE814A99EEF000B1711 /* ppc-execute.cpp */; };
+		D0323861209B9D0A00A8BF9C /* ppc-cpu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDE214A99EEF000B1711 /* ppc-cpu.cpp */; };
+		D0323862209B9D1900A8BF9C /* sheepshaver_glue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0856CDBB14A99EEF000B1711 /* sheepshaver_glue.cpp */; };
+		D0323865209B9E5600A8BF9C /* SDL2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D04E74E0208E711500561B08 /* SDL2.framework */; };
 		D05E7905208E9F9E003668C6 /* clip_macosx64.mm in Sources */ = {isa = PBXBuildFile; fileRef = 08D93A15159FE174003B04EC /* clip_macosx64.mm */; };
 		D05E7908208EA211003668C6 /* pict.c in Sources */ = {isa = PBXBuildFile; fileRef = 0879BD5D15A88F7600DC277D /* pict.c */; };
 		D08B3EBB20963C5F005873CA /* SDL2.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D04E74E0208E711500561B08 /* SDL2.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -126,6 +134,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = BECDF5FE0761BA81005FE872;
 			remoteInfo = Framework;
+		};
+		D0323863209B9D3A00A8BF9C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0856CCAE14A99DE0000B1711 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 0846E49914B124DE00574779;
+			remoteInfo = kpx_cpu;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -400,6 +415,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0323865209B9E5600A8BF9C /* SDL2.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -975,6 +991,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				D0323864209B9D3A00A8BF9C /* PBXTargetDependency */,
 				7539EDF81F50C40100454E81 /* PBXTargetDependency */,
 			);
 			name = SheepShaver;
@@ -1104,6 +1121,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0201057209BA204005E02D2 /* ppc-dis.c in Sources */,
+				D0323862209B9D1900A8BF9C /* sheepshaver_glue.cpp in Sources */,
+				D0323861209B9D0A00A8BF9C /* ppc-cpu.cpp in Sources */,
+				D0323860209B9CE800A8BF9C /* ppc-execute.cpp in Sources */,
+				D032385F209B9CD500A8BF9C /* ppc-decode.cpp in Sources */,
+				D032385D209B9CA700A8BF9C /* utils-cpuinfo.cpp in Sources */,
+				D032385C209B9C8B00A8BF9C /* mathlib.cpp in Sources */,
+				D032385B209B9C7D00A8BF9C /* ieeefp.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1114,7 +1139,6 @@
 				D0A8D742208FB430003C58B5 /* vm.cc in Sources */,
 				D05E7908208EA211003668C6 /* pict.c in Sources */,
 				D05E7905208E9F9E003668C6 /* clip_macosx64.mm in Sources */,
-				D042EC4B2083ED4E0026CE59 /* emul_ppc.cpp in Sources */,
 				08E877521E0640E800A90A2C /* clip_macosx.cpp in Sources */,
 				0856CFC114A99EF0000B1711 /* adb.cpp in Sources */,
 				0856CFC214A99EF0000B1711 /* audio.cpp in Sources */,
@@ -1197,6 +1221,11 @@
 			name = Framework;
 			targetProxy = 7539EDF71F50C40100454E81 /* PBXContainerItemProxy */;
 		};
+		D0323864209B9D3A00A8BF9C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 0846E49914B124DE00574779 /* kpx_cpu */;
+			targetProxy = D0323863209B9D3A00A8BF9C /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1258,8 +1287,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = (
+					i386,
+					x86_64,
+				);
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -1281,9 +1317,12 @@
 					../kpx_cpu/include,
 					../include,
 					../Unix/dyngen_precompiled,
+					../MacOSX/SDL2.framework/Headers,
+					../CrossPlatform,
 				);
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = kpx_cpu;
 			};
 			name = Debug;
@@ -1292,12 +1331,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
-				COPY_PHASE_STRIP = YES;
+				ARCHS = (
+					i386,
+					x86_64,
+				);
+				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_DYNAMIC_NO_PIC = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)",
+				);
+				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_OPTIMIZATION_LEVEL = 3;
+				GCC_OPTIMIZATION_LEVEL = fast;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DATADIR=",
 					HAVE_CONFIG_H,
@@ -1316,9 +1362,12 @@
 					../kpx_cpu/include,
 					../include,
 					../Unix/dyngen_precompiled,
+					../MacOSX/SDL2.framework/Headers,
+					../CrossPlatform,
 				);
 				INSTALL_PATH = /usr/local/lib;
 				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_NAME = kpx_cpu;
 			};
 			name = Release;
@@ -1483,7 +1532,10 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D__MACH__";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-liconv";
+				OTHER_LDFLAGS = (
+					"-liconv",
+					"-lkpx_cpu",
+				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = SheepShaver;
@@ -1551,7 +1603,10 @@
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_CFLAGS = "-D__MACH__";
 				OTHER_CPLUSPLUSFLAGS = "$(OTHER_CFLAGS)";
-				OTHER_LDFLAGS = "-liconv";
+				OTHER_LDFLAGS = (
+					"-liconv",
+					"-lkpx_cpu",
+				);
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = SheepShaver;
