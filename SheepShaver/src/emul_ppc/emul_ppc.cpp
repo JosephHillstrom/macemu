@@ -1369,7 +1369,7 @@ void emul_ppc(uint32 start)
 				break;
 			}
 
-			case 14: {	// addi
+			/*case 14: {	// addi
 				uint32 rd = (op >> 21) & 0x1f;
 				uint32 ra = (op >> 16) & 0x1f;
 				r[rd] = (ra ? r[ra] : 0) + (int32)(int16)(op & 0xffff);
@@ -1383,7 +1383,7 @@ void emul_ppc(uint32 start)
 				break;
 			}
 
-			/*case 16: {	// bc
+			case 16: {	// bc
 				uint32 bo = (op >> 21) & 0x1f;
 				uint32 bi = (op >> 16) & 0x1f;
 				if (op & 1)
@@ -1420,7 +1420,22 @@ bc_nobranch:
 		}
 	}
 }
+void addis(uint32 op)
+{
+	uint32 rd = (op >> 21) & 0x1f;
 
+	uint32 ra = (op >> 16) & 0x1f;
+
+	r[rd] = (ra ? r[ra] : 0) + (op << 16);
+}
+void addi(uint32 op)
+{
+	uint32 rd = (op >> 21) & 0x1f;
+
+	uint32 ra = (op >> 16) & 0x1f;
+
+	r[rd] = (ra ? r[ra] : 0) + (int32)(int16)(op & 0xffff);
+}
 void bc(uint32 op)
 {
     uint32 bo = (op >> 21) & 0x1f;
@@ -1809,6 +1824,8 @@ void init_emul_ppc(void)
         prim[i] = badop;
     }
     prim[6] = op_68000;
+    prim[14] = addi;
+    prim[15] = addis;
     prim[16] = bc;
     prim[18] = b;
     prim[19] = emul19;
