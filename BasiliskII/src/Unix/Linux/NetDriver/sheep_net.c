@@ -240,7 +240,7 @@ void cleanup_module(void)
 {
 	/* Unregister driver */
 	misc_deregister(&sheep_net_device);
-	printk("sheep net: driver removed\n");
+	D(bug("Sheep net driver removed\n"));
 }
 
 
@@ -268,9 +268,12 @@ static int sheep_net_open(struct inode *inode, struct file *f)
 	memset(v, 0, sizeof(struct SheepVars));
 	skb_queue_head_init(&v->queue);
 	init_waitqueue_head(&v->wait);
-	v->fake_addr[0] = 'v'; /* "SheepShaver" */
-	v->fake_addr[1] = 'r'; /*          ^ ^  */
-	get_random_bytes(&v->fake_addr[2], 4);
+	v->fake_addr[0] = 0xfe;
+	v->fake_addr[1] = 0xfd;
+	v->fake_addr[2] = 0xde;
+	v->fake_addr[3] = 0xad;
+	v->fake_addr[4] = 0xbe;
+	v->fake_addr[5] = 0xef;
 
 	/* Put our stuff where we will be able to find it later */
 	f->private_data = (void *)v;
@@ -601,7 +604,7 @@ static int sheep_net_ioctl(struct inode *inode, struct file *f, unsigned int cod
 
 			/* Allocate socket */
 #ifdef LINUX_26
-			v->skt = compat_sk_alloc(dev_net(v->ether), GFP_USER, 1, &sheep_proto);
+			v->skt = sk_alloc(dev_net(v->ether), GFP_USER, 1, &sheep_proto);
 #else
 			v->skt = sk_alloc(0, GFP_USER, 1);
 #endif
