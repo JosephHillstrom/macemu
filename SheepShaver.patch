@@ -5172,6 +5172,3 @@ Only in macemu/: SheepShaver/src/pict.c
 -	XPRAM[ off ] = byte;
 -	return true;
  }
-Only in macemu/: bintrailingspacechars-sed-bsd.sh
-Only in macemu/: build--basiliskii
-Only in macemu/: build--sheepshaver
