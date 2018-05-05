@@ -21,6 +21,8 @@
 #include "sysdeps.h"
 
 #include <vector>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 #include "macos_util.h"
 #include "clip.h"

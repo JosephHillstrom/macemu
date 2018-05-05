@@ -206,11 +206,11 @@ enum {
 #define _rC(R)		((R) & 0xf0)
 #define _rR(R)		((R) & 0x0f)
 #define _rN(R)		((R) & 0x07)
-#define _rXP(R)		(((R) > 0 && _rR(R) > 7) ? 1 : 0)
+#define _rXP(R)		((R) > 0 && _rR(R) > 7)
 #else
 #define _rN(R)		((R) & 0x07)
 #define _rR(R)		(int(R))
-#define _rXP(R)		((_rR(R) > 7 && _rR(R) < 16) ? 1 : 0)
+#define _rXP(R)		(_rR(R) > 7 && _rR(R) < 16)
 #endif
 
 #if !defined(_ASM_SAFETY) || ! X86_FLAT_REGISTERS

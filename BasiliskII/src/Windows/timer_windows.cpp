@@ -20,6 +20,9 @@
 
 #include "sysdeps.h"
 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
 #include "main.h"
 #include "macos_util.h"
 #include "timer.h"
