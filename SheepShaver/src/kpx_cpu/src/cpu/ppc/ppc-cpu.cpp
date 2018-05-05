@@ -123,6 +123,7 @@ uint32 powerpc_registers::reserve_data = 0;
 void powerpc_cpu::init_registers()
 {
 	assert((((uintptr)&vr(0)) % 16) == 0);
+	memset(&_regs, 0, sizeof(_regs));
 	for (int i = 0; i < 32; i++) {
 		gpr(i) = 0;
 		fpr(i) = 0;
@@ -548,6 +549,7 @@ void *powerpc_cpu::compile_chain_block(block_info *sbi)
 	// which is aligned at least on 4-byte boundaries
 	const int n = ((uintptr)sbi) & 3;
 	sbi = (block_info *)(((uintptr)sbi) & ~3L);
+	const uint32 bpc = sbi->pc;
 
 	const uint32 tpc = sbi->li[n].jmp_pc;
 	block_info *tbi = my_block_cache.find(tpc);
@@ -563,6 +565,12 @@ void *powerpc_cpu::compile_chain_block(block_info *sbi)
 void powerpc_cpu::execute(uint32 entry)
 {
 	bool invalidated_cache = false;
+#if PPC_MIPS_COUNTER
+	unsigned long retired = 0, retired_ovf = 0;
+	double start, snap;
+	static uint32 mips_prints = 0;
+	start = snap = sys_time();
+#endif
 	pc() = entry;
 #if PPC_EXECUTE_DUMP_STATE
 	const bool dump_state = true;
@@ -602,13 +610,15 @@ void powerpc_cpu::execute(uint32 entry)
 				// Compile new block
 				bi = compile_block(pc());
 			}
+			goto return_site;
 		}
 #endif
 #if PPC_DECODE_CACHE
-		block_info *bi = my_block_cache.find(pc());
-		if (bi != NULL)
-			goto pdi_execute;
 		for (;;) {
+			block_info *bi = my_block_cache.find(pc());
+			if (bi != NULL)
+				goto pdi_execute;
+		  pdi_compile:
 #if PPC_PROFILE_COMPILE_TIME
 			compile_count++;
 			clock_t start_time;
@@ -618,6 +628,7 @@ void powerpc_cpu::execute(uint32 entry)
 			bi->init(pc());
 
 			// Predecode a new block
+		  pdi_decode:
 			block_info::decode_info *di;
 			const instr_info_t *ii;
 			uint32 dpc;
@@ -673,18 +684,45 @@ void powerpc_cpu::execute(uint32 entry)
 			// Execute all cached blocks
 		  pdi_execute:
 			for (;;) {
+#if PPC_MIPS_COUNTER
+				retired += bi->size;
+#endif
 				const int r = bi->size % 4;
 				di = bi->di + r;
 				int n = (bi->size + 3) / 4;
 				switch (r) {
 				case 0: do {
-						di += 4;
-						di[-4].execute(this, di[-4].opcode);
+				        di += 4;
+				        di[-4].execute(this, di[-4].opcode);
 				case 3: di[-3].execute(this, di[-3].opcode);
 				case 2: di[-2].execute(this, di[-2].opcode);
 				case 1: di[-1].execute(this, di[-1].opcode);
 					} while (--n > 0);
 				}
+#if PPC_MIPS_COUNTER
+				if (retired > (1 << 27)) {
+					double now = sys_time(),
+					       diff = now - snap;
+					if (diff > 1.0) {
+						double mips = (double)(retired + retired_ovf) / 1e6;
+						fprintf(stderr, "%3.5lf MIPS @ %0.3lfs\n", mips / diff, now - start);
+						mips_prints++;
+						if (mips_prints == 5) {
+							mips_prints = 0;
+							my_block_cache.print_statistics();
+						}
+						retired_ovf = 0;
+						retired = 0;
+						snap = now;
+					} else {
+						// We should wait until we hit the *next* 134,217,728
+						// instructions. It's too soon to print a new MIPS
+						// count.
+						retired_ovf += retired;
+						retired = 0;
+					}
+				}
+#endif
 
 				if (!spcflags().empty()) {
 					if (!check_spcflags())
@@ -702,9 +740,9 @@ void powerpc_cpu::execute(uint32 entry)
 					break;
 			}
 		}
-#else
-		goto do_interpret;
+		goto return_site;
 #endif
+		goto do_interpret;
 	}
 #endif
   do_interpret:
@@ -719,8 +757,37 @@ void powerpc_cpu::execute(uint32 entry)
 		if (is_logging())
 			record_step(opcode);
 #endif
-		assert(ii->execute.ptr() != 0);
+		//assert(ii->execute.ptr() != 0);
 		ii->execute(this, opcode);
+
+#if PPC_MIPS_COUNTER
+		retired++;
+
+		if (retired > (1 << 27)) {
+			double now = sys_time(),
+			       diff = now - snap;
+			if (diff > 1.0) {
+				double mips = (double)(retired + retired_ovf) / 1e6;
+				fprintf(stderr, "%3.5lf MIPS @ %0.3lfs\n", mips / diff, now - start);
+#if PPC_DECODE_CACHE
+				mips_prints++;
+				if (mips_prints == 5) {
+					mips_prints = 0;
+					my_block_cache.print_statistics();
+				}
+#endif
+				retired_ovf = 0;
+				retired = 0;
+				snap = now;
+			} else {
+				// We should wait until we hit the *next* 134,217,728
+				// instructions. It's too soon to print a new MIPS
+				// count.
+				retired_ovf += retired;
+				retired = 0;
+			}
+		}
+#endif
 #if PPC_EXECUTE_DUMP_STATE
 		if (dump_state)
 			dump_registers();

@@ -366,7 +366,7 @@ static int16 VideoControl(uint32 pb, VidLocals *csSave)
 		case cscSetGamma: {							// SetGamma
 			uint32 user_table = ReadMacInt32(param + csGTable);
 			D(bug("SetGamma %08x\n", user_table));
-			return set_gamma(csSave, user_table);
+			return set_gamma(csSave, ReadMacInt32(user_table));
 		}
 
 		case cscGrayPage: {							// GrayPage
