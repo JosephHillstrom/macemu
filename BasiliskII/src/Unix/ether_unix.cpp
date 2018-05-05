@@ -230,7 +230,7 @@ static bool execute_network_script(const char *action)
 
 bool ether_init(void)
 {
-	int val;
+	int val, nonblock = 1;
 	char str[256];
 
 	// Do nothing if no Ethernet device specified
@@ -355,7 +355,6 @@ bool ether_init(void)
 
 	// Set nonblocking I/O
 #ifdef USE_FIONBIO
-	int nonblock = 1;
 	if (ioctl(fd, FIONBIO, &nonblock) < 0) {
 		sprintf(str, GetString(STR_BLOCKING_NET_SOCKET_WARN), strerror(errno));
 		WarningAlert(str);
@@ -388,10 +387,25 @@ bool ether_init(void)
 		ether_addr[4] = 0x34;
 		ether_addr[5] = 0x56;
 #endif
-	} else
+		
+	} else {
+#ifdef __linux
+		struct ifreq ifr;
+		int r, sock;
+		memset(&ifr, 0, sizeof(ifr));
+		sock = socket(PF_INET, SOCK_DGRAM, 0);
+		strcpy(ifr.ifr_name, net_if_name);
+		r = ioctl(sock, SIOCGIFHWADDR, &ifr);
+		if (r == -1)
+			perror("ioctl(SIOCGIFHWADDR)");
+		else
+			memcpy(ether_addr, ifr.ifr_hwaddr.sa_data, 6);
+		close(sock);
+#else
 		ioctl(fd, SIOCGIFADDR, ether_addr);
-	D(bug("Ethernet address %02x %02x %02x %02x %02x %02x\n", ether_addr[0], ether_addr[1], ether_addr[2], ether_addr[3], ether_addr[4], ether_addr[5]));
-
+#endif
+	}
+	D(bug("Ethernet address %02x:%02x:%02x:%02x:%02x:%02x\n", ether_addr[0], ether_addr[1], ether_addr[2], ether_addr[3], ether_addr[4], ether_addr[5]));
 	// Start packet reception thread
 	if (!start_thread())
 		goto open_error;
