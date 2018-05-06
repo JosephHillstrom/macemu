@@ -68,11 +68,11 @@ static int ppc_refcount = 0;
 
 void powerpc_cpu::set_register(int id, any_register const & value)
 {
-	if (id >= _regs.regs.GPR(0) && id <= _regs.regs.GPR(31)) {
+	if (id >= 0 && id <= 31) {
 		gpr(id - powerpc_registers::GPR_BASE) = value.i;
 		return;
 	}
-	if (id >= _regs.regs.FPR(0) && id <= _regs.regs.FPR(31)) {
+	if (id >= (32+0) && id <= (32+31)) {
 		fpr(id - powerpc_registers::FPR_BASE) = value.d;
 		return;
 	}
@@ -93,11 +93,11 @@ void powerpc_cpu::set_register(int id, any_register const & value)
 any_register powerpc_cpu::get_register(int id)
 {
 	any_register value;
-	if (id >= _regs.regs.GPR(0) && id <= _regs.regs.GPR(31)) {
+	if (id >= (0) && id <= (31)) {
 		value.i = gpr(id - powerpc_registers::GPR_BASE);
 		return value;
 	}
-	if (id >= _regs.regs.FPR(0) && id <= _regs.regs.FPR(31)) {
+	if (id >= (32+0) && id <= _regs.regs.FPR(32+31)) {
 		value.d = fpr(id - powerpc_registers::FPR_BASE);
 		return value;
 	}
@@ -518,9 +518,9 @@ bool powerpc_cpu::check_spcflags()
 		if (!processing_interrupt) {
 			processing_interrupt = true;
 			powerpc_registers r;
-			_regs.regs.interrupt_copy(&r, &(_regs.regs));
+			int_copy(&r, &(_regs.regs));
 			HandleInterrupt(&r);
-			_regs.regs.interrupt_copy(&(_regs.regs), &r);
+			int_copy(&(_regs.regs), &r);
 			processing_interrupt = false;
 		}
 	}
@@ -577,11 +577,11 @@ void powerpc_cpu::execute(uint32 entry)
 	start = snap = sys_time();
 #endif*/
 	pc() = entry;
-#if PPC_EXECUTE_DUMP_STATE
+/*#if PPC_EXECUTE_DUMP_STATE
 	const bool dump_state = true;
-#endif
+#endif*/
 	execute_depth++;
-#if PPC_DECODE_CACHE || PPC_ENABLE_JIT
+/*#if PPC_DECODE_CACHE || PPC_ENABLE_JIT
 	if (execute_depth == 1 || (PPC_ENABLE_JIT && PPC_REENTRANT_JIT)) {
 #if PPC_ENABLE_JIT
 		if (use_jit) {
@@ -689,9 +689,9 @@ void powerpc_cpu::execute(uint32 entry)
 			// Execute all cached blocks
 		  pdi_execute:
 			for (;;) {
-/*#if PPC_MIPS_COUNTER
+#if PPC_MIPS_COUNTER
 				retired += bi->size;
-#endif*/
+#endif
 				const int r = bi->size % 4;
 				di = bi->di + r;
 				int n = (bi->size + 3) / 4;
@@ -704,7 +704,7 @@ void powerpc_cpu::execute(uint32 entry)
 				case 1: di[-1].execute(this, di[-1].opcode);
 					} while (--n > 0);
 				}
-/*#if PPC_MIPS_COUNTER
+#if PPC_MIPS_COUNTER
 				if (retired > (1 << 27)) {
 					double now = sys_time(),
 					       diff = now - snap;
@@ -727,7 +727,7 @@ void powerpc_cpu::execute(uint32 entry)
 						retired = 0;
 					}
 				}
-#endif*/
+#endif
 
 				if (!spcflags().empty()) {
 					if (!check_spcflags())
@@ -749,12 +749,12 @@ void powerpc_cpu::execute(uint32 entry)
 #endif
 		goto do_interpret;
 	}
-#endif
+#endif*/
   do_interpret:
 	for (;;) {
 		uint32 opcode = vm_read_memory_4(pc());
 		const instr_info_t *ii = decode(opcode);
-#if PPC_EXECUTE_DUMP_STATE
+/*#if PPC_EXECUTE_DUMP_STATE
 		if (dump_state)
 			dump_instruction(opcode);
 #endif
@@ -762,7 +762,7 @@ void powerpc_cpu::execute(uint32 entry)
 		if (is_logging())
 			record_step(opcode);
 #endif
-		//assert(ii->execute.ptr() != 0);
+		//assert(ii->execute.ptr() != 0);*/
 		ii->execute(this, opcode);
 
 /*#if PPC_MIPS_COUNTER
@@ -792,11 +792,11 @@ void powerpc_cpu::execute(uint32 entry)
 				retired = 0;
 			}
 		}
-#endif*/
+#endif
 #if PPC_EXECUTE_DUMP_STATE
 		if (dump_state)
 			dump_registers();
-#endif
+#endif*/
 		if (!spcflags().empty() && !check_spcflags())
 			goto return_site;
 	}
