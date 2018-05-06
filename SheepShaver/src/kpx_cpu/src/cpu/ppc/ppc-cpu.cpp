@@ -579,9 +579,9 @@ void powerpc_cpu::execute(uint32 entry)
 	pc() = entry;
 /*#if PPC_EXECUTE_DUMP_STATE
 	const bool dump_state = true;
-#endif*/
+#endif
 	execute_depth++;
-/*#if PPC_DECODE_CACHE || PPC_ENABLE_JIT
+#if PPC_DECODE_CACHE || PPC_ENABLE_JIT
 	if (execute_depth == 1 || (PPC_ENABLE_JIT && PPC_REENTRANT_JIT)) {
 #if PPC_ENABLE_JIT
 		if (use_jit) {
@@ -751,8 +751,9 @@ void powerpc_cpu::execute(uint32 entry)
 	}
 #endif*/
   do_interpret:
-	for (;;) {
+	while (1) {
 		uint32 opcode = vm_read_memory_4(pc());
+		printf("Opcode 0x%08x at 0x%08x ctr=0x%08x\n", opcode, pc(), _regs.regs.ctr);
 		const instr_info_t *ii = decode(opcode);
 /*#if PPC_EXECUTE_DUMP_STATE
 		if (dump_state)
@@ -802,9 +803,10 @@ void powerpc_cpu::execute(uint32 entry)
 	}
   return_site:
 	// Tell upper level we invalidated cache?
-	if (invalidated_cache)
+	if (invalidated_cache) {
 		spcflags().set(SPCFLAG_JIT_EXEC_RETURN);
-	--execute_depth;
+	}
+	/*--execute_depth;*/
 }
 
 void powerpc_cpu::execute()
