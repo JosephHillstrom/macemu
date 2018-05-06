@@ -1147,7 +1147,7 @@ static void Quit(void)
 
 	// Delete ROM area
 	if (rom_area_mapped)
-		vm_mac_release(ROMBase, ROM_AREA_SIZE);
+		/*vm_mac_release(ROMBase, ROM_AREA_SIZE);*/
 
 	// Delete DR cache areas
 	if (dr_emulator_area_mapped)
@@ -2230,7 +2230,7 @@ void SheepMem::Exit(void)
 
 #if EMULATED_PPC
 		// Delete alternate stack for PowerPC interrupt routine
-		vm_mac_release(sig_stack, SIG_STACK_SIZE);
+		/*vm_mac_release(sig_stack, SIG_STACK_SIZE);*/
 #endif
 	}
 }

@@ -349,8 +349,9 @@ int vm_acquire_fixed(void * addr, size_t size, int options)
 int vm_release(void * addr, size_t size)
 {
 	// Safety check: don't try to release memory that was not allocated
-	if (addr == VM_MAP_FAILED)
+	if (addr == VM_MAP_FAILED) {
 		return 0;
+	}
 
 #ifdef HAVE_MACH_VM
 	if (vm_deallocate(mach_task_self(), (vm_address_t)addr, size) != KERN_SUCCESS)
