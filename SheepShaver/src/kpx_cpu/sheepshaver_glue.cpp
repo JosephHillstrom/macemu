@@ -842,8 +842,8 @@ void init_emul_ppc(void)
 
 	// Initialize main CPU emulator
 	ppc_cpu = new sheepshaver_cpu();
-	ppc_cpu->set_register(powerpc_registers::GPR(3), any_register((uint32)ROMBase + 0x30d000));
-	ppc_cpu->set_register(powerpc_registers::GPR(4), any_register(KernelDataAddr + 0x1000));
+	ppc_cpu->set_register(ppc_cpu->_regs.regs.GPR(3), any_register((uint32)ROMBase + 0x30d000));
+	ppc_cpu->set_register(ppc_cpu->_regs.regs.GPR(4), any_register(KernelDataAddr + 0x1000));
 	WriteMacInt32(XLM_RUN_MODE, MODE_68K);
 
 #if ENABLE_MON

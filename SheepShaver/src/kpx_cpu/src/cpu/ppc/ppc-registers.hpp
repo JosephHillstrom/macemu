@@ -20,7 +20,7 @@
 
 #ifndef PPC_REGISTERS_H
 #define PPC_REGISTERS_H
-
+#ifdef __cplusplus
 #include "cpu/ppc/ppc-bitfields.hpp"
 
 /**
@@ -199,7 +199,18 @@ union powerpc_vr
 /**
  *		User Environment Architecture (UEA) Register Set
  **/
-
+extern "C" {
+#endif
+#define GPR_BASE 0
+#define FPR_BASE 32
+static inline int get_gpr(int r) { return GPR_BASE + r; }
+static inline int get_fpr(int r) { return FPR_BASE + r; }
+#undef GPR_BASE
+#undef FPR_BASE
+typedef int (*regtype_getter)(int);
+struct powerpc_registers;
+typedef void (*int_cp)(struct powerpc_registers*, struct powerpc_registers*);
+void int_copy(struct powerpc_registers *oregs, struct powerpc_registers *iregs);
 struct powerpc_registers
 {
 	enum {
@@ -221,10 +232,9 @@ struct powerpc_registers
 		SPR_PVR		= 287,
 		SPR_VRSAVE	= 256,
 	};
-
-	static inline int GPR(int r) { return GPR_BASE + r; }
-	static inline int FPR(int r) { return FPR_BASE + r; }
-	static void interrupt_copy(powerpc_registers &oregs, powerpc_registers const &iregs);
+	regtype_getter GPR = get_gpr;
+	regtype_getter FPR = get_fpr;
+	int_cp interrupt_copy;
 
 	uint32 gpr[32];				// General-Purpose Registers
 	powerpc_fpr fpr[32];		// Floating-Point Registers
@@ -247,5 +257,7 @@ struct powerpc_registers
 	static uint32 reserve_data;
 #endif
 };
-
+#ifdef __cplusplus
+}
+#endif
 #endif /* PPC_REGISTERS_H */

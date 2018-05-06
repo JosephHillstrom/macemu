@@ -17,7 +17,9 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#ifdef PPC_MIPS_COUNTER
+#undef PPC_MIPS_COUNTER
+#endif
 #include "sysdeps.h"
 #include <stdlib.h>
 #include <assert.h>
@@ -40,7 +42,7 @@
 #define DEBUG 0
 #include "debug.h"
 
-#if PPC_PROFILE_GENERIC_CALLS
+/*#if PPC_PROFILE_GENERIC_CALLS
 uint32 powerpc_cpu::generic_calls_count[PPC_I(MAX)];
 static int generic_calls_ids[PPC_I(MAX)];
 const int generic_calls_top_ten = 20;
@@ -60,17 +62,17 @@ int register_info_compare(const void *e1, const void *e2)
 	const powerpc_cpu::register_info *ri2 = (powerpc_cpu::register_info *)e2;
 	return ri2->count - ri1->count;
 }
-#endif
+#endif*/
 
 static int ppc_refcount = 0;
 
 void powerpc_cpu::set_register(int id, any_register const & value)
 {
-	if (id >= powerpc_registers::GPR(0) && id <= powerpc_registers::GPR(31)) {
+	if (id >= _regs.regs.GPR(0) && id <= _regs.regs.GPR(31)) {
 		gpr(id - powerpc_registers::GPR_BASE) = value.i;
 		return;
 	}
-	if (id >= powerpc_registers::FPR(0) && id <= powerpc_registers::FPR(31)) {
+	if (id >= _regs.regs.FPR(0) && id <= _regs.regs.FPR(31)) {
 		fpr(id - powerpc_registers::FPR_BASE) = value.d;
 		return;
 	}
@@ -91,11 +93,11 @@ void powerpc_cpu::set_register(int id, any_register const & value)
 any_register powerpc_cpu::get_register(int id)
 {
 	any_register value;
-	if (id >= powerpc_registers::GPR(0) && id <= powerpc_registers::GPR(31)) {
+	if (id >= _regs.regs.GPR(0) && id <= _regs.regs.GPR(31)) {
 		value.i = gpr(id - powerpc_registers::GPR_BASE);
 		return value;
 	}
-	if (id >= powerpc_registers::FPR(0) && id <= powerpc_registers::FPR(31)) {
+	if (id >= _regs.regs.FPR(0) && id <= _regs.regs.FPR(31)) {
 		value.d = fpr(id - powerpc_registers::FPR_BASE);
 		return value;
 	}
@@ -122,7 +124,7 @@ uint32 powerpc_registers::reserve_data = 0;
 
 void powerpc_cpu::init_registers()
 {
-	assert((((uintptr)&vr(0)) % 16) == 0);
+	/*assert((((uintptr)&vr(0)) % 16) == 0);*/
 	memset(&_regs, 0, sizeof(_regs));
 	for (int i = 0; i < 32; i++) {
 		gpr(i) = 0;
@@ -247,6 +249,9 @@ static void mon_write_byte_ppc(uintptr addr, uint32 b)
 
 void powerpc_cpu::initialize()
 {
+	_regs.regs.GPR = get_gpr;
+	_regs.regs.FPR = get_fpr;
+	_regs.regs.interrupt_copy = int_copy;
 #ifdef SHEEPSHAVER
 	printf("PowerPC CPU emulator by Gwenole Beauchesne\n");
 #endif
@@ -475,31 +480,31 @@ void powerpc_cpu::fake_dump_registers(uint32)
 {
 	dump_registers();
 }
-
-void powerpc_registers::interrupt_copy(powerpc_registers &oregs, powerpc_registers const &iregs)
+extern "C" {
+void int_copy(struct powerpc_registers *oregs, struct powerpc_registers *iregs)
 {
 	for (int i = 0; i < 32; i++) {
-		oregs.gpr[i] = iregs.gpr[i];
-		oregs.fpr[i] = iregs.fpr[i];
+		oregs->gpr[i] = iregs->gpr[i];
+		oregs->fpr[i] = iregs->fpr[i];
 	}
-	oregs.cr	= iregs.cr;
-	oregs.fpscr	= iregs.fpscr;
-	oregs.xer	= iregs.xer;
-	oregs.lr	= iregs.lr;
-	oregs.ctr	= iregs.ctr;
-	oregs.pc	= iregs.pc;
+	oregs->cr	= iregs->cr;
+	oregs->fpscr= iregs->fpscr;
+	oregs->xer	= iregs->xer;
+	oregs->lr	= iregs->lr;
+	oregs->ctr	= iregs->ctr;
+	oregs->pc	= iregs->pc;
 
-	uint32 vrsave = iregs.vrsave;
-	oregs.vrsave  = vrsave;
+	uint32 vrsave = iregs->vrsave;
+	oregs->vrsave  = vrsave;
 	if (vrsave) {
 		for (int i = 31; i >= 0; i--) {
 			if (vrsave & 1)
-				oregs.vr[i] = iregs.vr[i];
+				oregs->vr[i] = iregs->vr[i];
 			vrsave >>= 1;
 		}
 	}
 }
-
+}
 bool powerpc_cpu::check_spcflags()
 {
 	if (spcflags().test(SPCFLAG_CPU_EXEC_RETURN)) {
@@ -513,9 +518,9 @@ bool powerpc_cpu::check_spcflags()
 		if (!processing_interrupt) {
 			processing_interrupt = true;
 			powerpc_registers r;
-			powerpc_registers::interrupt_copy(r, regs());
+			_regs.regs.interrupt_copy(&r, &(_regs.regs));
 			HandleInterrupt(&r);
-			powerpc_registers::interrupt_copy(regs(), r);
+			_regs.regs.interrupt_copy(&(_regs.regs), &r);
 			processing_interrupt = false;
 		}
 	}
@@ -565,12 +570,12 @@ void *powerpc_cpu::compile_chain_block(block_info *sbi)
 void powerpc_cpu::execute(uint32 entry)
 {
 	bool invalidated_cache = false;
-#if PPC_MIPS_COUNTER
+/*#if PPC_MIPS_COUNTER
 	unsigned long retired = 0, retired_ovf = 0;
 	double start, snap;
 	static uint32 mips_prints = 0;
 	start = snap = sys_time();
-#endif
+#endif*/
 	pc() = entry;
 #if PPC_EXECUTE_DUMP_STATE
 	const bool dump_state = true;
@@ -684,9 +689,9 @@ void powerpc_cpu::execute(uint32 entry)
 			// Execute all cached blocks
 		  pdi_execute:
 			for (;;) {
-#if PPC_MIPS_COUNTER
+/*#if PPC_MIPS_COUNTER
 				retired += bi->size;
-#endif
+#endif*/
 				const int r = bi->size % 4;
 				di = bi->di + r;
 				int n = (bi->size + 3) / 4;
@@ -699,7 +704,7 @@ void powerpc_cpu::execute(uint32 entry)
 				case 1: di[-1].execute(this, di[-1].opcode);
 					} while (--n > 0);
 				}
-#if PPC_MIPS_COUNTER
+/*#if PPC_MIPS_COUNTER
 				if (retired > (1 << 27)) {
 					double now = sys_time(),
 					       diff = now - snap;
@@ -722,7 +727,7 @@ void powerpc_cpu::execute(uint32 entry)
 						retired = 0;
 					}
 				}
-#endif
+#endif*/
 
 				if (!spcflags().empty()) {
 					if (!check_spcflags())
@@ -760,7 +765,7 @@ void powerpc_cpu::execute(uint32 entry)
 		//assert(ii->execute.ptr() != 0);
 		ii->execute(this, opcode);
 
-#if PPC_MIPS_COUNTER
+/*#if PPC_MIPS_COUNTER
 		retired++;
 
 		if (retired > (1 << 27)) {
@@ -787,7 +792,7 @@ void powerpc_cpu::execute(uint32 entry)
 				retired = 0;
 			}
 		}
-#endif
+#endif*/
 #if PPC_EXECUTE_DUMP_STATE
 		if (dump_state)
 			dump_registers();

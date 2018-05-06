@@ -46,33 +46,36 @@ class powerpc_cpu
 	//
 	// We can't assume (offsetof(powerpc_cpu, regs) % 16) == 0 since
 	// extra data could be inserted prior regs, e.g. pointer to vtable
+
+
+	// Make sure the calculation of the current offset makes use of
+	// 'this' as this could make it simplified at compile-time
+
+
+/*#if PPC_PROFILE_REGS_USE
+	// Registers use statistics
+	// NOTE: the emulator is designed to access registers only through
+	// the gpr() accessors. The number of calls to gpr() matches exactly
+	// the number of register operands for an instruction.*/
+public:
 	struct {
 		powerpc_registers regs;
 		uint8 pad[16];
 	} _regs;
 
-	// Make sure the calculation of the current offset makes use of
-	// 'this' as this could make it simplified at compile-time
-	powerpc_registers *regs_ptr() const			{ return (powerpc_registers *)((char *)&_regs.regs + (16 - (((char *)&_regs.regs - (char *)this) % 16))); }
-	powerpc_registers const & regs() const		{ return *regs_ptr(); }
-	powerpc_registers & regs()					{ return *regs_ptr(); }
-
-#if PPC_PROFILE_REGS_USE
-	// Registers use statistics
-	// NOTE: the emulator is designed to access registers only through
-	// the gpr() accessors. The number of calls to gpr() matches exactly
-	// the number of register operands for an instruction.
-public:
 	struct register_info {
 		int id;
 		uint64 count;
 	};
+	powerpc_registers *regs_ptr() const			{ return (powerpc_registers *)((char *)&_regs.regs + (16 - (((char *)&_regs.regs - (char *)this) % 16))); }
+	powerpc_registers const & regs() const		{ return *regs_ptr(); }
+	powerpc_registers & regs()					{ return *regs_ptr(); }
 private:
 	register_info *reginfo;
-	void log_reg(int r) const { reginfo[r].count++; }
-#else
+	/*void log_reg(int r) const { reginfo[r].count++; }
+#else*/
 	void log_reg(int r) const { }
-#endif
+/*#endif*/
 
 protected:
 
