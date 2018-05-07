@@ -246,7 +246,7 @@ static void mon_write_byte_ppc(uintptr addr, uint32 b)
 	*m = b;
 }
 #endif*/
-
+#include "cpu/ppc/ppc_wrap.h"
 void powerpc_cpu::initialize()
 {
 	_regs.regs.GPR = get_gpr;
@@ -268,6 +268,7 @@ void powerpc_cpu::initialize()
 	init_decoder();
 	init_registers();
 	init_decode_cache();
+	init_c_registers(_regs.regs);
 	execute_depth = 0;
 
 	// Initialize block lookup table

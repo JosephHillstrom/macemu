@@ -117,6 +117,9 @@ DEFINE_OP4(ppc_rlwimi, uint32, (op_rotl::apply(x, y) & z) | (t & ~z));
 DEFINE_OP3(ppc_rlwinm, uint32, (op_rotl::apply(x, y) & z));
 DEFINE_OP3(ppc_rlwnm, uint32, (op_rotl::apply(x, (y & 0x1f)) & z));
 
+#define uint64 uint64_t
+#define int64 int64_t
+
 DEFINE_ALIAS_OP(add_64, add, uint64);
 DEFINE_ALIAS_OP(sub_64, sub, uint64);
 DEFINE_ALIAS_OP(smul_64,mul,  int64);
@@ -184,7 +187,7 @@ struct op_vsr {
 		return v >> sh;
 	}
 };
-
+#define uint16 uint16_t
 template< uint16 round = 0 >
 struct op_mhraddsh {
 	static inline int32 apply(int32 a, int32 b, int32 c) {
@@ -291,6 +294,9 @@ struct op_cmpbfp {
 		return (le ? 0 : (1 << 31)) | (ge ? 0 : (1 << 30));
 	}
 };
+#define int8 int8_t
+#define int16 int16_t
+#define uint8 uint8_t
 
 DEFINE_OP3(vsel, uint32, ((y & z) | (x & ~z)));
 DEFINE_OP3(vmaddfp, float, ((x * z) + y));

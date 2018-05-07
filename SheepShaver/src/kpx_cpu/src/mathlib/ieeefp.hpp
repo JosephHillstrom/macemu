@@ -64,6 +64,8 @@ extern "C" int fesetround(int);
 #define FLOAT_WORD_ORDER_BIG_ENDIAN
 #endif
 
+#define uint32 uint32_t
+
 // Representation of an IEEE 754 float
 union mathlib_ieee_float_shape_type {
 	float value;

@@ -33,6 +33,8 @@ enum {
 	SPCFLAG_JIT_EXEC_RETURN			= 1 << 4,	// Return from compiled code
 };
 
+#include "sysdeps.h"
+
 class basic_spcflags
 {
 	uint32 mask;

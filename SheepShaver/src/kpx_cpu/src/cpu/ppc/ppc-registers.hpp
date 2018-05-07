@@ -107,11 +107,11 @@ powerpc_cr_register::test(int condition) const
 
 class powerpc_xer_register
 {
+public:
 	uint8 so;
 	uint8 ov;
 	uint8 ca;
 	uint8 byte_count;
-public:
 	powerpc_xer_register();
 	void set(uint32 xer);
 	uint32 get() const;
@@ -171,8 +171,8 @@ union powerpc_fpr {
 
 class powerpc_vscr
 {
-	uint32 vscr;
 public:
+	uint32 vscr;
 	powerpc_vscr() : vscr(0)	{ }
 	void set(uint32 v)			{ vscr = v; }
 	uint32 get() const			{ return vscr; }
@@ -211,7 +211,11 @@ static inline int get_fpr(int r) { return FPR_BASE + r; }
 typedef int (*regtype_getter)(int);
 struct powerpc_registers;
 typedef void (*int_cp)(struct powerpc_registers*, struct powerpc_registers*);
+extern "C" {
+#endif
 void int_copy(struct powerpc_registers *oregs, struct powerpc_registers *iregs);
+#ifdef __cplusplus
+}
 struct powerpc_registers
 {
 	enum {

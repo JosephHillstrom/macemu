@@ -224,7 +224,7 @@ extern int mathlib_fpclassifyl(long double x);
 		 : sizeof (x) == sizeof (double)						\
 		 ? mathlib_fpclassify (x) : mathlib_fpclassifyl (x))
 #endif
-
+#define int32 int32_t
 // 7.12.3.2  The isfinite macro
 static inline int mathlib_isfinite(float x)
 {

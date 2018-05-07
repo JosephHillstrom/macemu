@@ -1,3 +1,4 @@
+#include <stdint.h>
 #include "cpu/ppc/OLDOPS.H"
 #define MAKE_RD(op) ((op & 0x03E00000) >> 21)
 #define MAKE_RA(op) ((op & 0x001F0000) >> 16)
