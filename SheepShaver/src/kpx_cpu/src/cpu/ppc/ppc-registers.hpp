@@ -29,8 +29,8 @@
 
 class powerpc_cr_register
 {
-	uint32 cr;
 public:
+	uint32 cr;
 	bool test(int condition) const;
 	void set(uint32 v);
 	uint32 get() const;
@@ -157,11 +157,12 @@ typedef basic_spcflags powerpc_spcflags;
 /**
  *		Floating point register
  **/
-
+#endif
 union powerpc_fpr {
 	uint64 j;
 	double d;
 };
+#ifdef __cplusplus
 
 
 /**
@@ -181,6 +182,7 @@ public:
 	void set_sat(bool v)		{ VSCR_SAT_field::insert(vscr, v); }
 };
 
+#endif
 
 /**
  *		Vector register
@@ -195,12 +197,11 @@ union powerpc_vr
 	float	f[4];
 };
 
+#ifdef __cplusplus
 
 /**
  *		User Environment Architecture (UEA) Register Set
  **/
-extern "C" {
-#endif
 #define GPR_BASE 0
 #define FPR_BASE 32
 static inline int get_gpr(int r) { return GPR_BASE + r; }
@@ -255,8 +256,29 @@ struct powerpc_registers
 	static uint32 reserve_valid;
 	static uint32 reserve_addr;
 	static uint32 reserve_data;
+}
 #endif
-};
+extern "C" {
+#endif
+typedef struct xer_regptr {
+	uint8 * so;
+	uint8 * ov;
+	uint8 * ca;
+	uint8 * byte_count;
+} xer_regptr;
+typedef struct regpointer {
+	uint32 * gpr;
+	powerpc_fpr * fpr;
+	powerpc_vr * vr;
+	uint32 * cr;
+	xer_regptr xer;
+	uint32 * vscr;
+	uint32 * vrsave;
+	uint32 * fpscr;
+	uint32 * lr;
+	uint32 * ctr;
+	uint32 * pc;
+} regpointer;
 #ifdef __cplusplus
 }
 #endif
