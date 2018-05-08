@@ -114,6 +114,8 @@
 #define EXECUTE_VECTOR_SUM(SZ, VD, VA, VB) \
 &powerpc_cpu::execute_vector_sum<SZ, operand_vD_##VD, operand_vA_##VA, operand_vB_##VB>
 
+#include "ppc_wrap.h"
+
 const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	{ "invalid",
 	  EXECUTE_0(illegal),
@@ -196,7 +198,7 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	  B_form, 16, 0, CFLOW_BRANCH
 	},
 	{ "bcctr",
-	  EXECUTE_BRANCH(CTR, operand_BO, ZERO, AA_BIT_0, LK_BIT_G),
+	  bcctr_cpp,
 	  PPC_I(BCCTR),
 	  XL_form, 19, 528, CFLOW_BRANCH
 	},
