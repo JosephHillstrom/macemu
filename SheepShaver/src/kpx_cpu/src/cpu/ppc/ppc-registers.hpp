@@ -260,7 +260,7 @@ struct powerpc_registers
 	static uint32 reserve_valid;
 	static uint32 reserve_addr;
 	static uint32 reserve_data;
-}
+};
 #endif
 extern "C" {
 #endif
