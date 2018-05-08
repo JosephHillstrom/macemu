@@ -80,12 +80,13 @@ public:
 
 template< class R, class T, class A >
 class nv_mem_fun1_t : public std::binary_function<T, A, R> {
+public:
 	typedef R (T::*pmf_t)(A);
 	typedef R (*pf_t)(T *, A x);
 	pf_t pf;
-public:
 	nv_mem_fun1_t(pmf_t pmf) : pf(nv_mem_fun_of<pmf_t, pf_t>(pmf)) {}
-	R operator()(T *p, A x) const { return (*pf)(p, x); }
+	nv_mem_fun1_t(void){return;}
+	virtual R operator()(T *p, A x) const { return (*pf)(p, x); }
 	pf_t ptr() const { return pf; }
 };
 

@@ -253,16 +253,15 @@ struct powerpc_registers
 	uint32 ctr;					// Count Register (SPR 9)
 	uint32 pc;					// Program Counter
 	powerpc_spcflags spcflags;	// Special CPU flags
-#if KPX_MAX_CPUS == 1
+/*#if KPX_MAX_CPUS == 1*/
 	uint32 reserve_valid;
 	uint32 reserve_addr;
-#else
+/*#else
 	static uint32 reserve_valid;
 	static uint32 reserve_addr;
-	static uint32 reserve_data;
+	static uint32 reserve_data;*/
 };
-#endif
-extern "C" {
+/*#endif*/
 #endif
 typedef struct xer_regptr {
 	uint8 * so;
@@ -284,6 +283,5 @@ typedef struct regpointer {
 	uint32 * pc;
 } regpointer;
 #ifdef __cplusplus
-}
 #endif
 #endif /* PPC_REGISTERS_H */
