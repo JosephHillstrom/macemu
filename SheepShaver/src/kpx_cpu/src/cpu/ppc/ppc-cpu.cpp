@@ -249,9 +249,6 @@ static void mon_write_byte_ppc(uintptr addr, uint32 b)
 #include "cpu/ppc/ppc_wrap.h"
 void powerpc_cpu::initialize()
 {
-	_regs.regs.GPR = get_gpr;
-	_regs.regs.FPR = get_fpr;
-	_regs.regs.interrupt_copy = int_copy;
 #ifdef SHEEPSHAVER
 	printf("PowerPC CPU emulator by Gwenole Beauchesne\n");
 #endif
@@ -268,7 +265,6 @@ void powerpc_cpu::initialize()
 	init_decoder();
 	init_registers();
 	init_decode_cache();
-	init_c_registers(_regs.regs);
 	execute_depth = 0;
 
 	// Initialize block lookup table
@@ -307,6 +303,10 @@ void powerpc_cpu::initialize()
 	compile_time = 0;
 	emul_start_time = clock();
 #endif
+	_regs.regs.GPR = get_gpr;
+	_regs.regs.FPR = get_fpr;
+	_regs.regs.interrupt_copy = int_copy;
+	init_c_registers(regs());
 }
 
 #if PPC_ENABLE_JIT

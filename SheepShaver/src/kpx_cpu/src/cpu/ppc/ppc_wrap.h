@@ -9,13 +9,14 @@ extern "C" {
 extern regpointer c_registers;
 #ifdef __cplusplus
 }
+regpointer make_regptr(struct powerpc_registers * regs);
 void bcctr_idiot(powerpc_cpu * cpu, uint32 op)
 {
     bcctr(c_registers, op);
-    *(c_registers.pc) += 4;
+    (*(c_registers.pc)) += 4;
     
 }
-void init_c_registers(struct powerpc_registers regs);
+void init_c_registers(powerpc_registers & regs);
 struct idiot : nv_mem_fun1_t< void, powerpc_cpu, uint32 > {
 public:
 

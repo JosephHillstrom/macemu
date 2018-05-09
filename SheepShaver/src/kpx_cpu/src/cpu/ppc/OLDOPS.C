@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include "cpu/ppc/OLDOPS.H"
-#define MAKE_RD(op) ((op & 0x03E00000) >> 21)
-#define MAKE_RA(op) ((op & 0x001F0000) >> 16)
+#define MAKE_RD(op) ((op >> 21) & 0x1F)
+#define MAKE_RA(op) ((op >> 16) & 0x1F)
 void bcctr(regpointer regs, uint32 op)
 {
 	uint32 rd = MAKE_RD(op);
