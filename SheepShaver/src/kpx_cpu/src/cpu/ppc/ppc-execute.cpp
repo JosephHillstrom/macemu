@@ -56,10 +56,10 @@ void powerpc_cpu::execute_illegal(uint32 opcode)
 {
 	fprintf(stderr, "Illegal instruction at %08x, opcode = %08x\n", pc(), opcode);
 
-#ifdef SHEEPSHAVER
-	if (PrefsFindBool("ignoreillegal")) {
+/*#ifdef SHEEPSHAVER
+	if (PrefsFindBool("ignoreillegal")) {*/
 		increment_pc(4);
-		return;
+		/*return;
 	}
 #endif
 
@@ -70,7 +70,7 @@ void powerpc_cpu::execute_illegal(uint32 opcode)
 	const char *arg[4] = {"mon", "-m", "-r", NULL};
 	mon(3, arg);
 #endif
-	abort();
+	abort();*/
 }
 
 void powerpc_cpu::execute_nop(uint32 opcode)

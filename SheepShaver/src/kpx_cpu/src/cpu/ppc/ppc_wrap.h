@@ -12,8 +12,8 @@ extern regpointer c_registers;
 regpointer make_regptr(struct powerpc_registers * regs);
 void bcctr_idiot(powerpc_cpu * cpu, uint32 op)
 {
-    bcctr(c_registers, op);
-    (*(c_registers.pc)) += 4;
+	(*(c_registers.pc)) += 4;
+	bcctr(c_registers, op);
     
 }
 void init_c_registers(powerpc_registers & regs);

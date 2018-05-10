@@ -53,13 +53,13 @@
 #endif
 #endif
 
-#ifdef HAVE_WIN32_VM
-/* Windows is either ILP32 or LLP64 */
+/*#ifdef HAVE_WIN32_VM
+ Windows is either ILP32 or LLP64
 typedef UINT_PTR vm_uintptr_t;
 #else
-/* Other systems are sane as they are either ILP32 or LP64 */
-typedef unsigned long vm_uintptr_t;
-#endif
+ Other systems are sane as they are either ILP32 or LP64 */
+typedef unsigned long long vm_uintptr_t;
+/*#endif*/
 
 /* We want MAP_32BIT, if available, for SheepShaver and BasiliskII
    because the emulated target is 32-bit and this helps to allocate
@@ -184,13 +184,13 @@ static int vm_error(kern_return_t ret_code)
 
 int vm_init(void)
 {
-#ifdef HAVE_MMAP_VM
+/*#ifdef HAVE_MMAP_VM
 #ifndef zero_fd
 	zero_fd = open("/dev/zero", O_RDWR);
 	if (zero_fd < 0)
 		return -1;
 #endif
-#endif
+#endif*/
 
 // On 10.4 and earlier, reset CrashReporter's task signal handler to
 // avoid having it show up for signals that get handled.

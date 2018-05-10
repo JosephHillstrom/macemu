@@ -869,23 +869,18 @@ int main(int argc, char **argv)
 #endif
 
 	// Open /dev/zero
-	zero_fd = open("/dev/zero", O_RDWR);
+	/*zero_fd = open("/dev/zero", O_RDWR);
 	if (zero_fd < 0) {
 		sprintf(str, GetString(STR_NO_DEV_ZERO_ERR), strerror(errno));
 		ErrorAlert(str);
 		goto quit;
 	}
 
-/*#if !defined(__APPLE__) || !defined(__x86_64__)
+#if !defined(__APPLE__) || !defined(__x86_64__)
 	// Create areas for Kernel Data
 	if (!kernel_data_init())
 		goto quit;
 #endif*/
-	kernel_data = (KernelData *)Mac2HostAddr(KERNEL_DATA_BASE);
-	emulator_data = &kernel_data->ed;
-	KernelDataAddr = KERNEL_DATA_BASE;
-	D(bug("Kernel Data at %p (%08x)\n", kernel_data, KERNEL_DATA_BASE));
-	D(bug("Emulator Data at %p (%08x)\n", emulator_data, KERNEL_DATA_BASE + offsetof(KernelData, ed)));
 #if 0
 	// Create area for DR Cache
 	if (vm_mac_acquire_fixed(DR_EMULATOR_BASE, DR_EMULATOR_SIZE) < 0) {
@@ -946,7 +941,6 @@ int main(int argc, char **argv)
 			goto quit;
 		}
 		vm_ini((uint8 *)RAMBaseHost);
-		RAMBase = Host2MacAddr(RAMBaseHost);
 		while (RAMBase != 0) {
 			/* wait if it isn't initialized*/
 			int i = 0;
@@ -958,7 +952,13 @@ int main(int argc, char **argv)
 				break;
 			}
 		}
-		ROMBase = (RAMBase + RAMSize + ROM_ALIGNMENT -1) & ~(ROM_ALIGNMENT-1);
+		kernel_data = (KernelData *)Mac2HostAddr(KERNEL_DATA_BASE);
+		emulator_data = &kernel_data->ed;
+		KernelDataAddr = KERNEL_DATA_BASE;
+		D(bug("Kernel Data at %p (%08x)\n", kernel_data, KERNEL_DATA_BASE));
+		D(bug("Emulator Data at %p (%08x)\n", emulator_data, KERNEL_DATA_BASE + offsetof(KernelData, ed)));
+		RAMBase = Host2MacAddr(RAMBaseHost);
+		ROMBase = (RAMBase + RAMSize + ROM_ALIGNMENT - 1) & ~(ROM_ALIGNMENT - 1);
 		ROMBaseHost = Mac2HostAddr(ROMBase);
 		ROMEnd = RAMSize + ROM_AREA_SIZE + ROM_ALIGNMENT + SIG_STACK_SIZE;
 		setSize(ROMEnd);
@@ -984,10 +984,10 @@ int main(int argc, char **argv)
 	ram_area_mapped = true;
 	D(bug("RAM area at %p (%08x)\n", RAMBaseHost, RAMBase));
 
-	if (RAMBase > KernelDataAddr) {
+	/*if (RAMBase > KernelDataAddr) {
 		ErrorAlert(GetString(STR_RAM_AREA_TOO_HIGH_ERR));
 		goto quit;
-	}
+	}*/
 	
 	// Create area for SheepShaver data
 	if (!SheepMem::Init()) {

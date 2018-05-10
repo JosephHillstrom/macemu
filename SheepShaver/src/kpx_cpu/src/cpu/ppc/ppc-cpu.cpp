@@ -754,7 +754,7 @@ void powerpc_cpu::execute(uint32 entry)
   do_interpret:
 	while (1) {
 		uint32 opcode = vm_read_memory_4(pc());
-		printf("Opcode 0x%08x at 0x%08x ctr=0x%08x\n", opcode, pc(), _regs.regs.ctr);
+		//printf("Opcode 0x%08x at 0x%08x ctr=0x%08x\n", opcode, pc(), _regs.regs.ctr);
 		const instr_info_t *ii = decode(opcode);
 /*#if PPC_EXECUTE_DUMP_STATE
 		if (dump_state)
