@@ -334,56 +334,77 @@ static inline vm_addr_t vm_do_get_virtual_address(uint8 *addr)
 		return vm_wrap_address((uintptr)addr - VMBaseDiff);
 }
 /*#define vm_do_get_virtual_address(addr) ((vm_addr_t)addr)*/
-static inline uint32 vm_read_memory_1(vm_addr_t addr)
+static inline uint32 vm_read_physical_memory_1(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
 		return 0;
 	}
 	return vm_do_read_memory_1(vm_do_get_real_address(addr));
 }
-static inline uint32 vm_read_memory_2(vm_addr_t addr)
+static inline uint32 vm_read_physical_memory_2(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
 		return 0;
 	}
 	return vm_do_read_memory_2((uint16 *)vm_do_get_real_address(addr));
 }
-static inline uint32 vm_read_memory_4(vm_addr_t addr)
+static inline uint32 vm_read_physical_memory_4(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
 		return 0;
 	}
 	return vm_do_read_memory_4((uint32 *)vm_do_get_real_address(addr));
 }
-static inline uint64 vm_read_memory_8(vm_addr_t addr)
+static inline uint64 vm_read_physical_memory_8(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
 		return 0;
 	}
 	return vm_do_read_memory_8((uint64 *)vm_do_get_real_address(addr));
 }
-#define vm_read_memory_1_reversed vm_read_memory_1
-static inline uint32 vm_read_memory_2_reversed(vm_addr_t addr)
+#define vm_read_physical_memory_1_reversed vm_read_physical_memory_1
+static inline uint32 vm_read_physical_memory_2_reversed(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
 		return 0;
 	}
 	return vm_do_read_memory_2_reversed((uint16 *)vm_do_get_real_address(addr));
 }
-static inline uint32 vm_read_memory_4_reversed(vm_addr_t addr)
+static inline uint32 vm_read_physical_memory_4_reversed(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
 		return 0;
 	}
 	return vm_do_read_memory_4_reversed((uint32 *)vm_do_get_real_address(addr));
 }
-static inline uint64 vm_read_memory_8_reversed(vm_addr_t addr)
+static inline uint64 vm_read_physical_memory_8_reversed(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
 		return 0;
 	}
 	return vm_do_read_memory_8_reversed((uint64 *)vm_do_get_real_address(addr));
 }
+
+#define vm_read_virtual_memory_1 vm_read_physical_memory_1
+#define vm_read_virtual_memory_2 vm_read_physical_memory_2
+#define vm_read_virtual_memory_4 vm_read_physical_memory_4
+#define vm_read_virtual_memory_8 vm_read_physical_memory_8
+
+#define vm_read_virtual_memory_1_reversed vm_read_physical_memory_1_reversed
+#define vm_read_virtual_memory_2_reversed vm_read_physical_memory_2_reversed
+#define vm_read_virtual_memory_4_reversed vm_read_physical_memory_4_reversed
+#define vm_read_virtual_memory_8_reversed vm_read_physical_memory_8_reversed
+
+#define vm_read_memory_1 vm_read_virtual_memory_1
+#define vm_read_memory_2 vm_read_virtual_memory_2
+#define vm_read_memory_4 vm_read_virtual_memory_4
+#define vm_read_memory_8 vm_read_virtual_memory_8
+
+#define vm_read_memory_1_reversed vm_read_virtual_memory_1_reversed
+#define vm_read_memory_2_reversed vm_read_virtual_memory_2_reversed
+#define vm_read_memory_4_reversed vm_read_virtual_memory_4_reversed
+#define vm_read_memory_8_reversed vm_read_virtual_memory_8_reversed
+
 static inline void vm_write_memory_1(vm_addr_t addr, uint32 value)
 {
 	if (NO_WRITE(addr)) {
