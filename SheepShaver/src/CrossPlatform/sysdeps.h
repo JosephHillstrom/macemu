@@ -141,6 +141,7 @@ typedef short int16;
 typedef unsigned int uint16;
 typedef int int16;
 #else
+#include <inttypes.h>
 /*#error "No 2 byte type, you lose."*/
 typedef uint16_t uint16;
 typedef int16_t int16;
@@ -152,6 +153,7 @@ typedef int int32;
 typedef unsigned long uint32;
 typedef long int32;
 #else
+#include <inttypes.h>
 /*#error "No 4 byte type, you lose."*/
 typedef uint32_t uint32;
 typedef int32_t int32;
@@ -167,6 +169,7 @@ typedef long long int64;
 #define VAL64(a) (a ## LL)
 #define UVAL64(a) (a ## uLL)
 #else
+#include <inttypes.h>
 /*#error "No 8 byte type, you lose."*/
 typedef uint64_t uint64;
 typedef int64_t int64;
@@ -295,13 +298,19 @@ static inline uint64 bswap_64(uint64 toSwap)
 	return (uint64)((uint64)((bswap_32((uint32)(toSwap >> 32)))) | (((uint64)(bswap_32((uint32)toSwap))) << 32));
 }
 #ifdef WORDS_BIGENDIAN
-static inline uint16 tswap16(uint16 x) { return x; }
+#define tswap16
+#define tswap32
+#define tswap64
+/*static inline uint16 tswap16(uint16 x) { return x; }
 static inline uint32 tswap32(uint32 x) { return x; }
-static inline uint64 tswap64(uint64 x) { return x; }
+static inline uint64 tswap64(uint64 x) { return x; }*/
 #else
-static inline uint16 tswap16(uint16 x) { return bswap_16(x); }
+#define tswap16 bswap_16
+#define tswap32 bswap_32
+#define tswap64 bswap_64
+/*static inline uint16 tswap16(uint16 x) { return bswap_16(x); }
 static inline uint32 tswap32(uint32 x) { return bswap_32(x); }
-static inline uint64 tswap64(uint64 x) { return bswap_64(x); }
+static inline uint64 tswap64(uint64 x) { return bswap_64(x); }*/
 #endif
 
 // spin locks
