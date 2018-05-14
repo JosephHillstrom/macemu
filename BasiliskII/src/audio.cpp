@@ -35,6 +35,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // Supported sample rates, sizes and channels
 vector<uint32> audio_sample_rates;
