@@ -12,6 +12,8 @@
 #
 
 ## Xcode, Build generated
+build/**
+DerivedData/**
 build/
 DerivedData/
 
@@ -24,6 +26,7 @@ DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
+xcuserdata/**
 xcuserdata/
 
 ## Xcode, Other
@@ -35,3 +38,6 @@ xcuserdata/
 # JetBrains IDE settings
 #
 *.idea
+
+# Windows metadata
+Thumbs.db
