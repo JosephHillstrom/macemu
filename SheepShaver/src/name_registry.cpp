@@ -31,6 +31,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // Function pointers
 typedef int16 (*rcec_ptr)(const RegEntryID *, const char *, RegEntryID *);
