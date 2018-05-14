@@ -68,6 +68,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // File system global data and 68k routines
 enum {
