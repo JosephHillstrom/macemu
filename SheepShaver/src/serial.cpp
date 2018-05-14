@@ -27,6 +27,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // Global variables
 SERDPort *the_serd_port[2];
