@@ -36,6 +36,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 #define TM_QUEUE 0			// Enable TMQueue management (doesn't work)
 
