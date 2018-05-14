@@ -32,6 +32,8 @@
 #include "ether.h"
 #include "macos_util.h"
 
+#include "physical_mem.h"
+
 // Generate PowerPC thunks for GetResource() replacements?
 #define POWERPC_GET_RESOURCE_THUNKS 1
 
