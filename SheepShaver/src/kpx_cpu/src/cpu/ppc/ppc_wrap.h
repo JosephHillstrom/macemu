@@ -10,7 +10,7 @@ extern regpointer c_registers;
 #ifdef __cplusplus
 }
 regpointer make_regptr(struct powerpc_registers * regs);
-void bcctr_idiot(powerpc_cpu * cpu, uint32 op)
+static void bcctr_idiot(powerpc_cpu * cpu, uint32 op)
 {
 	(*(c_registers.pc)) += 4;
 	bcctr(c_registers, op);
@@ -26,5 +26,33 @@ public:
     }
 };
 idiot bcctr_cpp;
+
+static void dozi_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	dozi(c_registers, op);
+}
+struct dozi_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	dozi_struct()
+	{
+		pf = dozi_wrapper;
+	}
+};
+dozi_struct dozi_cpp;
+
+static void maskg_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    maskg(c_registers, op);
+}
+struct maskg_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    maskg_struct()
+    {
+        pf = maskg_wrapper;
+    }
+};
+maskg_struct maskg_cpp;
 #endif
 #endif

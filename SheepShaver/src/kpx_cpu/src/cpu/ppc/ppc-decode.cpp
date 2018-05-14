@@ -1776,6 +1776,16 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	  EXECUTE_VECTOR_ARITH(xor_64, V2DI, V2DI, V2DI, NONE),
 	  PPC_I(VXOR),
 	  VX_form, 4, 1220, CFLOW_NORMAL
+	},
+	{ "dozi",
+		dozi_cpp,
+		power_dozi,
+		I_form, 9, 0, CFLOW_NORMAL
+	},
+	{"maskg",
+		maskg_cpp,
+		power_maskg,
+		XO_form, 31, 29, CFLOW_NORMAL
 	}
 };
 
