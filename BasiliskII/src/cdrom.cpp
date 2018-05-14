@@ -47,6 +47,7 @@ using std::vector;
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // CDROM disk/drive icon
 const uint8 CDROMIcon[258] = {
