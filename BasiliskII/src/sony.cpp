@@ -56,6 +56,7 @@ using std::vector;
 #define DISK_INSERT_CHECK 0
 #endif
 
+#include "physical_mem.h"
 
 // Floppy disk icon
 const uint8 SonyDiskIcon[258] = {
