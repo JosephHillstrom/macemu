@@ -32,6 +32,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // Function pointers
 typedef long (*cu_ptr)(void *, uint32);
