@@ -37,6 +37,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // Sound input driver
 static const uint8 sound_input_driver[] = {	// .AppleSoundInput driver header
