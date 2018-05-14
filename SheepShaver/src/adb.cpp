@@ -41,6 +41,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // Global variables
 static int mouse_x = 0, mouse_y = 0;							// Mouse position
