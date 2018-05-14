@@ -54,6 +54,8 @@ extern uint8 gKernelData[];
 #ifdef ENABLE_MON
 #include "mon.h"
 
+#include "physical_mem.h"
+
 static uint32 sheepshaver_read_byte(uintptr adr)
 {
 	return ReadMacInt8(adr);
