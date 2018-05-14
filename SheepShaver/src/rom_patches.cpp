@@ -45,6 +45,7 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "physical_mem.h"
 
 // 68k breakpoint address
 //#define M68K_BREAK_POINT 0x29e0		// BootMe
