@@ -473,6 +473,8 @@ static inline void vm_write_physical_memory_8_reversed(vm_addr_t addr, uint64 va
 
 #define vm_write_memory_1_reversed vm_write_virtual_memory_1_reversed
 #define vm_write_memory_2_reversed vm_write_virtual_memory_2_reversed
+#define vm_write_memory_4_reversed vm_write_virtual_memory_4_reversed
+#define vm_write_memory_8_reversed vm_write_virtual_memory_8_reversed
 
 static inline void *vm_memset(vm_addr_t addr, int c, size_t n)
 {
