@@ -7,3 +7,5 @@ void bcctr(regpointer regs, uint32 op);
 void dozi(regpointer regs, uint32 op);
 void maskg(regpointer regs, uint32 op);
 void power_opc_abs(regpointer gCPU, uint32 op);
+void power_opc_clcs(regpointer gCPU, uint32 op);
+void power_opc_doz(regpointer gCPU, uint32 op);

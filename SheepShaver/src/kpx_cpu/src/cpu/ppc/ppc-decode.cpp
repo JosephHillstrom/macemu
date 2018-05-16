@@ -1786,6 +1786,21 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 		maskg_cpp,
 		power_maskg,
 		XO_form, 31, 29, CFLOW_NORMAL
+	},
+	{ "abs",
+		abs_cpp,
+		power_abs,
+		XO_form, 31, 360, CFLOW_NORMAL
+	},
+	{ "clcs",
+		clcs_cpp,
+		power_clcs,
+		XO_form, 31, 531, CFLOW_NORMAL
+	},
+	{ "doz",
+		doz_cpp,
+		power_doz,
+		XO_form, 31, 264, CFLOW_NORMAL
 	}
 };
 

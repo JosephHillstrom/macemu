@@ -54,5 +54,47 @@ public:
     }
 };
 maskg_struct maskg_cpp;
+
+static void abs_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_abs(c_registers, op);
+}
+struct abs_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    abs_struct()
+    {
+        pf = abs_wrapper;
+    }
+};
+abs_struct abs_cpp;
+
+static void clcs_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_clcs(c_registers, op);
+}
+struct clcs_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    clcs_struct()
+    {
+        pf = clcs_wrapper;
+    }
+};
+clcs_struct clcs_cpp;
+
+static void doz_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_doz(c_registers, op);
+}
+struct doz_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    doz_struct()
+    {
+        pf = doz_wrapper;
+    }
+};
+doz_struct doz_cpp;
 #endif
 #endif

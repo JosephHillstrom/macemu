@@ -362,6 +362,9 @@ enum powerpc_instruction {
 	PPC_I(VXOR),
 	power_dozi,
 	power_maskg,
+	power_abs,
+	power_clcs,
+	power_doz,
 	PPC_I(MAX) // Total number of instruction types
 };
 

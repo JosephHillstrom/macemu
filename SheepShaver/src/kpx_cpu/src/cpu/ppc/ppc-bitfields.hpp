@@ -126,6 +126,7 @@ typedef CR_SO_field<7> standalone_CR_SO_field;
 typedef bit_field<  0,  0 > XER_SO_field;
 typedef bit_field<  1,  1 > XER_OV_field;
 typedef bit_field<  2,  2 > XER_CA_field;
+typedef bit_field<3, 24> xer_reserved;
 typedef bit_field< 25, 31 > XER_COUNT_field;
 
 // FPSCR register fields

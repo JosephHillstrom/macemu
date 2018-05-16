@@ -15,6 +15,7 @@ regpointer make_regptr(struct powerpc_registers * regs)
   ret.xer.ov = &(regs->xer.ov);
   ret.xer.ca = &(regs->xer.ca);
   ret.xer.byte_count = &(regs->xer.byte_count);
+  ret.xer.reserved = &(regs->xer.reserved);
   ret.vscr = &(regs->vscr.vscr);
   ret.vrsave = &(regs->vrsave);
   ret.fpscr = &(regs->fpscr);

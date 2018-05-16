@@ -112,6 +112,7 @@ public:
 	uint8 ov;
 	uint8 ca;
 	uint8 byte_count;
+	uint32 reserved;
 	powerpc_xer_register();
 	void set(uint32 xer);
 	uint32 get() const;
@@ -128,20 +129,21 @@ public:
 inline
 powerpc_xer_register::powerpc_xer_register()
 	: so(0), ov(0), ca(0), byte_count(0)
-{ }
+{ this->reserved = 0;}
 
 inline uint32
 powerpc_xer_register::get() const
 {
-	return (so << 31) | (ov << 30) | (ca << 29) | byte_count;
+	return (so << 31) | (ov << 30) | (ca << 29) | ((reserved << 8) & 0x1ffffff8) | (byte_count & 0x7f);
 }
-
+/*we handle using reserved because it's required for some G1 instructions*/
 inline void
 powerpc_xer_register::set(uint32 xer)
 {
 	so = XER_SO_field::extract(xer);
 	ov = XER_OV_field::extract(xer);
 	ca = XER_CA_field::extract(xer);
+	reserved = xer_reserved::extract(xer);
 	byte_count = XER_COUNT_field::extract(xer);
 }
 
@@ -268,6 +270,7 @@ typedef struct xer_regptr {
 	uint8 * ov;
 	uint8 * ca;
 	uint8 * byte_count;
+	uint32 * reserved;
 } xer_regptr;
 typedef struct regpointer {
 	uint32 * gpr;

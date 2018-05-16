@@ -1,5 +1,7 @@
 #include <stdint.h>
 #include "cpu/ppc/OLDOPS.H"
+#include "sysdeps.h"
+#include "vm.hpp"
 #define MAKE_RD(op) ((op >> 21) & 0x1F)
 #define MAKE_RA(op) ((op >> 16) & 0x1F)
 #define MAKE_RB(op) ((op & 0x0000FC00) >> 10)
@@ -7,8 +9,9 @@
 #define OPC_UPDATE_CRO(opcode) (opcode & 1)
 #define CLEAR_CRO(cr) (cr) &= 0x0FFFFFFFF
 #define OPC_UPDATE_OV(opcode) (opcode & 0x00000800)
-#define SET_OV(regs) (*regs.xer.ov) = 1; (*regs.xer.so) = 1;
-#define CLEAR_OV(regs) (*regs.xer.ov) = 0;
+#define SET_OV(regs) (*regs.xer.ov) = 1; (*regs.xer.so) = 1
+#define CLEAR_OV(regs) (*regs.xer.ov) = 0
+
 static void record(regpointer regs, uint32 val)
 {
     uint32 crf = 0;
@@ -150,3 +153,117 @@ void power_opc_abs(regpointer gCPU, uint32 op)
         gCPU.gpr[rD] = (-signedval);
     }
 }
+
+void power_opc_clcs(regpointer gCPU, uint32 op)
+{
+    uint32 rD = MAKE_RD(op);
+    gCPU.gpr[rD] = 32;
+    /* we just give the cache line size for powerpc  *
+     * instead of saying, that the cache is disabled */
+}
+
+void power_opc_doz(regpointer gCPU, uint32 op)
+{
+    uint32 rD = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 rB = MAKE_RB(op);
+    if ((int32)gCPU.gpr[rA] >= (int32)gCPU.gpr[rB]) {
+        if (OPC_UPDATE_CRO(op)) {
+            CLEAR_CRO(*gCPU.cr);
+            (*gCPU.cr) |= (2 << 28);
+        }
+        if (OPC_UPDATE_OV(op)) {
+            if(gCPU.gpr[rA] == gCPU.gpr[rB]) {
+                /* unsigned overflow *
+                 * ((~x) + x + 1)    *
+                 * ALWAYS overflows  *
+                 * for ANY value of  *
+                 * X. doz uses ~rA   *
+                 * + rB + 1, rather  *
+                 * than (signed)rA - *
+                 * (signed) rB       */
+                SET_OV(gCPU);
+            }
+            else {
+                CLEAR_OV(gCPU);
+            }
+        }
+        gCPU.gpr[rD] = 0;
+    }
+    else {
+        if (OPC_UPDATE_CRO(op)) {
+            CLEAR_CRO(*gCPU.cr);
+            (*gCPU.cr) |= (4 << 28);
+        }
+        if (OPC_UPDATE_OV(op)) {
+            CLEAR_OV(gCPU);
+        }
+        gCPU.gpr[rD] = ((~gCPU.gpr[rA]) + gCPU.gpr[rB] + 1);
+    }
+}
+
+void power_opc_lscbx(regpointer gCPU, uint32 op)
+{
+    bool match = false;
+    bool discard = false;
+    uint32 rD = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 rB = MAKE_RB(op);
+    uint32 addr;
+    uint32 cro = 0;
+    if (rA == 0) {
+        addr = rB;
+    }
+    else {
+        addr = rA + rB;
+    }
+    uint32 number = (*gCPU.xer.byte_count);
+    if (number == 0) {
+        if (OPC_UPDATE_CRO(op)) {
+            (*gCPU.cr) |= (0xF << 28);
+            /* or CR0 = Undefined */
+        }
+        return;
+    }
+    uint8 temp;
+    int i = 0;
+    int j = 4;
+    while (i <= number) {
+        if (!j) {
+            j = 4;
+            discard = false;
+            rD ++;
+            if (rD >= 32) {
+                rD = 0;
+            }
+            if ((rD == rA && (rA != 0))) {
+                discard = true;
+            }
+            if (rD == rB) {
+                    discard = true;
+            }
+        }
+        gCPU.gpr[rD] &= (~(0xFF << (j * 8)));
+        temp = vm_read_memory_1(addr);
+        gCPU.gpr[rD] |= (temp << (j * 8));
+        if (temp == (((*gCPU.xer.reserved) >> 2) & 0xff)) {
+            gCPU.xer &= 0xFFFFFF80;
+            gCPU.xer |= i;
+                    match = true;
+                    break;
+                }
+                addr ++;
+                i ++;
+                j --;
+                }
+                if (OPC_UPDATE_CRO(gCPU.current_opc)) {
+                    if (gCPU.xer & 0x80000000) {
+                        cro |= 1;
+                    }
+                    if (match) {
+                        cro |= 2;
+                    }
+                    gCPU.cr = (cro << 28);
+                }
+                }
+
