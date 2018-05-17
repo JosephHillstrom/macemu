@@ -219,10 +219,10 @@ void power_opc_lscbx(regpointer gCPU, uint32 op)
     }
     uint32 number = (*gCPU.xer.byte_count);
     if (number == 0) {
-        if (OPC_UPDATE_CRO(op)) {
+        /*if (OPC_UPDATE_CRO(op)) {
             (*gCPU.cr) |= (0xF << 28);
-            /* or CR0 = Undefined */
-        }
+            // or CR0 = Undefined 
+        }*/
         return;
     }
     uint8 temp;
@@ -240,30 +240,31 @@ void power_opc_lscbx(regpointer gCPU, uint32 op)
                 discard = true;
             }
             if (rD == rB) {
-                    discard = true;
+                discard = true;
             }
         }
-        gCPU.gpr[rD] &= (~(0xFF << (j * 8)));
         temp = vm_read_memory_1(addr);
-        gCPU.gpr[rD] |= (temp << (j * 8));
+	if (!discard) {
+            gCPU.gpr[rD] |= (temp << (j * 8));
+	    gCPU.gpr[rD] &= (~(0xFF << (j * 8)));
+	}
         if (temp == (((*gCPU.xer.reserved) >> 2) & 0xff)) {
-            gCPU.xer &= 0xFFFFFF80;
-            gCPU.xer |= i;
-                    match = true;
-                    break;
-                }
-                addr ++;
-                i ++;
-                j --;
-                }
-                if (OPC_UPDATE_CRO(gCPU.current_opc)) {
-                    if (gCPU.xer & 0x80000000) {
-                        cro |= 1;
-                    }
-                    if (match) {
-                        cro |= 2;
-                    }
-                    gCPU.cr = (cro << 28);
-                }
-                }
+            (*gCPU.xer.byte_count) = i;
+             match = true;
+             break;
+        }
+        addr ++;
+        i ++;
+        j --;
+    }
+    if (OPC_UPDATE_CRO(gCPU.current_opc)) {
+        if ((*gCPU.xer.so)) {
+            cro |= 1;
+        }
+        if (match) {
+            cro |= 2;
+        }
+        (*gCPU.cr) |= (cro << 28);
+    }
+}
 
