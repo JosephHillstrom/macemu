@@ -268,3 +268,16 @@ void power_opc_lscbx(regpointer gCPU, uint32 op)
     }
 }
 
+void power_opc_maskg(regpointer gCPU, uint32 op)
+{
+	uint32 rS = MAKE_RD(op);
+	uint32 rA = MAKE_RA(op);
+	uint32 rB = MAKE_RB(op);
+	uint32 mstart = (gCPU.gpr[rS] & 0x0000001F);
+	uint32 mstop =  (gCPU.gpr[rB] & 0x0000001F);
+	int i;
+	gCPU.gpr[rA] = make_mask(mstart, mstop);
+	if (OPC_UPDATE_CRO(op)) {
+		record(gCPU, gCPU.gpr[rA]);
+	}
+}
