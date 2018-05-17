@@ -96,5 +96,19 @@ public:
     }
 };
 doz_struct doz_cpp;
+
+static void lscbx_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_lscbx(c_registers, op);
+}
+struct lscbx_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	doz_struct()
+	{
+		pf = lscbx_wrapper;
+	}
+};
+lscbx_struct lscbx_cpp;
 #endif
 #endif
