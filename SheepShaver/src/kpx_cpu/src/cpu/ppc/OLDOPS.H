@@ -10,3 +10,4 @@ void power_opc_abs(regpointer gCPU, uint32 op);
 void power_opc_clcs(regpointer gCPU, uint32 op);
 void power_opc_doz(regpointer gCPU, uint32 op);
 void power_opc_lscbx(regpointer gCPU, uint32 op);
+void power_opc_maskg(regpointer gCPU, uint32 op);
