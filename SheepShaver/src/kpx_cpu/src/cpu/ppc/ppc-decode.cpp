@@ -1801,6 +1801,11 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 		doz_cpp,
 		power_doz,
 		XO_form, 31, 264, CFLOW_NORMAL
+	},
+	{ "lscbx",
+	 	lscbx_cpp,
+	 	power_lscbx,
+	 	XO_form, 31, 277, CFLOW_NORMAL
 	}
 };
 
