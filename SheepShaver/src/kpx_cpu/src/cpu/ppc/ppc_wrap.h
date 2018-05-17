@@ -111,5 +111,18 @@ public:
 };
 lscbx_struct lscbx_cpp;
 
+static void maskir_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_maskir(c_registers, op);
+}
+struct maskir_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	maskir_struct()
+	{
+		pf = maskir_wrapper;
+	}
+};
+maskir_struct maskir_cpp;
 #endif
 #endif
