@@ -1811,6 +1811,26 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	 	maskir_cpp,
 	 	power_maskir,
 	 	XO_form, 31, 541, CFLOW_NORMAL
+	},
+	{ "nabs",
+		nabs_cpp,
+		power_nabs,
+		XO_form, 31, 488, CFLOW_NORMAL
+	},
+	{ "rlmi",
+		rlmi_cpp,
+		power_rlmi,
+		D_form, 22, 0, CFLOW_NORMAL
+	},
+	{ "rrib",
+		rrib_cpp,
+		power_rrib,
+		XO_form, 31, 537, CFLOW_NORMAL
+	},
+	{ "div",
+		div_cpp,
+		power_div,
+		XO_form, 31, 331, CFLOW_NORMAL
 	}
 };
 

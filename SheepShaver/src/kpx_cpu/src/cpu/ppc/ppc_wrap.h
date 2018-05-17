@@ -104,7 +104,7 @@ static void lscbx_wrapper(powerpc_cpu * cpu, uint32 op)
 }
 struct lscbx_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
 public:
-	doz_struct()
+	lscbx_struct()
 	{
 		pf = lscbx_wrapper;
 	}
@@ -124,5 +124,61 @@ public:
 	}
 };
 maskir_struct maskir_cpp;
+
+static void nabs_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_nabs(c_registers, op);
+}
+struct nabs_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    nabs_struct()
+    {
+        pf = nabs_wrapper;
+    }
+};
+nabs_struct nabs_cpp;
+
+static void rlmi_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_rlmi(c_registers, op);
+}
+struct rlmi_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    rlmi_struct()
+    {
+        pf = rlmi_wrapper;
+    }
+};
+rlmi_struct rlmi_cpp;
+
+static void rrib_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_rrib(c_registers, op);
+}
+struct rrib_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    rrib_struct()
+    {
+        pf = rrib_wrapper;
+    }
+};
+rrib_struct rrib_cpp;
+
+static void div_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_div(c_registers, op);
+}
+struct div_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    div_struct()
+    {
+        pf = div_wrapper;
+    }
+};
+div_struct div_cpp;
 #endif
 #endif
