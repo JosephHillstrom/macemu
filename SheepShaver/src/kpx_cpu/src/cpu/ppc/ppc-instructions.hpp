@@ -365,6 +365,7 @@ enum powerpc_instruction {
 	power_abs,
 	power_clcs,
 	power_doz,
+	power_lscbx,
 	PPC_I(MAX) // Total number of instruction types
 };
 
