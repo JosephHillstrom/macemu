@@ -1806,6 +1806,11 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	 	lscbx_cpp,
 	 	power_lscbx,
 	 	XO_form, 31, 277, CFLOW_NORMAL
+	},
+	{ "maskir",
+	 	maskir_cpp,
+	 	power_maskir,
+	 	XO_form, 31, 541, CFLOW_NORMAL
 	}
 };
 
