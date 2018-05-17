@@ -111,18 +111,5 @@ public:
 };
 lscbx_struct lscbx_cpp;
 
-maskg_wrapper(powerpc_cpu * cpu, uint32 op)
-{
-	(*(c_registers.pc)) += 4;
-	power_opc_maskg(c_registers, op);
-}
-struct maskg_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
-public:
-	maskg_struct()
-	{
-		pf = maskg_wrapper;
-	}
-};
-maskg_struct maskg_cpp;
 #endif
 #endif
