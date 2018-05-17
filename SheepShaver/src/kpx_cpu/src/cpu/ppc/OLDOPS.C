@@ -49,6 +49,17 @@ uint32 make_mask(uint32 mstart, uint32 mstop)
     return tmp;
 }
 
+uint32 use_mask(uint32 mask, uint32 value, uint32 start)
+{
+	uint32 ret = start;
+	int i;
+	for (i = 0; i < 32; i ++) {
+		if (mask & (1 << i)) {
+			ret &= (~(1 << i));
+			ret |= (value & (1 << i));
+		}
+	}
+}
 
 void bcctr(regpointer regs, uint32 op)
 {
@@ -266,4 +277,15 @@ void power_opc_lscbx(regpointer gCPU, uint32 op)
         }
         (*gCPU.cr) |= (cro << 28);
     }
+}
+
+void power_opc_maskir(regpointer gCPU, uint32 op)
+{
+	uint32 rS = MAKE_RD(op);
+	uint32 rA = MAKE_RA(op);
+	uint32 rB = MAKE_RB(op);
+	gCPU.gpr[rA] = use_mask(gCPU.gpr[rB], gCPU.gpr[rS], gCPU.gpr[rA]);
+	if (OPC_UPDATE_CRO(op)) {
+		UPDATE_CRO(gCPU.gpr[rA]);
+	}
 }
