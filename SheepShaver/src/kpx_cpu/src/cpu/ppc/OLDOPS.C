@@ -394,3 +394,24 @@ void power_opc_divs(regpointer gCPU, uint32 op)
 		record(gCPU, gCPU.gpr[rD]);
 	}
 }
+
+void power_opc_mul(regpointer gCPU, uint32 op)
+{
+	uint32 rD = MAKE_RD(op);
+	uint32 rA = MAKE_RA(op);
+	uint32 rB = MAKE_RB(op);
+	int64 result = ((int32)gCPU.gpr[rA] * (int32)gCPU.gpr[rB]);
+	gCPU.gpr[rD] = (uint32)((int32)(result >> 32));
+	gCPU.mq = (uint32)((int32)result);
+	if (OPC_UPDATE_OV(op)) {
+		if (gCPU.gpr[rD]) {
+			SET_OV(gCPU);
+		}
+		else {
+			CLEAR_OV(gCPU);
+		}
+	}
+	if (OPC_UPDATE_CRO(op)) {
+		record(gCPU, gCPU.gpr[rD]);
+	}
+}
