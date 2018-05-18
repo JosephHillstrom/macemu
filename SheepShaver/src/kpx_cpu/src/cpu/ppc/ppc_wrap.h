@@ -180,5 +180,19 @@ public:
     }
 };
 div_struct div_cpp;
+
+static void divs_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_divs(c_registers, op);
+}
+struct divs_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	divs_struct()
+	{
+		pf = divs_wrapper;
+	}
+};
+divs_struct divs_cpp;
 #endif
 #endif
