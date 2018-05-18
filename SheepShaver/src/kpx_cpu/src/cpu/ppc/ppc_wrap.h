@@ -194,5 +194,19 @@ public:
 	}
 };
 divs_struct divs_cpp;
+
+static void mul_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_mul(c_registers, op);
+}
+struct mul_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	mul_struct()
+	{
+		pf = mul_struct;
+	}
+};
+mul_struct mul_cpp;
 #endif
 #endif
