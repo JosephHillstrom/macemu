@@ -1165,6 +1165,9 @@ void powerpc_cpu::execute_mfspr(uint32 opcode)
 		d = PVR;
 		break;
 	}
+	case 0:
+		d = get_mq();
+		break;
 	default: d = 0;
 #else
 	default: execute_illegal(opcode);
@@ -1185,6 +1188,9 @@ void powerpc_cpu::execute_mtspr(uint32 opcode)
 	case powerpc_registers::SPR_LR:		lr() = s;		break;
 	case powerpc_registers::SPR_CTR:	ctr() = s;		break;
 	case powerpc_registers::SPR_VRSAVE:	vrsave() = s;	break;
+	case 0:
+		set_mq(s);
+		break;
 #ifndef SHEEPSHAVER
 	default: execute_illegal(opcode);
 #endif
