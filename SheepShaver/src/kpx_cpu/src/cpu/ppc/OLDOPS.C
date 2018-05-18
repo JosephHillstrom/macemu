@@ -423,3 +423,23 @@ void power_opc_mul(regpointer gCPU, uint32 op)
 		record(gCPU, gCPU.gpr[rD]);
 	}
 }
+
+void power_opc_sle(regpointer gCPU, uint32 op)
+{
+	uint32 rB = MAKE_RB(op);
+	uint32 rA = MAKE_RA(op);
+	uint32 rS = MAKE_RD(op);
+	uint32 tmp = gCPU.gpr[rS];
+	uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
+	uint32 mask = 0;
+	int i;
+	for (i = 31; i > toRotate; i --) {
+		mask |= (1 << i);
+	}
+	tmp = ((tmp << toRotate) | (tmp >> (31 - toRotate)));
+	gCPU.mq = tmp;
+	gCPU.gpr[rA] = (tmp & mask);
+	if (OPC_UPDATE_CRO(gCPU.current_opc)) {
+		UPDATE_CRO(gCPU.gpr[rA]);
+	}
+}
