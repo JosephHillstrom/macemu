@@ -208,5 +208,19 @@ public:
 	}
 };
 mul_struct mul_cpp;
+
+static void sle_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_sle(c_registers, op);
+}
+struct sle_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	sle_struct()
+	{
+		pf = sle_wrapper;
+	}
+};
+sle_struct sle_cpp;
 #endif
 #endif
