@@ -204,7 +204,7 @@ struct mul_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
 public:
 	mul_struct()
 	{
-		pf = mul_struct;
+		pf = mul_wrapper;
 	}
 };
 mul_struct mul_cpp;

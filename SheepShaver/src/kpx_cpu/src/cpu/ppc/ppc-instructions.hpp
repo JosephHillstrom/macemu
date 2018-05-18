@@ -373,6 +373,7 @@ enum powerpc_instruction {
 	power_div,
 	power_divs,
 	power_mul,
+	power_sle,
 	PPC_I(MAX) // Total number of instruction types
 };
 
