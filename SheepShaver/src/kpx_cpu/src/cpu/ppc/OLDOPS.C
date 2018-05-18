@@ -60,6 +60,14 @@ uint32 use_mask(uint32 mask, uint32 value, uint32 start)
     return ret;
 }
 uint32 mq;
+uint32 get_mq(void)
+{
+	return mq;
+}
+void set_mq(uint32 val)
+{
+	mq = val;
+}
 
 
 
