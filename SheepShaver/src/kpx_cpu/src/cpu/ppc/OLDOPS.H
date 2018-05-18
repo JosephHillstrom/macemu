@@ -15,3 +15,4 @@ void power_opc_nabs(regpointer gCPU, uint32 op);
 void power_opc_rlmi(regpointer gCPU, uint32 op);
 void power_opc_rrib(regpointer gCPU, uint32 op);
 void power_opc_div(regpointer gCPU, uint32 op);
+void power_opc_divs(regpointer gCPU, uint32 op);
