@@ -1836,6 +1836,11 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	 	divs_cpp,
 	 	power_divs,
 	 	XO_form, 31, 363, CFLOW_NORMAL
+	},
+	{ "mul",
+	 	mul_cpp,
+	 	power_mul,
+	 	XO_form, 31, 107, CFLOW_NORMAL
 	}
 };
 
