@@ -48,6 +48,9 @@
 #define DEBUG 0
 #include "debug.h"
 
+#include "OLDOPS.H"
+/* for get_mq & set_mq */
+
 /**
  *	Illegal & NOP instructions
  **/
