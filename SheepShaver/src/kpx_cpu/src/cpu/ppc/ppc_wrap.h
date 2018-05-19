@@ -222,5 +222,19 @@ public:
 	}
 };
 sle_struct sle_cpp;
+
+static void sleq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sleq(c_registers, op);
+}
+struct sleq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    sleq_struct()
+    {
+        pf = sleq_wrapper;
+    }
+};
+sleq_struct sleq_cpp;
 #endif
 #endif

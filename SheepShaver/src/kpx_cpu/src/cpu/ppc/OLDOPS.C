@@ -443,3 +443,23 @@ void power_opc_sle(regpointer gCPU, uint32 op)
 		record(gCPU, gCPU.gpr[rA]);
 	}
 }
+
+void power_opc_sleq(regpointer gCPU, uint32 op)
+{
+    uint32 rS = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 rB = MAKE_RB(op);
+    uint32 tmp = gCPU.gpr[rS];
+    uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
+    uint32 mask = 0;
+    int i;
+    for (i = 31; i > toRotate; i --) {
+        mask |= (1 << i);
+    }
+    tmp = (tmp << toRotate) | (tmp >> (toRotate - 31));
+    gCPU.gpr[rA] = use_mask(mask, tmp, mq);
+    mq = tmp;
+    if (OPC_UPDATE_CRO(op)) {
+        record(gCPU, gCPU.gpr[rA]);
+    }
+}
