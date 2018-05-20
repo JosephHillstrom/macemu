@@ -302,12 +302,12 @@ void init_sheep_mem(uint8 * mem);
 #define KERNEL_DATA2(a) ((a & 0xFFFFE000) == KERNEL_DATA2_BASE)
 #define KERNEL(a) (KERNEL_DATA(a) || KERNEL_DATA2(a))
 #define in_sheep_mem(addr) ((addr >= sheep_base) && (addr <= (sheep_base + page_size)))
+#define in_sheep_mem_host(a) ((a >= sheep_mem) && (a <= (sheep_mem + page_size)))
 #define HIMEM(a) ((in_sheep_mem(a))||(KERNEL(a)))
 #define too_big(addr) ((addr >= address_size)&&(!(HIMEM(addr))))
 #define ZERO too_big
 /*too_big(addr) is so we don't crash on too big addresses*/
 #define NO_WRITE ZERO
-/*NO_WRITE is from when I incorrectly disabled writing to the Kernel Data section*/
 /*#if REAL_ADDRESSING || DIRECT_ADDRESSING*/
 extern uint8 /*gZeroPage[0x3000],*/ gKernelData[0x2000];
 static inline uint8 * vm_get_host_address(vm_addr_t addr)
@@ -336,10 +336,17 @@ static inline vm_addr_t vm_get_guest_address(uint8 *addr)
 	if ((addr >= gKernelData) && (addr <= gKernelData + 0x2000)) {
 		return KERNEL_DATA_BASE + addr - gKernelData;
 	}
+	else if (in_sheep_mem_host(addr)) {
+		return ((sheep_base + (addr - sheep_mem)));
+	}
 	/*else*/
 		return vm_wrap_address((uintptr)addr - VMBaseDiff);
 }
 /*#define vm_do_get_virtual_address(addr) ((vm_addr_t)addr)*/
+
+#define vm_get_physical_address
+#define vm_get_virtual_address
+
 static inline uint32 vm_read_physical_memory_1(vm_addr_t addr)
 {
 	if (ZERO(addr)) {
@@ -391,15 +398,15 @@ static inline uint64 vm_read_physical_memory_8_reversed(vm_addr_t addr)
 	return vm_do_read_memory_8_reversed((uint64 *)vm_get_host_address(addr));
 }
 
-#define vm_read_virtual_memory_1 vm_read_physical_memory_1
-#define vm_read_virtual_memory_2 vm_read_physical_memory_2
-#define vm_read_virtual_memory_4 vm_read_physical_memory_4
-#define vm_read_virtual_memory_8 vm_read_physical_memory_8
+#define vm_read_virtual_memory_1(a) vm_read_physical_memory_1(vm_get_physical_address(a))
+#define vm_read_virtual_memory_2(a) vm_read_physical_memory_2(vm_get_physical_address(a))
+#define vm_read_virtual_memory_4(a) vm_read_physical_memory_4(vm_get_physical_address(a))
+#define vm_read_virtual_memory_8(a) vm_read_physical_memory_8(vm_get_physical_address(a))
 
-#define vm_read_virtual_memory_1_reversed vm_read_physical_memory_1_reversed
-#define vm_read_virtual_memory_2_reversed vm_read_physical_memory_2_reversed
-#define vm_read_virtual_memory_4_reversed vm_read_physical_memory_4_reversed
-#define vm_read_virtual_memory_8_reversed vm_read_physical_memory_8_reversed
+#define vm_read_virtual_memory_1_reversed(a) vm_read_physical_memory_1_reversed(vm_get_physical_address(a))
+#define vm_read_virtual_memory_2_reversed(a) vm_read_physical_memory_2_reversed(vm_get_physical_address(a))
+#define vm_read_virtual_memory_4_reversed(a) vm_read_physical_memory_4_reversed(vm_get_physical_address(a))
+#define vm_read_virtual_memory_8_reversed(a) vm_read_physical_memory_8_reversed(vm_get_physical_address(a))
 
 #define vm_read_memory_1 vm_read_virtual_memory_1
 #define vm_read_memory_2 vm_read_virtual_memory_2
@@ -462,15 +469,15 @@ static inline void vm_write_physical_memory_8_reversed(vm_addr_t addr, uint64 va
 	vm_do_write_memory_8_reversed((uint64 *)vm_get_host_address(addr), value);
 }
 
-#define vm_write_virtual_memory_1 vm_write_physical_memory_1
-#define vm_write_virtual_memory_2 vm_write_physical_memory_2
-#define vm_write_virtual_memory_4 vm_write_physical_memory_4
-#define vm_write_virtual_memory_8 vm_write_physical_memory_8
+#define vm_write_virtual_memory_1(a, v) vm_write_physical_memory_1(vm_get_physical_address(a), v)
+#define vm_write_virtual_memory_2(a, v) vm_write_physical_memory_2(vm_get_physical_address(a), v)
+#define vm_write_virtual_memory_4(a, v) vm_write_physical_memory_4(vm_get_physical_address(a), v)
+#define vm_write_virtual_memory_8(a, v) vm_write_physical_memory_8(vm_get_physical_address(a), v)
 
-#define vm_write_virtual_memory_1_reversed vm_write_physical_memory_1_reversed
-#define vm_write_virtual_memory_2_reversed vm_write_physical_memory_2_reversed
-#define vm_write_virtual_memory_4_reversed vm_write_physical_memory_4_reversed
-#define vm_write_virtual_memory_8_reversed vm_write_physical_memory_8_reversed
+#define vm_write_virtual_memory_1_reversed(a, v) vm_write_physical_memory_1_reversed(vm_get_physical_address(a), v)
+#define vm_write_virtual_memory_2_reversed(a, v) vm_write_physical_memory_2_reversed(vm_get_physical_address(a), v)
+#define vm_write_virtual_memory_4_reversed(a, v) vm_write_physical_memory_4_reversed(vm_get_physical_address(a), v)
+#define vm_write_virtual_memory_8_reversed(a, v) vm_write_physical_memory_8_reversed(vm_get_physical_address(a), v)
 
 #define vm_write_memory_1 vm_write_virtual_memory_1
 #define vm_write_memory_2 vm_write_virtual_memory_2

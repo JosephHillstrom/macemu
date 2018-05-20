@@ -47,9 +47,22 @@
 #endif
 #define WriteMacInt64(addr, v) vm_write_physical_memory_8((vm_addr_t)addr, v)
 
+#ifdef Host2MacAddr
+#undef Host2MacAddr
+#endif
+#define Host2MacAddr vm_get_guest_address
 
+#ifdef Mac2HostAddr
+#undef Mac2HostAddr
+#endif
+#define Mac2HostAddr(a) vm_get_host_address((vm_addr_t)a)
+
+#ifndef read_bswap_int_8
 #define read_bswap_int_8 ReadMacInt8
+#endif
+#ifndef write_bswap_int_8
 #define write_bswap_int_8 WriteMacInt8
+#endif
 
 #ifdef read_bswap_int_16
 #undef read_bswap_int_16

@@ -69,8 +69,8 @@ extern uint8 *ROMBaseHost;		// Base address of Mac ROM (host address space)
 #define WriteMacInt32(addr, v) vm_write_memory_4((vm_addr_t)addr, v)
 #define ReadMacInt64(addr) vm_read_memory_8((vm_addr_t)addr)
 #define WriteMacInt64(addr, v) vm_write_memory_8((vm_addr_t)addr, v)
-#define Host2MacAddr vm_do_get_virtual_address
-#define Mac2HostAddr(addr) vm_get_host_address((vm_addr_t)addr)
+#define Host2MacAddr(a) vm_get_virtual_address(vm_get_guest_address(a))
+#define Mac2HostAddr(addr) vm_get_host_address(vm_get_physical_address((vm_addr_t)addr))
 #define Mac_memset(addr, c, n) vm_memset((vm_addr_t)addr, c, n)
 #define Mac2Host_memcpy(dest, src, n) vm_memcpy(dest, src, n)
 #define Host2Mac_memcpy Mac2Host_memcpy
