@@ -236,5 +236,19 @@ public:
     }
 };
 sleq_struct sleq_cpp;
+
+static void sliq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sliq(c_registers, op);
+}
+struct sliq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    sliq_struct()
+    {
+        pf = sliq_wrapper;
+    }
+};
+sliq_struct sliq_cpp;
 #endif
 #endif

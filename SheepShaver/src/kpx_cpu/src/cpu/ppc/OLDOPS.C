@@ -463,3 +463,22 @@ void power_opc_sleq(regpointer gCPU, uint32 op)
         record(gCPU, gCPU.gpr[rA]);
     }
 }
+
+void power_opc_sliq(regpointer gCPU, uint32 op)
+{
+    uint32 rS = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 SH = MAKE_RB(op);
+    uint32 mask = 0;
+    uint32 tmp = gCPU.gpr[rS];
+    int i;
+    for (i = 31; i > SH; i --) {
+        mask |= (1 << i);
+    }
+    tmp = (tmp << SH) | (tmp >> (SH - 31));
+    mq = tmp;
+    gCPU.gpr[rA] = (tmp & mask);
+    if (OPC_UPDATE_CRO(op)) {
+        record(gCPU, gCPU.gpr[rA]);
+    }
+}
