@@ -615,3 +615,27 @@ void power_opc_sre(regpointer gCPU, uint32 op)
         record(gCPU, gCPU.gpr[rA]);
     }
 }
+
+void power_opc_srea(regpointer gCPU, uint32 op)
+{
+	uint32 rS = MAKE_RD(op);
+	uint32 rA = MAKE_RA(op);
+	uint32 rB = MAKE_RB(op);
+	uint32 mask = 0xFFFFFFFF;
+	uint32 tmp = gCPU.gpr[rS];
+	uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
+	tmp = (tmp >> toRotate) | (tmp << (31 - toRotate));
+	for (int i = 31; i > toRotate; i--) {
+		mask &= (~(1 << i));
+	}
+	mq = tmp;
+	if (gCPU.gpr[rS] & 0x80000000) {
+		gCPU.gpr[rA] = use_mask(0xFFFFFFFF, tmp, gCPU.gpr[rA]);
+	}
+	else {
+		gCPU.gpr[rA] = use_mask(0, tmp, gCPU.gpr[rA]);
+	}
+	if (OPC_UPDATE_CRO(op)) {
+		record(gCPU, gCPU.gpr[rA]);
+	}
+}
