@@ -360,7 +360,36 @@ public:
 	{
 		pf = srliq_sriq_wrapper;
 	}
+};
 srliq_sriq_struct sriq_cpp;
 #define srliq_cpp sriq_cpp
+
+static void srlq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_srlq(c_registers, op);
+}
+struct srlq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	srlq_struct()
+	{
+		pf = srlq_wrapper;
+	}
+};
+srlq_struct srlq_cpp;
+
+static void srq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_srq(c_registers, op);
+}
+struct srq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	srq_struct()
+	{
+		pf = srq_wrapper;
+	}
+};
+srq_struct srq_cpp;
 #endif
 #endif
