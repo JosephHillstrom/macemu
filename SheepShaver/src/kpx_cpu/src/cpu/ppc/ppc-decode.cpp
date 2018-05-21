@@ -1765,7 +1765,7 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	{ "vupklsb",
 	  EXECUTE_VECTOR_UNPACK(1, V8HIms, V16QIms),
 	  PPC_I(VUPKLSB),
-	  VX_form, 4, 654, CFLOW_NORMAL
+hank williams	  VX_form, 4, 654, CFLOW_NORMAL
 	},
 	{ "vupklsh",
 	  EXECUTE_VECTOR_UNPACK(1, V4SIs, V8HIms),
@@ -1891,6 +1891,16 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	 	sreq_cpp,
 	 	power_sreq,
 	 	XO_form, 31, 729, CFLOW_NORMAL
+	},
+	{ "sriq",
+	 	sriq_cpp,
+	 	power_sriq,
+	 	XO_form, 31, 696, CFLOW_NORMAL
+	},
+	{ "srliq",
+	 	srliq_cpp,
+	 	power_srliq,
+	 	XO_form, 31, 760, CFLOW_NORMAL
 	}
 };
 
