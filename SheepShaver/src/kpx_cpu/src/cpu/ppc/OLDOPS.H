@@ -20,6 +20,12 @@ void power_opc_mul(regpointer gCPU, uint32 op);
 void power_opc_sle(regpointer gCPU, uint32 op);
 void power_opc_sleq(regpointer gCPU, uint32 op);
 void power_opc_sliq(regpointer gCPU, uint32 op);
+void power_opc_sllq(regpointer gCPU, uint32 op);
+void power_opc_slq(regpointer gCPU, uint32 op);
+void power_opc_sraiq(regpointer gCPU, uint32 op);
+void power_opc_sraq(regpointer gCPU, uint32 op);
+void power_opc_sre(regpointer gCPU, uint32 op);
+
 
 
 

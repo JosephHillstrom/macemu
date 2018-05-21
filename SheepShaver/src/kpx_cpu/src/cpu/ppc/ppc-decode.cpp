@@ -1856,6 +1856,26 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 		sliq_cpp,
 		power_sliq,
 		XO_form, 31, 184, CFLOW_NORMAL
+	},
+	{ "sllq",
+		sllq_cpp,
+		power_sllq,
+		XO_form, 31, 216, CFLOW_NORMAL
+	},
+	{ "slq",
+		slq_cpp,
+		power_slq,
+		XO_form, 31, 152, CFLOW_NORMAL
+	},
+	{ "sraiq",
+		sraiq_cpp,
+		power_sraiq,
+		XO_form, 31, 952, CFLOW_NORMAL
+	},
+	{ "sraq",
+		sraq_cpp,
+		power_sraq,
+		XO_form, 31, 920, CFLOW_NORMAL
 	}
 };
 

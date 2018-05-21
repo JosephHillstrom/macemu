@@ -482,3 +482,136 @@ void power_opc_sliq(regpointer gCPU, uint32 op)
         record(gCPU, gCPU.gpr[rA]);
     }
 }
+
+void power_opc_sllq(regpointer gCPU, uint32 op)
+{
+    uint32 rS = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 rB = MAKE_RB(op);
+    uint32 mask = 0;
+    uint32 tmp = gCPU.gpr[rS];
+    uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
+    int i;
+    for (i = 31; i > toRotate; i --) {
+        mask |= (1 << i);
+    }
+    //rol(tmp, toRotate);
+    tmp = ((tmp << toRotate) | (tmp >> (31 - toRotate)));
+    gCPU.gpr[rA] = use_mask(mask, tmp, mq);
+    if (OPC_UPDATE_CRO(op)) {
+        record(gCPU, gCPU.gpr[rA]);
+    }
+}
+
+void power_opc_slq(regpointer gCPU, uint32 op)
+{
+    uint32 rS = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 rB = MAKE_RB(op);
+    uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
+    uint32 tmp = gCPU.gpr[rS];
+    int i;
+    uint32 mask = 0;
+    if (!(gCPU.gpr[rB] & 0x00000200)) {
+        for (i = 31; i > toRotate; i--) {
+            mask |= (1 << i);
+        }
+    }
+    tmp = ((tmp << toRotate) | (tmp << (31 - toRotate)));
+    mq = tmp;
+    gCPU.gpr[rA] = (tmp & mask);
+    if (OPC_UPDATE_CRO(op)) {
+        record(gCPU, gCPU.gpr[rA]);
+    }
+}
+
+void power_opc_sraiq(regpointer gCPU, uint32 op)
+{
+    uint32 rS = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 SH = MAKE_RB(op);
+    uint32 tmp = gCPU.gpr[rS];
+    uint32 temp;
+    uint32 mask = 0xFFFFFFFF;
+    tmp = (tmp >> SH) | (tmp << (31 - SH));
+    for (int i = 31; i > SH; i--) {
+        mask &= (~(1 << i));
+    }
+    mq = tmp;
+    if (gCPU.gpr[rS] & 0x80000000) {
+        gCPU.gpr[rA] = 0xFFFFFFFF;
+    }
+    else {
+        gCPU.gpr[rA] = (tmp & mask);
+    }
+    temp = (tmp & (~(mask)));
+    tmp |= temp;
+    tmp &= gCPU.gpr[rS];
+    if (tmp & 0x80000000) {
+        (*gCPU.xer.ca) = 1;
+    }
+    else {
+        (*gCPU.xer.ca) = 0;
+    }
+    if (OPC_UPDATE_CRO(op)) {
+        record(gCPU, gCPU.gpr[rA]);
+    }
+}
+
+void power_opc_sraq(regpointer gCPU, uint32 op)
+{
+    uint32 rS = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 rB = MAKE_RB(op);
+    uint32 mask = 0xFFFFFFFF;
+    uint32 tmp = gCPU.gpr[rS];
+    uint32 temp;
+    uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
+    tmp = (tmp >> toRotate) | (tmp << (31 - toRotate));
+    if (gCPU.gpr[rB] & 0x00000020) {
+        for (int i = 31; i > toRotate; i--) {
+            mask &= (~(1 << i));
+        }
+    }
+    else {
+        mask = 0;
+    }
+    mq = tmp;
+    if (gCPU.gpr[rS] & 0x80000000) {
+        gCPU.gpr[rA] = 0xFFFFFFFF;
+    }
+    else {
+        gCPU.gpr[rA] = (tmp & mask);
+    }
+    temp = (tmp & (~(mask)));
+            tmp |= temp;
+            tmp &= gCPU.gpr[rS];
+            if (tmp & 0x80000000) {
+                (*gCPU.xer.ca) = 1;
+            }
+            else {
+                (*gCPU.xer.ca) = 0;
+            }
+            if (OPC_UPDATE_CRO(op)) {
+                record(gCPU, gCPU.gpr[rA]);
+            }
+}
+
+void power_opc_sre(regpointer gCPU, uint32 op)
+{
+    uint32 rS = MAKE_RD(op);
+    uint32 rA = MAKE_RA(op);
+    uint32 rB = MAKE_RB(op);
+    uint32 tmp = gCPU.gpr[rS];
+    uint32 toRotate = (rB & 0x0000001F);
+    uint32 mask = 0;
+    tmp = (tmp >> toRotate) | (tmp << (31 - toRotate));
+    mq = tmp;
+    for (int i = 31; i > toRotate; i--) {
+        mask &= (~(1 << i));
+    }
+    gCPU.gpr[rA] = (tmp & mask);
+    if (OPC_UPDATE_CRO(op)) {
+        record(gCPU, gCPU.gpr[rA]);
+    }
+}

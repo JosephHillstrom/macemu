@@ -250,5 +250,61 @@ public:
     }
 };
 sliq_struct sliq_cpp;
+
+static void sllq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sllq(c_registers, op);
+}
+struct sllq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    sllq_struct()
+    {
+        pf = sllq_wrapper;
+    }
+};
+struct sllq_struct sllq_cpp;
+
+static void slq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_slq(c_registers, op);
+}
+struct slq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    slq_struct()
+    {
+        pf = slq_wrapper;
+    }
+};
+slq_struct slq_cpp;
+
+static void sraiq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sraiq(c_registers, op);
+}
+struct sraiq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    sraiq_struct()
+    {
+        pf = sraiq_wrapper;
+    }
+};
+sraiq_struct sraiq_cpp;
+
+static void sraq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sraq(c_registers, op);
+}
+struct sraq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    sraq_struct()
+    {
+        pf = sraq_wrapper;
+    }
+};
+sraq_struct sraq_cpp;
 #endif
 #endif
