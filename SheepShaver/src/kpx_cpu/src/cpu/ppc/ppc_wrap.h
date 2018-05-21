@@ -348,5 +348,19 @@ public:
     }
 };
 sreq_struct sreq_cpp;
+
+static void srliq_sriq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+	(*(c_registers.pc)) += 4;
+	power_opc_srliq_sriq(c_registers, op);
+}
+struct srliq_sriq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+	srliq_sriq_struct()
+	{
+		pf = srliq_sriq_wrapper;
+	}
+srliq_sriq_struct sriq_cpp;
+#define srliq_cpp sriq_cpp
 #endif
 #endif
