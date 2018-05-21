@@ -385,6 +385,7 @@ enum powerpc_instruction {
 	power_sreq,
 	power_sriq,
 	power_srliq,
+	power_srlq,
 	PPC_I(MAX) // Total number of instruction types
 };
 
