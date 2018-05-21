@@ -26,6 +26,7 @@ void power_opc_sraiq(regpointer gCPU, uint32 op);
 void power_opc_sraq(regpointer gCPU, uint32 op);
 void power_opc_sre(regpointer gCPU, uint32 op);
 void power_opc_srea(regpointer gCPU, uint32 op);
+void power_opc_sreq(regpointer gCPU, uint32 op);
 
 
 
