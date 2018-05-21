@@ -1901,6 +1901,11 @@ hank williams	  VX_form, 4, 654, CFLOW_NORMAL
 	 	srliq_cpp,
 	 	power_srliq,
 	 	XO_form, 31, 760, CFLOW_NORMAL
+	},
+	{ "srlq",
+	 	srlq_cpp,
+	 	power_srlq,
+	 	XO_form, 31, 728, CFLOW_NORMAL
 	}
 };
 
