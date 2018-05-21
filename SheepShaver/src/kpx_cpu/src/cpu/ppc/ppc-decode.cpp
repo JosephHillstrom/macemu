@@ -1880,7 +1880,12 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	{ "sre",
 	 	sre_cpp,
 	 	power_sre,
-	 	XO_form, 31, 665, CFL665OW_NORMAL
+	 	XO_form, 31, 665, CFLOW_NORMAL
+	},
+	{ "srea",
+	 	sre_cpp,
+	 	power_sre,
+	 	XO_form, 31, 921, CFLOW_NORMAL
 	}
 };
 
