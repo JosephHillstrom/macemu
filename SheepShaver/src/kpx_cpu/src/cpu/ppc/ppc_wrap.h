@@ -306,5 +306,47 @@ public:
     }
 };
 sraq_struct sraq_cpp;
+
+static void sre_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sraq(c_registers, op);
+}
+struct sre_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    sre_struct()
+    {
+        pf = sre_wrapper;
+    }
+};
+sre_struct sre_cpp;
+
+static void srea_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sraq(c_registers, op);
+}
+struct srea_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    srea_struct()
+    {
+        pf = srea_wrapper;
+    }
+};
+srea_struct srea_cpp;
+
+static void sreq_wrapper(powerpc_cpu * cpu, uint32 op)
+{
+    (*(c_registers.pc)) += 4;
+    power_opc_sreq(c_registers, op);
+}
+struct sreq_struct : nv_mem_fun1_t<void, powerpc_cpu, uint32> {
+public:
+    sreq_struct()
+    {
+        pf = sreq_wrapper;
+    }
+};
+sreq_struct sreq_cpp;
 #endif
 #endif
