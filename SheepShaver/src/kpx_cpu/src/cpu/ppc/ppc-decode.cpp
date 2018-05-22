@@ -1765,7 +1765,7 @@ const powerpc_cpu::instr_info_t powerpc_cpu::powerpc_ii_table[] = {
 	{ "vupklsb",
 	  EXECUTE_VECTOR_UNPACK(1, V8HIms, V16QIms),
 	  PPC_I(VUPKLSB),
-hank williams	  VX_form, 4, 654, CFLOW_NORMAL
+ 	  VX_form, 4, 654, CFLOW_NORMAL
 	},
 	{ "vupklsh",
 	  EXECUTE_VECTOR_UNPACK(1, V4SIs, V8HIms),

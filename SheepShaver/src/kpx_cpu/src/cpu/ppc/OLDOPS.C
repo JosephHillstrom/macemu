@@ -654,7 +654,7 @@ void power_opc_sreq(regpointer gCPU, uint32 op)
 	}
 	gCPU.gpr[rA] = use_mask(mask, tmp, mq);
 	mq = tmp;
-	if (OPC_UPDATE_CRO(gCPU.current_opc)) {
+	if (OPC_UPDATE_CRO(op)) {
 		record(gCPU, gCPU.gpr[rA]);
 	}
 }
@@ -690,7 +690,7 @@ void power_opc_srlq(regpointer gCPU, uint32 op)
 	uint32 mask;
 	uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
 	uint32 tmp = gCPU.gpr[rA];
-	tmp = (tmp >> toRoatate) | (tmp << (32 - toRotate));
+	tmp = (tmp >> toRotate) | (tmp << (32 - toRotate));
 	if (gCPU.gpr[rB] & 0x00000020) {
 		mask = 0;
 		for (int i = 31; i > toRotate; i++) {
@@ -718,7 +718,7 @@ void power_opc_srq(regpointer gCPU, uint32 op)
 	uint32 tmp = gCPU.gpr[rS];
 	uint32 toRotate = (gCPU.gpr[rB] & 0x0000001F);
 	uint32 mask = 0xFFFFFFFF;
-	tmp = (tmp >> toRoatate) | (tmp << (32 - toRotate));
+	tmp = (tmp >> toRotate) | (tmp << (32 - toRotate));
 	mq = tmp;
 	if (gCPU.gpr[rB] & 0x00000020) {
 		mask = 0;
