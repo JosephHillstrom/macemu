@@ -99,6 +99,7 @@
 		D0A66D2720A0DCC000D58A65 /* OLDOPS.C in Sources */ = {isa = PBXBuildFile; fileRef = D0A66D2520A0DCBF00D58A65 /* OLDOPS.C */; };
 		D0A66D2820A0DCC000D58A65 /* ppc_wrap.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0A66D2620A0DCC000D58A65 /* ppc_wrap.cc */; };
 		D0A8D742208FB430003C58B5 /* vm.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0A8D741208FB430003C58B5 /* vm.cc */; };
+		D0C441ED20B5F73900809CE1 /* ppc_exc.cc in Sources */ = {isa = PBXBuildFile; fileRef = D0C441EC20B5F73900809CE1 /* ppc_exc.cc */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -402,6 +403,7 @@
 		D0A66D2520A0DCBF00D58A65 /* OLDOPS.C */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = OLDOPS.C; path = ../kpx_cpu/src/cpu/ppc/OLDOPS.C; sourceTree = "<group>"; };
 		D0A66D2620A0DCC000D58A65 /* ppc_wrap.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ppc_wrap.cc; path = ../kpx_cpu/src/cpu/ppc/ppc_wrap.cc; sourceTree = "<group>"; };
 		D0A8D741208FB430003C58B5 /* vm.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = vm.cc; path = ../kpx_cpu/src/cpu/vm.cc; sourceTree = "<group>"; };
+		D0C441EC20B5F73900809CE1 /* ppc_exc.cc */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ppc_exc.cc; path = ../kpx_cpu/src/cpu/ppc/ppc_exc.cc; sourceTree = "<group>"; };
 		D0E1C834208CEAFB008DE351 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		D0FF5887208D174800AD139C /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = SDL.framework; sourceTree = "<group>"; };
 		E4302EE21FBFE7FA00A5B500 /* lowmem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = lowmem.c; path = Darwin/lowmem.c; sourceTree = "<group>"; };
@@ -460,6 +462,7 @@
 		0856CCAC14A99DE0000B1711 = {
 			isa = PBXGroup;
 			children = (
+				D0C441EC20B5F73900809CE1 /* ppc_exc.cc */,
 				D0A66D2520A0DCBF00D58A65 /* OLDOPS.C */,
 				D0A66D2620A0DCC000D58A65 /* ppc_wrap.cc */,
 				D08B3EB820963B46005873CA /* SDL.framework */,
@@ -1127,6 +1130,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D0C441ED20B5F73900809CE1 /* ppc_exc.cc in Sources */,
 				D0A66D2720A0DCC000D58A65 /* OLDOPS.C in Sources */,
 				D0A66D2820A0DCC000D58A65 /* ppc_wrap.cc in Sources */,
 				D0201057209BA204005E02D2 /* ppc-dis.c in Sources */,
@@ -1547,6 +1551,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = SheepShaver;
+				SDKROOT = macosx10.13;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
@@ -1618,6 +1623,7 @@
 				PRECOMPS_INCLUDE_HEADERS_FROM_BUILT_PRODUCTS_DIR = YES;
 				PRESERVE_DEAD_CODE_INITS_AND_TERMS = YES;
 				PRODUCT_NAME = SheepShaver;
+				SDKROOT = macosx10.13;
 				STRIP_INSTALLED_PRODUCT = NO;
 				STRIP_STYLE = debugging;
 				STRIP_SWIFT_SYMBOLS = NO;
