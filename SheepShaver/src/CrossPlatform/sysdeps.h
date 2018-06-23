@@ -210,13 +210,13 @@ static inline uint32 do_opt_bswap_32(uint32 x)
   return v;
 }
 #endif
-#endif*/
+#endif
 
 #ifdef HAVE_BYTESWAP_H
 #include <byteswap.h>
 #endif
 
-/*#ifdef  opt_bswap_16
+#ifdef  opt_bswap_16
 #undef  bswap_16
 #define bswap_16 opt_bswap_16
 #endif
@@ -274,12 +274,12 @@ static inline uint64 generic_bswap_64(uint64 x)
 }*/
 static inline uint16 bswap_16(uint16 toSwap)
 {
-#ifdef ___X86___
+/*#ifdef ___X86___
 	__asm__("rolw $8, %w0":"=r"(toSwap):"0"(toSwap));
-#else
-		toSwap = ((toSwap >> 8)|(toSwap << 8))
-#endif
-	return toSwap;
+#else*/
+		/*toSwap =*/return ((toSwap >> 8)|(toSwap << 8))
+/*#endif
+	return toSwap;*/
 }
 static inline uint32 bswap_32(uint32 toSwap)
 {
