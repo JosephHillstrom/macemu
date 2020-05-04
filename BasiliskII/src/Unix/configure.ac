@@ -89,6 +89,11 @@ AC_ARG_WITH(bincue,
 AC_ARG_WITH(libvhd,   
   AS_HELP_STRING([--with-libvhd], [Enable VHD disk images]))
 
+AC_ARG_WITH(vdeplug,
+  AS_HELP_STRING([--with-vdeplug], [Enable VDE virtual network support]),
+  [],
+  [with_vdeplug=yes])
+
   
 dnl Cross Compiling results in 'guesses' being made about the target system. These defaults are oftetimes incorrect.
 dnl The following Environment variables allow you to configure the default guess value for each option in the configure script.
@@ -594,9 +599,6 @@ case "$host" in
 *-*-hpux10.26)
 	disable_ptmx_check=yes
 	;;
-*-*-linux*)
-	no_dev_ptmx=1
-	;;
 mips-sony-bsd|mips-sony-newsos4)
 	AC_DEFINE(HAVE_NEWS4, 1, [Define if you are on NEWS-OS (additions from openssh-3.2.2p1, for sshpty.c).])
 	;;
@@ -610,7 +612,6 @@ mips-sony-bsd|mips-sony-newsos4)
 	no_dev_ptmx=1
 	;;
 *-*-darwin*)
-	no_dev_ptmx=1
 	LIBS="$LIBS -lstdc++"
 	;;
 *-*-freebsd*)
@@ -821,6 +822,13 @@ if [[ -n "$CAN_SLIRP" ]]; then
     ../slirp/ip_input.c  ../slirp/socket.c     ../slirp/udp.c"
 fi
 AC_SUBST(SLIRP_SRCS)
+
+dnl Is libvdeplug available?
+have_vdeplug=no
+AS_IF([test "x$with_vdeplug" = "xyes"], [
+  have_vdeplug=yes
+  AC_CHECK_LIB(vdeplug, vde_close, [], [have_vdeplug=no])
+])
 
 if [[ "x$WANT_MACOSX_GUI" = "xyes" ]]; then
   CPPFLAGS="$CPPFLAGS -I../MacOSX"
@@ -1884,6 +1892,7 @@ echo SDL support ............................ : $SDL_SUPPORT
 echo SDL major-version ...................... : $WANT_SDL_VERSION_MAJOR
 echo BINCUE support ......................... : $have_bincue
 echo LIBVHD support ......................... : $have_libvhd
+echo VDE support ............................ : $have_vdeplug
 echo XFree86 DGA support .................... : $WANT_XF86_DGA
 echo XFree86 VidMode support ................ : $WANT_XF86_VIDMODE
 echo fbdev DGA support ...................... : $WANT_FBDEV_DGA

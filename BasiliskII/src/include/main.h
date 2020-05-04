@@ -90,6 +90,9 @@ extern uint32 InterruptFlags;                                                   
 extern void SetInterruptFlag(uint32 flag);                                              // Set/clear interrupt flags
 extern void ClearInterruptFlag(uint32 flag);
 
+// vde switch variable
+extern char* vde_sock;
+
 // Array length
 #if __cplusplus >= 201103L || (_MSC_VER >= 1900 && defined __cplusplus)
 template <typename T, size_t size>
