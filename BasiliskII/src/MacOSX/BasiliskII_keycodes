@@ -26,7 +26,6 @@
 #
 
 #
-<<<<<<< HEAD
 # Cocoa French Keyboard
 #
 
@@ -137,8 +136,6 @@ sdl cocoa
 65	65	# KP .
 
 #
-=======
->>>>>>> c7e034639562af0551815786e5032f989ea8253c
 # X11 server
 #
 sdl x11
@@ -362,7 +359,6 @@ sdl fbcon
 # Quartz (1:1 translation actually)
 #
 sdl Quartz
-<<<<<<< HEAD
 41	53	# Esc
 58	122	# F1
 59	120	# F2
@@ -450,7 +446,6 @@ sdl Quartz
 54	43	# ,
 55	47	# .
 56	44	# /
-=======
 53	53	# Esc
 122	122	# F1
 120	120	# F2
@@ -538,7 +533,6 @@ sdl Quartz
 43	43	# ,
 47	47	# .
 44	44	# /
->>>>>>> c7e034639562af0551815786e5032f989ea8253c
 126	62	# Cursor Up
 123	59	# Cursor Left
 125	61	# Cursor Down
@@ -547,7 +541,6 @@ sdl Quartz
 84	84	# KP 2
 85	85	# KP 3
 76	76	# KP Enter
-<<<<<<< HEAD
 228	54	# Ctrl
 226	58	# Option
 227	55	# Command
@@ -555,13 +548,11 @@ sdl Quartz
 230	58	# Right Alt->option
 231	55	# Right cmd
 44	49	# Space
-=======
 54	54	# Ctrl
 58	58	# Option
 55	55	# Command
 54	54	# Ctrl Left
 49	49	# Space
->>>>>>> c7e034639562af0551815786e5032f989ea8253c
 82	82	# KP 0
 65	65	# KP .
 
@@ -602,11 +593,7 @@ sdl directx
 14	51	# Backspace
 210	114	# Insert
 199	115	# Home
-<<<<<<< HEAD
-75	116	# Page Up
-=======
 201	116	# Page Up
->>>>>>> c7e034639562af0551815786e5032f989ea8253c
 69	71	# Num Lock
 181	75	# KP /
 55	67	# KP *
@@ -647,13 +634,8 @@ sdl directx
 75	86	# KP 4
 76	87	# KP 5
 77	88	# KP 6
-<<<<<<< HEAD
-225	56	# Shift Left
-100	50	# International
-=======
 42	56	# Shift Left
 86	50	# International
->>>>>>> c7e034639562af0551815786e5032f989ea8253c
 44	6	# Z
 45	7	# X
 46	8	# C
@@ -664,18 +646,13 @@ sdl directx
 51	43	# ,
 52	47	# .
 53	44	# /
-<<<<<<< HEAD
-229	56	# Shift Right
-=======
 54	56	# Shift Right
->>>>>>> c7e034639562af0551815786e5032f989ea8253c
 43	42	# \
 200	62	# Cursor Up
 79	83	# KP 1
 80	84	# KP 2
 81	85	# KP 3
 156	76	# KP Enter
-<<<<<<< HEAD
 224	54	# Ctrl Left
 227	58	# Logo Left (-> Option)
 226	55	# Alt Left (-> Command)
@@ -689,18 +666,3 @@ sdl directx
 79	60	# Cursor Right
 98	82	# KP 0
 99	65	# KP .
-=======
-29	54	# Ctrl Left
-219	58	# Logo Left (-> Option)
-56	55	# Alt Left (-> Command)
-57	49	# Space
-184	55	# Alt Right (-> Command)
-220	58	# Logo Right (-> Option)
-221	50	# Menu (-> International)
-157	54	# Ctrl Right
-203	59	# Cursor Left
-208	61	# Cursor Down
-205	60	# Cursor Right
-82	82	# KP 0
-83	65	# KP .
->>>>>>> c7e034639562af0551815786e5032f989ea8253c

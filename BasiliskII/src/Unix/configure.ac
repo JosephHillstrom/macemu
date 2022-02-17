@@ -36,7 +36,7 @@ AC_ARG_ENABLE(sdl-video,     [  --enable-sdl-video      use SDL for video graphi
 AC_ARG_ENABLE(sdl-audio,     [  --enable-sdl-audio      use SDL for audio [default=no]], [WANT_SDL_AUDIO=$enableval], [WANT_SDL_AUDIO=no])
 AC_ARG_ENABLE(sdl-framework,    [  --enable-sdl-framework  use SDL framework [default=no]], [WANT_SDL_FRAMEWORK=$enableval], [WANT_SDL_FRAMEWORK=no])
 AC_ARG_ENABLE(sdl-framework-prefix,    [  --enable-sdl-framework-prefix=PFX    default=/Library/Frameworks], [SDL_FRAMEWORK="$enableval"], [SDL_FRAMEWORK=/Library/Frameworks])
-AC_ARG_WITH(sdl1,            [  --with-sdl1             use SDL 1.x, rather than SDL 2.x [default=no]], [WANT_SDL_VERSION_MAJOR=1], [])
+AC_ARG_WITH(sdl2,            [  --with-sdl2             use SDL 2.x, rather than SDL 1.x [default=no]], [WANT_SDL_VERSION_MAJOR=2], [WANT_SDL_VERSION_MAJOR=1])
 
 dnl JIT compiler options.
 AC_ARG_ENABLE(jit-compiler,  [  --enable-jit-compiler   enable JIT compiler [default=no]], [WANT_JIT=$enableval], [WANT_JIT=no])
@@ -193,12 +193,14 @@ HAVE_M68K=no
 HAVE_SPARC=no
 HAVE_POWERPC=no
 HAVE_X86_64=no
+HAVE_AARCH_64=no
 case "$target_cpu" in
   i386* | i486* | i586* | i686* | i786* ) HAVE_I386=yes;;
   m68k* ) HAVE_M68K=yes;;
   sparc* ) HAVE_SPARC=yes;;
   powerpc* ) HAVE_POWERPC=yes;;
   x86_64* | amd64* ) HAVE_X86_64=yes;;
+  aarch64* ) HAVE_AARCH_64=yes;;
 esac
 
 dnl Check if we should really be assuming x86_64 even if we detected HAVE_I386 above.
@@ -319,38 +321,46 @@ if [[ "x$WANT_SDL" = "xyes" ]]; then
     ac_cv_framework_SDL=no
   fi
   if [[ "x$ac_cv_framework_SDL" = "xno" ]]; then
-    TEMP_WANT_SDL_VERSION_MAJOR=$WANT_SDL_VERSION_MAJOR
-    if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x" ]]; then
-      TEMP_WANT_SDL_VERSION_MAJOR=2
-    fi
-
-    dnl use PKG_PROG_PKG_CONFIG to declare PKG_CONFIG variables.  Otherwise,
-    dnl PKG_* macros may fail, without much explanation.  The lack of this
-    dnl was causing --with-sdl1 to fail, as SDL 1.x could not be detected,
-    dnl as the 2nd call to PKG_CHECK_MODULES would fail, as $PKG_CONFIG
-    dnl never got defined (bizarrely-enough).  -- dludwig@pobox.com
-    PKG_PROG_PKG_CONFIG
-
-    if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x2" ]]; then
-      PKG_CHECK_MODULES([sdl2], [sdl2 >= 2.0], [
-        CFLAGS="$CFLAGS $sdl2_CFLAGS"
-        CXXFLAGS="$CXXFLAGS $sdl2_CFLAGS"
-        LIBS="$LIBS $sdl2_LIBS"
-        WANT_SDL_VERSION_MAJOR=2
-      ], [
-        TEMP_WANT_SDL_VERSION_MAJOR=1
-      ])
-    fi
-    if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x1" ]]; then
-      PKG_CHECK_MODULES([sdl], [sdl >= 1.2], [
-        CFLAGS="$CFLAGS $sdl_CFLAGS"
-        CXXFLAGS="$CXXFLAGS $sdl_CFLAGS"
-        LIBS="$LIBS $sdl_LIBS"
-        WANT_SDL_VERSION_MAJOR=1
-      ], [
+    if [[ "x$WANT_SDL_VERSION_MAJOR" = "x1" ]]; then
+      AC_DEFINE(ENABLE_SDL1, 1, [Define if using SDL1.])
+      AC_PATH_PROG(sdl_config, "sdl-config")
+      if [[ -n "$sdl_config" ]]; then
+        sdl_cflags=`$sdl_config --cflags`
+        if [[ "x$WANT_SDL_STATIC" = "xyes" ]]; then
+          sdl_libs=`$sdl_config --static-libs`
+        else
+          sdl_libs=`$sdl_config --libs`
+        fi
+        CFLAGS="$CFLAGS $sdl_cflags"
+        CXXFLAGS="$CXXFLAGS $sdl_cflags"
+        LIBS="$LIBS $sdl_libs"
+      else
         WANT_SDL=no
-        WANT_SDL_VERSION_MAJOR=
-      ])
+        WANT_SDL_VIDEO=no
+        WANT_SDL_AUDIO=no
+        SDL_SUPPORT="none"
+      fi
+    fi
+
+    if [[ "x$WANT_SDL_VERSION_MAJOR" = "x2" ]]; then
+      AC_DEFINE(ENABLE_SDL2, 1, [Define if using SDL2.])
+      AC_PATH_PROG(sdl_config, "sdl2-config")
+      if [[ -n "$sdl_config" ]]; then
+        sdl_cflags=`$sdl_config --cflags`
+        if [[ "x$WANT_SDL_STATIC" = "xyes" ]]; then
+          sdl_libs=`$sdl_config --static-libs`
+        else
+          sdl_libs=`$sdl_config --libs`
+        fi
+        CFLAGS="$CFLAGS $sdl_cflags"
+        CXXFLAGS="$CXXFLAGS $sdl_cflags"
+        LIBS="$LIBS $sdl_libs"
+      else
+        WANT_SDL=no
+        WANT_SDL_VIDEO=no
+        WANT_SDL_AUDIO=no
+        SDL_SUPPORT="none"
+      fi
     fi
   fi
   SDL_SUPPORT=`echo "$SDL_SUPPORT" | sed -e "s/^ //"`
@@ -478,7 +488,7 @@ if [[ "x$WANT_GTK" = "xgtk" ]]; then
     dnl somehow, <gnome-i18n.h> would redefine gettext() to nothing if
     dnl ENABLE_NLS is not set, thusly conflicting with C++ <string> which
     dnl includes <libintl.h>
-    AM_GNU_GETTEXT
+    AM_GNU_GETTEXT([external])
     B2_PATH_GNOMEUI([
       AC_DEFINE(HAVE_GNOMEUI, 1, [Define if libgnomeui is available.])
       GUI_CFLAGS="$GUI_CFLAGS $GNOMEUI_CFLAGS"
@@ -593,11 +603,15 @@ dnl Check for headers and functions related to pty support (sshpty.c)
 dnl From openssh-3.2.2p1 configure.ac
 
 AC_CHECK_HEADERS(strings.h login.h sys/bsdtty.h sys/stat.h util.h pty.h)
-AC_CHECK_FUNCS(_getpty vhangup strlcpy)
+AC_SEARCH_LIBS([openpty], [util bsd])
+AC_CHECK_FUNCS(_getpty openpty vhangup strlcpy)
 
 case "$host" in
 *-*-hpux10.26)
 	disable_ptmx_check=yes
+	;;
+*-*-linux*)
+	no_dev_ptmx=1
 	;;
 mips-sony-bsd|mips-sony-newsos4)
 	AC_DEFINE(HAVE_NEWS4, 1, [Define if you are on NEWS-OS (additions from openssh-3.2.2p1, for sshpty.c).])
@@ -612,6 +626,7 @@ mips-sony-bsd|mips-sony-newsos4)
 	no_dev_ptmx=1
 	;;
 *-*-darwin*)
+	no_dev_ptmx=1
 	LIBS="$LIBS -lstdc++"
 	;;
 *-*-freebsd*)
@@ -889,6 +904,9 @@ if [[ "x$WANT_SDL_VIDEO" = "xyes" ]]; then
       EXTRASYSSRCS="$EXTRASYSSRCS ../dummy/clip_dummy.cpp"
       ;;
     esac
+    if [[ "$WANT_GTK" != "no" ]]; then
+      LIBS="$LIBS -lX11"
+    fi
   fi
 elif [[ "x$WANT_MACOSX_GUI" != "xyes" ]]; then
   VIDEOSRCS="video_x.cpp"
@@ -1412,6 +1430,16 @@ if [[ -n "$LINKER_SCRIPT_FLAGS" ]]; then
 fi
 AC_TRANSLATE_DEFINE(HAVE_LINKER_SCRIPT, "$ac_cv_linker_script_works",
   [Define if there is a linker script to relocate the executable above 0x70000000.])
+
+dnl override the addressing mode test order for Darwin
+if [[ "x$OS_TYPE" = "xdarwin" ]]; then
+    ADDRESSING_TEST_ORDER="banks"
+fi
+
+dnl override the addressing mode test order for AARCH64
+if [[ "x$HAVE_AARCH_64" = "xyes" ]]; then
+    ADDRESSING_TEST_ORDER="banks"
+fi
 
 dnl Determine the addressing mode to use
 if [[ "x$WANT_NATIVE_M68K" = "xyes" ]]; then

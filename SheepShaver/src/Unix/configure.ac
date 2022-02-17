@@ -72,7 +72,7 @@ AC_ARG_ENABLE(sdl-video,    [  --enable-sdl-video      use SDL for video graphic
 AC_ARG_ENABLE(sdl-audio,    [  --enable-sdl-audio      use SDL for audio [default=no]], [WANT_SDL_AUDIO=$enableval], [WANT_SDL_AUDIO=no])
 AC_ARG_ENABLE(sdl-framework,    [  --enable-sdl-framework  use SDL framework [default=no]], [WANT_SDL_FRAMEWORK=$enableval], [WANT_SDL_FRAMEWORK=no])
 AC_ARG_ENABLE(sdl-framework-prefix,    [  --enable-sdl-framework-prefix=PFX    default=/Library/Frameworks], [SDL_FRAMEWORK="$enableval"], [SDL_FRAMEWORK=/Library/Frameworks])
-AC_ARG_WITH(sdl1,            [  --with-sdl1             use SDL 1.x, rather than SDL 2.x [default=no]], [WANT_SDL_VERSION_MAJOR=1], [])
+AC_ARG_WITH(sdl2,            [  --with-sdl2             use SDL 2.x, rather than SDL 1.x [default=no]], [WANT_SDL_VERSION_MAJOR=2], [WANT_SDL_VERSION_MAJOR=1])
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -208,28 +208,8 @@ if [[ "x$WANT_SDL" = "xyes" ]]; then
     ac_cv_framework_SDL=no
   fi
   if [[ "x$ac_cv_framework_SDL" = "xno" ]]; then
-    TEMP_WANT_SDL_VERSION_MAJOR=$WANT_SDL_VERSION_MAJOR
-    if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x" ]]; then
-      TEMP_WANT_SDL_VERSION_MAJOR=2
-    fi
-    if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x2" ]]; then
-      AC_PATH_PROG(sdl2_config, "sdl2-config")
-      if [[ -n "$sdl2_config" ]]; then
-        sdl2_cflags=`$sdl2_config --cflags`
-        if [[ "x$WANT_SDL_STATIC" = "xyes" ]]; then
-          sdl2_libs=`$sdl2_config --static-libs`
-        else
-          sdl2_libs=`$sdl2_config --libs`
-        fi
-        CFLAGS="$CFLAGS $sdl2_cflags"
-        CXXFLAGS="$CXXFLAGS $sdl2_cflags"
-        LIBS="$LIBS $sdl2_libs"
-        WANT_SDL_VERSION_MAJOR=2
-      else
-        TEMP_WANT_SDL_VERSION_MAJOR=1
-      fi
-    fi
-    if [[ "x$TEMP_WANT_SDL_VERSION_MAJOR" = "x1" ]]; then
+    if [[ "x$WANT_SDL_VERSION_MAJOR" = "x1" ]]; then
+      AC_DEFINE(ENABLE_SDL1, 1, [Define if using SDL1.])
       AC_PATH_PROG(sdl_config, "sdl-config")
       if [[ -n "$sdl_config" ]]; then
         sdl_cflags=`$sdl_config --cflags`
@@ -241,11 +221,32 @@ if [[ "x$WANT_SDL" = "xyes" ]]; then
         CFLAGS="$CFLAGS $sdl_cflags"
         CXXFLAGS="$CXXFLAGS $sdl_cflags"
         LIBS="$LIBS $sdl_libs"
-        WANT_SDL_VERSION_MAJOR=1
       else
         WANT_SDL=no
         WANT_SDL_VIDEO=no
         WANT_SDL_AUDIO=no
+        SDL_SUPPORT="none"
+      fi
+    fi
+
+    if [[ "x$WANT_SDL_VERSION_MAJOR" = "x2" ]]; then
+      AC_DEFINE(ENABLE_SDL2, 1, [Define if using SDL2.])
+      AC_PATH_PROG(sdl_config, "sdl2-config")
+      if [[ -n "$sdl_config" ]]; then
+        sdl_cflags=`$sdl_config --cflags`
+        if [[ "x$WANT_SDL_STATIC" = "xyes" ]]; then
+          sdl_libs=`$sdl_config --static-libs`
+        else
+          sdl_libs=`$sdl_config --libs`
+        fi
+        CFLAGS="$CFLAGS $sdl_cflags"
+        CXXFLAGS="$CXXFLAGS $sdl_cflags"
+        LIBS="$LIBS $sdl_libs"
+      else
+        WANT_SDL=no
+        WANT_SDL_VIDEO=no
+        WANT_SDL_AUDIO=no
+        SDL_SUPPORT="none"
       fi
     fi
   fi
@@ -498,7 +499,8 @@ esac
 dnl Check for headers and functions related to pty support (sshpty.c)
 dnl From openssh-3.2.2p1 configure.ac
 AC_CHECK_HEADERS(strings.h login.h sys/bsdtty.h sys/stat.h util.h pty.h)
-AC_CHECK_FUNCS(_getpty vhangup strlcpy)
+AC_SEARCH_LIBS([openpty], [util bsd])
+AC_CHECK_FUNCS(_getpty openpty vhangup strlcpy)
 
 case "$host" in
 *-*-hpux10.26)

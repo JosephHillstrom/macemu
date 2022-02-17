@@ -97,7 +97,7 @@ static bool open_sdl_audio(void)
 		return false;
 	}
 	
-#if SDL_VERSION_ATLEAST(2,0,0)
+#ifdef ENABLE_SDL2
 	// HACK: workaround a bug in SDL pre-2.0.6 (reported via https://bugzilla.libsdl.org/show_bug.cgi?id=3710 )
 	// whereby SDL does not update audio_spec.size
 	if (audio_spec.size == 0) {
@@ -110,7 +110,7 @@ static bool open_sdl_audio(void)
 	audio_spec.silence);
 #endif
 
-#if SDL_VERSION_ATLEAST(2,0,0)
+#ifdef ENABLE_SDL2
 	const char * driver_name = SDL_GetCurrentAudioDriver();
 #else
 	char driver_name[32];
